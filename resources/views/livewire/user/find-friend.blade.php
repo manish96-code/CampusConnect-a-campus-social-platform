@@ -3,7 +3,6 @@
 
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <h2 class="text-[20px] font-bold text-[#050505]">People You May Know</h2>
-
         </div>
 
         {{-- <div class="">

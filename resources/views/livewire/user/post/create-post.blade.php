@@ -3,35 +3,6 @@
 
         <div class="w-full bg-white p-6 rounded-xl shadow-md">
 
-            {{-- <form wire:submit.prevent="createPost" class="flex flex-col space-y-4">
-
-                <div>
-                    <textarea id="caption" rows="4" wire:model.live="caption"
-                        class="w-full px-4 py-3 border rounded-xl text-xl focus:ring-2 focus:ring-purple-400 focus:border-transparent outline-none resize-none"
-                        placeholder="What's on your mind?"></textarea>
-
-                    @error('caption')
-                        <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                <div class="mb-4 w-32">
-                    <input type="file" wire:model="image" accept="image/*">
-                    @if ($image)
-                        <div class="mt-4">
-                            <img src="{{ $image->temporaryUrl() }}" alt="Image Preview" class="max-w-full h-auto rounded">
-                        </div>
-                    @endif
-                    @error('image') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                </div>
-
-                <button type="submit"
-                    class="px-5 bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition-all duration-200 self-end shadow-sm">
-                    Create Post
-                </button>
-
-            </form>  --}}
-
             <form wire:submit.prevent="createPost" class="flex flex-col space-y-4">
 
                 {{-- Caption --}}

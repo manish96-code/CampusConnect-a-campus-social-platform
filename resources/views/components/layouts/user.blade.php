@@ -17,13 +17,12 @@
                 <h1 class="text-2xl font-extrabold text-white tracking-wide">Social App</h1>
             </a>
 
-            <div>
+            <div class="relative ">
                 {{-- <input type="text" placeholder="Search..."
                 class="px-3 py-2 rounded-lg border bg-purple-300 focus:ring-2 focus:ring-purple-300 w-72"> --}}
                 <form action="{{ route('find-friends') }}" method="get">
                     <input type="text" name="query" placeholder="Search people"
-                        class="bg-[#f0f2f5] px-4 py-2 rounded-full pl-10 focus:outline-none w-60 text-[15px]"
-                        autocomplete="off">
+                        class="bg-[#f0f2f5] px-4 py-2 rounded-full pl-10 focus:outline-none w-60 text-[15px]">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-3 top-2.5 text-gray-500"
                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
