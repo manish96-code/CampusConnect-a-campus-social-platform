@@ -11,6 +11,7 @@ class CallingPost extends Component
 
     public $posts;
     public $selectedUser;
+    public $comment;
 
     #[On("postCreated")]
 
@@ -42,6 +43,18 @@ class CallingPost extends Component
         if ($post){
             $post->likes()->create(['user_id' => auth()->id()]);
         }
+        $this->dispatch("postCreated");
+    }
+
+    public function commentPost($postId){
+        $post = UserPost::find($postId);
+        if ($post){
+            $post->comments()->create([
+                'user_id' => auth()->id(),
+                'comment' => $this->comment
+            ]);
+        }
+        $this->comment = "";
         $this->dispatch("postCreated");
     }
     

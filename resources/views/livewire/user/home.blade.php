@@ -7,8 +7,15 @@
 
     <!-- post  -->
     <div class="w-5/12">
-        <livewire:user.post.create-post />
-        <livewire:user.post.calling-post />
+
+        <div>
+            <livewire:user.story>
+        </div>
+
+        <div>
+            <livewire:user.post.create-post />
+            <livewire:user.post.calling-post />
+        </div>
     </div>
 
     <!-- ad -->

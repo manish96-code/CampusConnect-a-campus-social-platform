@@ -55,6 +55,11 @@ class User extends Authenticatable
         return User::whereIn('id', $friendsIds);
     }
 
+    public function stories()
+    {
+        return $this->hasMany(Story::class, 'user_id');
+    }
+
 
 
     /**
