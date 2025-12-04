@@ -1,64 +1,206 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Page Title' }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{{ $title ?? 'Campus Connect' }}</title>
+    
+    <!-- CDN Scripts (Tailwind, Alpine, Icons) -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    {{-- <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
+
+
+    
+    <!-- Load Alpine once. If you bundle Alpine via Vite, REMOVE this CDN line. -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Livewire styles -->
+    @livewireStyles
+
+    <!-- Custom Styles -->
+    <style>
+        [x-cloak] { display: none !important; }
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    </style>
 </head>
 
-<body class="bg-purple-50">
+<body class="bg-[#F4F7FE] text-slate-800 antialiased min-h-screen relative pb-16 md:pb-0">
 
-    <header class="bg-purple-600 shadow-md py-4 px-[10%] fixed top-0 w-full z-50">
-        <div class="max-w-8xl mx-auto px-4 flex justify-between items-center">
+    <!-- Background Ambient Glow -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-indigo-200/20 rounded-full blur-[100px]"></div>
+        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-200/20 rounded-full blur-[100px]"></div>
+    </div>
 
-            <a href="{{ route('home') }}">
-                <h1 class="text-2xl font-extrabold text-white tracking-wide">Social App</h1>
+    <!-- DESKTOP & MOBILE HEADER -->
+    <header class="fixed top-0 inset-x-0 h-16 bg-white/90 backdrop-blur-md border-b border-slate-200/60 z-50 px-4 lg:px-8 transition-all duration-300">
+        <div class="max-w-7xl mx-auto h-full flex items-center justify-between">
+            
+            <!-- 1. Logo / Brand -->
+            <a href="{{ route('home') }}" class="flex items-center gap-2.5 group">
+                <div class="w-9 h-9 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+                    <!-- Graduation Cap Icon -->
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z" />
+                        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                    </svg>
+                </div>
+                <div class="hidden sm:block leading-tight">
+                    <h1 class="text-lg font-bold text-slate-800 tracking-tight">Campus Connect</h1>
+                    <p class="text-[10px] text-indigo-500 font-semibold uppercase tracking-wider">Student Network</p>
+                </div>
             </a>
 
-            <div class="relative ">
-                {{-- <input type="text" placeholder="Search..."
-                class="px-3 py-2 rounded-lg border bg-purple-300 focus:ring-2 focus:ring-purple-300 w-72"> --}}
-                <form action="{{ route('find-friends') }}" method="get">
-                    <input type="text" name="query" placeholder="Search people"
-                        class="bg-[#f0f2f5] px-4 py-2 rounded-full pl-10 focus:outline-none w-60 text-[15px]">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-3 top-2.5 text-gray-500"
-                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+            <!-- 2. Search Bar (Hidden on mobile) -->
+            <div class="hidden md:block flex-1 max-w-md mx-8">
+                <form action="{{ route('find-friends') }}" method="get" class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                        <i data-feather="search" class="w-4 h-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
+                    </div>
+                    <input type="text" name="query" placeholder="Search classmates, clubs..." 
+                        class="w-full bg-slate-100/80 border border-transparent focus:bg-white focus:border-indigo-200 focus:ring-4 focus:ring-indigo-500/10 rounded-full py-2 pl-10 pr-4 text-sm outline-none transition-all duration-200 placeholder-slate-400">
                 </form>
             </div>
-            <div>
 
-                <h2 class="text-xl font-bold text-white drop-shadow-sm capitalize">
-                    Hello, {{ auth()->user()->first_name }}
-                </h2>
+            <!-- 3. Right Actions -->
+            <div class="flex items-center gap-2 sm:gap-4">
+                
+                <!-- Search Toggle (Mobile Only) -->
+                <button class="md:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors">
+                    <i data-feather="search" class="w-5 h-5"></i>
+                </button>
 
-            </div>
+                <!-- Notifications -->
+                <button class="relative p-2 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 rounded-full transition-all">
+                    <i data-feather="bell" class="w-5 h-5"></i>
+                    <!-- Notification Dot -->
+                    <span class="absolute top-2 right-2.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white"></span>
+                </button>
 
-            {{-- <nav>
-                <ul class="flex space-x-6 text-white font-medium">
-                    <li><a href="{{ route('home') }}" class="hover:text-purple-200 transition">Home</a></li>
-                    <li><a href="#" class="hover:text-purple-200 transition">Profile</a></li>
-                    <li><a href="#" class="hover:text-purple-200 transition">Settings</a></li>
-                    <li>
-                        <a href="{{ route('logout') }}"
-                           class="hover:text-purple-200 transition">
-                            Logout
+                <!-- User Dropdown -->
+                <div x-data="{ open: false }" class="relative">
+                    <button @click="open = !open" @click.outside="open = false" 
+                        class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all">
+                        
+                        <img src="@if (auth()->user()->dp) {{ asset('storage/images/dp/' . auth()->user()->dp) }} @else https://ui-avatars.com/api/?name={{ auth()->user()->first_name }}+{{ auth()->user()->last_name }}&background=6366f1&color=fff @endif" 
+                             alt="Avatar" 
+                             class="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm">
+                        
+                        <div class="hidden lg:block text-left">
+                            <p class="text-xs font-bold text-slate-700 leading-none capitalize">{{ auth()->user()->first_name }}</p>
+                            <p class="text-[10px] text-slate-400 font-medium">Student</p>
+                        </div>
+                        
+                        <i data-feather="chevron-down" class="w-3 h-3 text-slate-400 hidden lg:block"></i>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div x-show="open" x-cloak 
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 translate-y-2"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 translate-y-2"
+                         class="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50 origin-top-right">
+                        
+                        <div class="px-4 py-2 border-b border-slate-50 mb-1">
+                            <p class="text-sm font-bold text-slate-800 truncate">{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}</p>
+                            <p class="text-xs text-slate-500 truncate">{{ auth()->user()->email }}</p>
+                        </div>
+
+                        <a href="{{ route('profile') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
+                            <i data-feather="user" class="w-4 h-4"></i> My Profile
                         </a>
-                    </li>
-                </ul>
-            </nav> --}}
-
+                        <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
+                            <i data-feather="settings" class="w-4 h-4"></i> Settings
+                        </a>
+                        
+                        <div class="border-t border-slate-50 my-1"></div>
+                        
+                        
+                            <a href="{{route('logout')}}" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 transition-colors">
+                                <i data-feather="log-out" class="w-4 h-4"></i> Sign Out
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
 
-    <div class="mt-20">
-        {{ $slot }}
-    </div>
+     <!-- MAIN (fixed): container + responsive grid -->
+    <main class="relative z-0 pt-16">
+        <div class=" px-4 sm:px-6 lg:px-8">
+            <!-- Grid: on lg show sidebar (3 cols) + content (9 cols) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- LEFT SIDEBAR (hidden on small screens) -->
+                <aside class="hidden lg:block lg:col-span-3">
+                    <!-- Use sticky so the sidebar stays visible while page scrolls.
+                         We keep top-24 so it clears the fixed header (header is h-16 + some spacing). -->
+                    <div class="sticky top-24">
+                        <livewire:user.sidebar />
+                    </div>
+                </aside>
+
+                <!-- MAIN CONTENT -->
+                <section class="col-span-1 lg:col-span-9">
+                    <!-- place page content (slot) here -->
+                    {{ $slot }}
+                </section>
+
+                <!-- OPTIONAL Right column (if you want extra widgets) -->
+                <!-- <aside class="hidden xl:block xl:col-span-2">Right widgets</aside> -->
+            </div>
+        </div>
+    </main>
+
+    <!-- MOBILE BOTTOM NAVIGATION (Dock) -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white/90 backdrop-blur-lg border-t border-slate-200 z-50 pb-safe">
+        <div class="flex justify-between items-center px-6 h-16">
+            <a href="{{ route('home') }}" class="flex flex-col items-center gap-1 {{ request()->routeIs('home') ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600' }}">
+                <i data-feather="home" class="w-6 h-6 {{ request()->routeIs('home') ? 'fill-indigo-100' : '' }}"></i>
+            </a>
+            
+            <a href="{{ route('find-friends') }}" class="flex flex-col items-center gap-1 {{ request()->routeIs('find-friends') ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600' }}">
+                <i data-feather="users" class="w-6 h-6 {{ request()->routeIs('find-friends') ? 'fill-indigo-100' : '' }}"></i>
+            </a>
+
+            <!-- Floating Action Button (Center) -->
+            <a href="#" class="relative -top-5 bg-gradient-to-br from-indigo-600 to-purple-600 p-3.5 rounded-2xl shadow-lg shadow-indigo-500/30 text-white transform active:scale-95 transition-transform">
+                <i data-feather="plus" class="w-6 h-6"></i>
+            </a>
+
+            <a href="#" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600">
+                <i data-feather="message-circle" class="w-6 h-6"></i>
+            </a>
+
+            <a href="{{ route('profile') }}" class="flex flex-col items-center gap-1 {{ request()->routeIs('profile') ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600' }}">
+                <i data-feather="user" class="w-6 h-6 {{ request()->routeIs('profile') ? 'fill-indigo-100' : '' }}"></i>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Icon Initialization -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            feather.replace();
+        });
+    </script>
+
+
+
+ @livewireScripts
+
+
+
 
 </body>
-
 </html>

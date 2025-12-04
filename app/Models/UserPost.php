@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserPost extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'user_id',
+        'image',
+        'caption',
+    ];
 
     public function user(){
         return $this->hasOne(User::class, 'id', 'user_id');

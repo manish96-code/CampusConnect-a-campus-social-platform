@@ -2,6 +2,7 @@
 
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
+use App\Livewire\User\Assignment;
 use App\Livewire\User\FindFriend;
 use App\Livewire\User\Home;
 use App\Livewire\User\Post\CreatePost;
@@ -20,6 +21,7 @@ Route::middleware('auth')->group(function(){
     Route::get('/profile/{id?}', Profile::class)->name('profile');
     Route::get('/find-friends', FindFriend::class)->name('find-friends');
     // Route::get('/create-post', CreatePost::class)->name('create-post');
+    Route::get('assignment', Assignment::class)->name('assignment');
     Route::get('/logout', function(){
         Auth::logout();
         return redirect()->route('login');
