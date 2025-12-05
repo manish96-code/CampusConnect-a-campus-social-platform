@@ -1,214 +1,204 @@
-<div class="max-w-6xl mx-auto px-4 py-8">
+<div class="max-w-7xl mx-auto px-4 lg:px-8 py-8 min-h-screen">
+    
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h1 class="text-2xl font-bold text-slate-900">Assignments</h1>
-            <p class="text-sm text-slate-500">Manage and submit your assignments.</p>
-        </div>
 
-        <div class="flex items-center gap-3">
-            @if (session()->has('message'))
-                <div class="text-sm text-emerald-700 bg-emerald-50 px-3 py-1 rounded-md">
-                    {{ session('message') }}
+        <!-- 2. MAIN CONTENT -->
+        <div class="lg:col-span-9 space-y-6">
+            
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Assignments</h1>
+                    <p class="text-slate-500 mt-1">View class assignments and submit work.</p>
+                </div>
+                
+                @if (session()->has('message'))
+                    <div class="px-4 py-2 bg-emerald-100 text-emerald-700 text-sm font-bold rounded-lg flex items-center gap-2">
+                        <i data-feather="check-circle" class="w-4 h-4"></i> {{ session('message') }}
+                    </div>
+                @endif
+
+                <button wire:click="toggleCreate" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-indigo-200 transition active:scale-95">
+                    @if($isCreating)
+                        <i data-feather="x" class="w-4 h-4"></i> Close
+                    @else
+                        <i data-feather="plus" class="w-4 h-4"></i> New Assignment
+                    @endif
+                </button>
+            </div>
+
+            <!-- Filters -->
+            <div class="flex gap-2 overflow-x-auto pb-2 border-b border-slate-200">
+                @foreach(['all' => 'All Tasks', 'pending' => 'Pending', 'completed' => 'Completed'] as $key => $label)
+                    <button wire:click="setFilter('{{ $key }}')" 
+                        class="px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap {{ $filter === $key ? 'bg-slate-800 text-white shadow-md' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700' }}">
+                        {{ $label }}
+                    </button>
+                @endforeach
+            </div>
+
+            <!-- 3. CREATE FORM (Visible when $isCreating is true) -->
+            @if($isCreating)
+                <div class="bg-white border border-indigo-100 rounded-2xl p-6 shadow-md mb-6 animate-fade-in-down">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-slate-800">Create New Assignment</h2>
+                    </div>
+
+                    <form wire:submit.prevent="create" class="space-y-4">
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase">Title</label>
+                            <input type="text" wire:model="title" class="w-full px-4 py-2 border rounded-lg focus:ring-indigo-500">
+                            @error('title') <span class="text-rose-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs font-bold text-slate-500 uppercase">Course</label>
+                                <input type="text" wire:model="course" class="w-full px-4 py-2 border rounded-lg">
+                                @error('course') <span class="text-rose-500 text-xs">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-slate-500 uppercase">Due Date</label>
+                                <input type="date" wire:model="due_date" class="w-full px-4 py-2 border rounded-lg">
+                                @error('due_date') <span class="text-rose-500 text-xs">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase">Description</label>
+                            <textarea wire:model="description" rows="3" class="w-full px-4 py-2 border rounded-lg"></textarea>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase">Attachment</label>
+                            <input type="file" wire:model="file" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            @error('file') <span class="text-rose-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
+                        <div class="flex justify-end pt-2">
+                            <button type="submit" class="bg-slate-900 text-white px-6 py-2 rounded-lg font-bold text-sm">
+                                <span wire:loading.remove wire:target="create">Publish</span>
+                                <span wire:loading wire:target="create">Saving...</span>
+                            </button>
+                        </div>
+                    </form>
                 </div>
             @endif
 
-            <button wire:click="toggleCreate"
-                class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg shadow">
-                <i data-feather="plus" class="w-4 h-4"></i>
-                {{ $isCreating ? 'Close' : 'New Assignment' }}
-            </button>
+            <!-- 4. ASSIGNMENT LIST -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                @forelse($assignments as $assignment)
+                    <div wire:click="showDetails({{ $assignment->id }})" 
+                         class="group bg-white rounded-2xl p-5 border shadow-sm hover:shadow-md cursor-pointer relative overflow-hidden {{ $assignment->my_submission ? 'border-emerald-200' : 'border-slate-200' }}">
+                        
+                        <div class="absolute left-0 top-0 bottom-0 w-1.5 {{ $assignment->my_submission ? 'bg-emerald-500' : ($assignment->due_date->isPast() ? 'bg-rose-500' : 'bg-indigo-500') }}"></div>
+
+                        <div class="pl-4">
+                            <div class="flex justify-between items-start">
+                                <span class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">{{ $assignment->course }}</span>
+                                @if($assignment->my_submission)
+                                    <span class="text-emerald-600 text-xs font-bold flex items-center gap-1"><i data-feather="check" class="w-3 h-3"></i> Done</span>
+                                @endif
+                            </div>
+                            
+                            <h3 class="text-lg font-bold text-slate-800 mt-2 group-hover:text-indigo-600 transition-colors line-clamp-1">{{ $assignment->title }}</h3>
+                            
+                            <div class="flex items-center justify-between mt-4 text-xs font-medium text-slate-500">
+                                <span class="flex items-center gap-1 {{ $assignment->due_date->isPast() && !$assignment->my_submission ? 'text-rose-600' : '' }}">
+                                    <i data-feather="calendar" class="w-3 h-3"></i> {{ $assignment->due_date->format('M d') }}
+                                </span>
+                                <span>By {{ $assignment->user->first_name ?? 'Teacher' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-span-2 text-center py-12 bg-white rounded-xl border border-dashed border-slate-300">
+                        <p class="text-slate-500 text-sm">No assignments found.</p>
+                    </div>
+                @endforelse
+            </div>
+
         </div>
     </div>
 
-    <!-- CREATE FORM (Hidden Until Click) -->
-    @if($isCreating)
-    <div class="bg-white border rounded-lg p-5 shadow-sm mb-6">
-        <h2 class="text-lg font-semibold text-slate-800 mb-4">Create New Assignment</h2>
+    <!-- 5. DETAILS MODAL (Visible when $selectedAssignment is set) -->
+    @if($selectedAssignment)
+        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" wire:click="closeDetails"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
-        <form wire:submit.prevent="create" class="space-y-4">
+                <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full p-6 relative">
+                    
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-900">{{ $selectedAssignment->title }}</h3>
+                            <p class="text-indigo-600 text-xs font-bold uppercase mt-1">{{ $selectedAssignment->course }} • Due {{ $selectedAssignment->due_date->format('F d, Y') }}</p>
+                        </div>
+                        <button wire:click="closeDetails" class="text-slate-400 hover:text-slate-600 bg-slate-100 p-1 rounded-full"><i data-feather="x" class="w-5 h-5"></i></button>
+                    </div>
 
-            <!-- Title -->
-            <div>
-                <label class="text-xs text-slate-600">Title</label>
-                <input type="text" wire:model.defer="title"
-                    class="mt-1 w-full px-3 py-2 border rounded-md focus:ring-indigo-500 focus:ring-1">
-                @error('title') <p class="text-rose-500 text-xs">{{ $message }}</p> @enderror
-            </div>
+                    <div class="bg-slate-50 p-4 rounded-xl text-sm text-slate-600 mb-6 border border-slate-100">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase mb-1">Instructions</h4>
+                        {{ $selectedAssignment->description ?? 'No instructions.' }}
+                        
+                        @if($selectedAssignment->file)
+                            <div class="mt-3 pt-3 border-t border-slate-200">
+                                <a href="{{ asset('storage/'.$selectedAssignment->file) }}" target="_blank" class="text-indigo-600 text-xs font-bold hover:underline flex items-center gap-1">
+                                    <i data-feather="download" class="w-3 h-3"></i> Download Attachment
+                                </a>
+                            </div>
+                        @endif
+                    </div>
 
-            <!-- Course & Due -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="text-xs text-slate-600">Course</label>
-                    <input type="text" wire:model.defer="course"
-                        class="mt-1 w-full px-3 py-2 border rounded-md">
-                    @error('course') <p class="text-rose-500 text-xs">{{ $message }}</p> @enderror
+                    <div class="border-t border-slate-100 pt-6">
+                        <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-4">Your Submission</h4>
+                        
+                        @if($selectedAssignment->my_submission)
+                            <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 text-center">
+                                <p class="text-emerald-700 text-sm font-bold flex items-center justify-center gap-2">
+                                    <i data-feather="check-circle" class="w-4 h-4"></i> Submitted Successfully
+                                </p>
+                                <p class="text-emerald-600 text-xs mt-1">
+                                    On {{ \Carbon\Carbon::parse($selectedAssignment->my_submission->created_at)->format('M d, H:i') }}
+                                </p>
+                                @if($selectedAssignment->my_submission->file)
+                                    <a href="{{ asset('storage/'.$selectedAssignment->my_submission->file) }}" target="_blank" class="text-emerald-700 text-xs underline mt-2 block">View Uploaded File</a>
+                                @endif
+                            </div>
+                        @else
+                            <form wire:submit.prevent="submitAssignment" class="space-y-4">
+                                <div>
+                                    <label class="text-xs font-bold text-slate-500 uppercase">Your Answer</label>
+                                    <textarea wire:model="submission_text" rows="3" class="w-full px-3 py-2 border rounded-lg focus:ring-indigo-500 text-sm"></textarea>
+                                </div>
+                                
+                                <div>
+                                    <label class="text-xs font-bold text-slate-500 uppercase">Attach File</label>
+                                    <input type="file" wire:model="submission_file" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                                    @error('submission_file') <span class="text-rose-500 text-xs block mt-1">{{ $message }}</span> @enderror
+                                </div>
+
+                                <div class="flex justify-between items-center pt-2">
+                                    @if($selectedAssignment->user_id === auth()->id())
+                                        <button type="button" wire:click="delete({{ $selectedAssignment->id }})" wire:confirm="Delete task?" class="text-rose-500 text-xs font-bold uppercase hover:underline">Delete Task</button>
+                                    @else
+                                        <div></div>
+                                    @endif
+                                    
+                                    <button type="submit" class="bg-slate-900 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-slate-800 transition flex items-center gap-2">
+                                        <span wire:loading.remove wire:target="submitAssignment">Submit Work</span>
+                                        <span wire:loading wire:target="submitAssignment">Sending...</span>
+                                    </button>
+                                </div>
+                            </form>
+                        @endif
+                    </div>
+
                 </div>
-
-                <div>
-                    <label class="text-xs text-slate-600">Due Date</label>
-                    <input type="date" wire:model.defer="due_date"
-                        class="mt-1 w-full px-3 py-2 border rounded-md">
-                    @error('due_date') <p class="text-rose-500 text-xs">{{ $message }}</p> @enderror
-                </div>
             </div>
-
-            <!-- Description -->
-            <div>
-                <label class="text-xs text-slate-600">Description</label>
-                <textarea wire:model.defer="description" rows="3"
-                    class="mt-1 w-full px-3 py-2 border rounded-md"></textarea>
-                @error('description') <p class="text-rose-500 text-xs">{{ $message }}</p> @enderror
-            </div>
-
-            <!-- File -->
-            <div>
-                <label class="text-xs text-slate-600">Attach File (Optional)</label>
-                <input type="file" wire:model="file"
-                    class="mt-1 block w-full text-sm text-slate-700">
-                @if($file)
-                    <p class="text-xs text-emerald-600 mt-1">{{ $file->getClientOriginalName() }}</p>
-                @endif
-                @error('file') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
-            </div>
-
-            <div class="flex justify-end gap-3 pt-2">
-                <button type="button" wire:click="toggleCreate"
-                    class="px-4 py-2 border rounded-md">Cancel</button>
-
-                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700">
-                    Save Assignment
-                </button>
-            </div>
-        </form>
-    </div>
+        </div>
     @endif
 
-    <!-- ASSIGNMENTS LIST -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        @forelse($assignments as $assignment)
-        <div class="bg-white border rounded-lg p-5 shadow-sm">
-
-            <!-- Assigned By -->
-            <div class="flex items-center gap-3">
-                <img src="{{ $assignment->user && $assignment->user->dp
-                    ? asset('storage/images/dp/'.$assignment->user->dp)
-                    : 'https://ui-avatars.com/api/?name='.urlencode($assignment->user->first_name ?? 'User') }}"
-                    class="w-10 h-10 rounded-full object-cover">
-
-                <div>
-                    <p class="text-sm font-medium text-slate-800">
-                        {{ $assignment->user->first_name ?? 'Unknown' }}
-                    </p>
-                    <p class="text-xs text-slate-400">{{ $assignment->user->email ?? '' }}</p>
-                </div>
-            </div>
-
-            <!-- Title -->
-            <h3 class="text-lg font-bold mt-3">{{ $assignment->title }}</h3>
-
-            <!-- Course & Due -->
-            <p class="text-sm mt-1 text-slate-600">
-                Course: <b>{{ $assignment->course }}</b>
-            </p>
-            <p class="text-sm text-slate-600">
-                Due: <b>{{ \Carbon\Carbon::parse($assignment->due_date)->format('d M Y') }}</b>
-            </p>
-
-            <!-- Status -->
-            <div class="mt-2">
-                @if($assignment->status === 'completed')
-                    <span class="px-2 py-1 text-xs bg-emerald-100 text-emerald-700 rounded-md">Completed</span>
-                @elseif(\Carbon\Carbon::parse($assignment->due_date)->isPast())
-                    <span class="px-2 py-1 text-xs bg-rose-100 text-rose-700 rounded-md">Overdue</span>
-                @else
-                    <span class="px-2 py-1 text-xs bg-indigo-100 text-indigo-700 rounded-md">Pending</span>
-                @endif
-            </div>
-
-            <!-- Actions -->
-            <div class="mt-4 flex justify-end">
-                <button wire:click="showDetails({{ $assignment->id }})"
-                    class="text-indigo-600 text-sm font-semibold hover:underline">
-                    View / Submit →
-                </button>
-            </div>
-
-        </div>
-        @empty
-        <div class="col-span-2 text-center py-10 text-slate-500 bg-white border rounded-lg">
-            No assignments found.
-        </div>
-        @endforelse
-    </div>
-
-    @if($isSubmitting && $selectedAssignment)
-    <div class="mt-8 bg-white border rounded-lg p-6 shadow-sm">
-        <div class="flex items-start justify-between gap-4">
-            <div>
-                <h3 class="text-lg font-bold text-slate-900">{{ $selectedAssignment->title }}</h3>
-                <p class="text-xs text-slate-500">{{ $selectedAssignment->course }} • Due: {{ \Carbon\Carbon::parse($selectedAssignment->due_date)->format('d M Y') }}</p>
-            </div>
-
-            <div class="text-right">
-                <button wire:click="closeDetails" class="text-sm text-slate-500 hover:underline">Close</button>
-            </div>
-        </div>
-
-        <hr class="my-4">
-
-        @if($selectedAssignment->status === 'completed' || $selectedAssignment->submission_file || $selectedAssignment->submission_text)
-            <div class="bg-emerald-50 border border-emerald-100 rounded-md p-3 mb-4">
-                <p class="text-sm font-semibold text-emerald-800 mb-1">Existing submission</p>
-                @if(!empty($selectedAssignment->submission_text))
-                    <div class="text-sm text-slate-700 mb-2 whitespace-pre-wrap">
-                        {{ $selectedAssignment->submission_text }}
-                    </div>
-                @endif
-
-                @if(!empty($selectedAssignment->submission_file))
-                    <div class="text-sm">
-                        <a href="{{ Storage::url($selectedAssignment->submission_file) }}" target="_blank" class="text-indigo-600 hover:underline">
-                            View submitted file
-                        </a>
-                    </div>
-                @endif
-            </div>
-            <p class="text-xs text-slate-500 mb-4">You may update your submission below (it will overwrite the previous one).</p>
-        @endif
-
-        <form wire:submit.prevent="submitAssignment" class="space-y-4">
-            <div>
-                <label class="text-xs font-medium text-slate-600 block mb-1">Text response (optional)</label>
-                <textarea wire:model.defer="submission_text" rows="4" class="w-full px-3 py-2 border rounded-md"></textarea>
-                @error('submission_text') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
-            </div>
-
-            <div>
-                <label class="text-xs font-medium text-slate-600 block mb-1">Attach file </label>
-                <input type="file" wire:model="submission_file" class="block w-full text-sm">
-                @if($submission_file)
-                    <p class="text-xs text-emerald-600 mt-1">{{ $submission_file->getClientOriginalName() }}</p>
-                @endif
-                @error('submission_file') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
-                <div wire:loading wire:target="submission_file" class="text-xs text-slate-500 mt-2">Uploading file…</div>
-            </div>
-
-            <div class="flex justify-end gap-3">
-                <button type="button" wire:click="closeDetails" class="px-3 py-2 border rounded-md text-sm">Cancel</button>
-                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm hover:bg-indigo-700">
-                    Submit Assignment
-                </button>
-            </div>
-        </form>
-    </div>
-    @endif
-
+    <script>
+        document.addEventListener('livewire:initialized', () => feather.replace());
+        document.addEventListener('livewire:navigated', () => feather.replace());
+    </script>
 </div>
-
-<script>
-    document.addEventListener('livewire:load', function () {
-        if (typeof feather !== 'undefined') feather.replace();
-    });
-</script>
