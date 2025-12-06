@@ -23,6 +23,12 @@ class Library extends Component
 
     public $isCreating = false;
 
+    // 🔍 Viewer state
+    public $showViewer = false;
+    public $viewerUrl;
+    public $viewerTitle;
+    public $viewerExt;
+
     public function toggleCreate()
     {
         $this->isCreating = ! $this->isCreating;
@@ -38,8 +44,8 @@ class Library extends Component
 
         LibraryModel::create([
             'user_id' => Auth::id(),
-            'title' => $this->title,
-            'file' => $path,
+            'title'   => $this->title,
+            'file'    => $path,
         ]);
 
         $this->reset(['title', 'file']);
@@ -59,6 +65,24 @@ class Library extends Component
             $doc->delete();
             session()->flash('message', 'Document deleted.');
         }
+    }
+
+    // ✅ Open viewer
+    public function view($id)
+    {
+        $doc = LibraryModel::with('user')->findOrFail($id);
+
+        $this->viewerUrl   = Storage::url($doc->file); // same as asset('storage/...')
+        $this->viewerTitle = $doc->title;
+        $this->viewerExt   = strtolower(pathinfo($doc->file, PATHINFO_EXTENSION));
+
+        $this->showViewer = true;
+    }
+
+    // ❌ Close viewer
+    public function closeViewer()
+    {
+        $this->reset(['showViewer', 'viewerUrl', 'viewerTitle', 'viewerExt']);
     }
 
     public function render()

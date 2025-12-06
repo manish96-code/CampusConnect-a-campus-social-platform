@@ -112,7 +112,6 @@
                             <a href="{{route('logout')}}" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 transition-colors">
                                 <i data-feather="log-out" class="w-4 h-4"></i> Sign Out
                             </a>
-                        </form>
                     </div>
                 </div>
             </div>
