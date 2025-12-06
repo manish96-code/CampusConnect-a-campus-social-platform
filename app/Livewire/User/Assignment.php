@@ -17,17 +17,22 @@ class Assignment extends Component
 
     #[Validate('required|string|max:255')]
     public $title;
+
     #[Validate('required|string|max:255')]
     public $course;
+
     #[Validate('nullable|string|max:1000')]
     public $description;
+
     #[Validate('required|date')]
     public $due_date;
+
     #[Validate('nullable|file|max:10240')]
     public $file; 
 
     #[Validate('nullable|string|max:2000')]
     public $submission_text;
+
     #[Validate('nullable|file|max:10240')]
     public $submission_file;
 
@@ -116,8 +121,7 @@ class Assignment extends Component
         session()->flash('message', 'Work submitted successfully!');
     }
 
-    public function delete($id)
-    {
+    public function delete($id){
         $assignment = AssignmentModel::find($id);
         if ($assignment && $assignment->user_id === Auth::id()) {
             $assignment->delete();
@@ -125,13 +129,11 @@ class Assignment extends Component
         }
     }
 
-    public function setFilter($filter)
-    {
+    public function setFilter($filter){
         $this->filter = $filter;
     }
 
-    public function render()
-    {
+    public function render(){
         $query = AssignmentModel::with(['user', 'my_submission']);
 
         if ($this->filter === 'pending') {

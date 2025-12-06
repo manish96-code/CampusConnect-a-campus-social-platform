@@ -5,25 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{ $title ?? 'Campus Connect' }}</title>
     
-    <!-- CDN Scripts (Tailwind, Alpine, Icons) -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://unpkg.com/feather-icons"></script>
-    {{-- <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
 
-
-    
-    <!-- Load Alpine once. If you bundle Alpine via Vite, REMOVE this CDN line. -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <!-- Livewire styles -->
     @livewireStyles
 
-    <!-- Custom Styles -->
     <style>
         [x-cloak] { display: none !important; }
-        /* Hide scrollbar for Chrome, Safari and Opera */
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        /* Hide scrollbar for IE, Edge and Firefox */
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
@@ -32,20 +23,16 @@
 
 <body class="bg-[#F4F7FE] text-slate-800 antialiased min-h-screen relative pb-16 md:pb-0">
 
-    <!-- Background Ambient Glow -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div class="absolute top-0 left-1/4 w-96 h-96 bg-indigo-200/20 rounded-full blur-[100px]"></div>
         <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-200/20 rounded-full blur-[100px]"></div>
     </div>
 
-    <!-- DESKTOP & MOBILE HEADER -->
     <header class="fixed top-0 inset-x-0 h-16 bg-white/90 backdrop-blur-md border-b border-slate-200/60 z-50 px-4 lg:px-8 transition-all duration-300">
-        <div class="max-w-7xl mx-auto h-full flex items-center justify-between">
+        <div class="px-10 mx-auto h-full flex items-center justify-between">
             
-            <!-- 1. Logo / Brand -->
             <a href="{{ route('home') }}" class="flex items-center gap-2.5 group">
                 <div class="w-9 h-9 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-                    <!-- Graduation Cap Icon -->
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z" />
                         <path d="M6 12v5c3 3 9 3 12 0v-5" />
@@ -57,7 +44,6 @@
                 </div>
             </a>
 
-            <!-- 2. Search Bar (Hidden on mobile) -->
             <div class="hidden md:block flex-1 max-w-md mx-8">
                 <form action="{{ route('find-friends') }}" method="get" class="relative group">
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -68,10 +54,8 @@
                 </form>
             </div>
 
-            <!-- 3. Right Actions -->
             <div class="flex items-center gap-2 sm:gap-4">
                 
-                <!-- Search Toggle (Mobile Only) -->
                 <button class="md:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors">
                     <i data-feather="search" class="w-5 h-5"></i>
                 </button>
@@ -135,34 +119,24 @@
         </div>
     </header>
 
-     <!-- MAIN (fixed): container + responsive grid -->
     <main class="relative z-0 pt-16">
         <div class=" px-4 sm:px-6 lg:px-8">
-            <!-- Grid: on lg show sidebar (3 cols) + content (9 cols) -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-                <!-- LEFT SIDEBAR (hidden on small screens) -->
-                <aside class="hidden lg:block lg:col-span-3">
-                    <!-- Use sticky so the sidebar stays visible while page scrolls.
-                         We keep top-24 so it clears the fixed header (header is h-16 + some spacing). -->
+                <aside class="hidden lg:block lg:col-span-2">
                     <div class="sticky top-24">
                         <livewire:user.sidebar />
                     </div>
                 </aside>
 
-                <!-- MAIN CONTENT -->
-                <section class="col-span-1 lg:col-span-9">
-                    <!-- place page content (slot) here -->
+                <section class="col-span-1 lg:col-span-10 ">
                     {{ $slot }}
                 </section>
 
-                <!-- OPTIONAL Right column (if you want extra widgets) -->
-                <!-- <aside class="hidden xl:block xl:col-span-2">Right widgets</aside> -->
             </div>
         </div>
     </main>
 
-    <!-- MOBILE BOTTOM NAVIGATION (Dock) -->
     <nav class="md:hidden fixed bottom-0 inset-x-0 bg-white/90 backdrop-blur-lg border-t border-slate-200 z-50 pb-safe">
         <div class="flex justify-between items-center px-6 h-16">
             <a href="{{ route('home') }}" class="flex flex-col items-center gap-1 {{ request()->routeIs('home') ? 'text-indigo-600' : 'text-slate-400 hover:text-slate-600' }}">
@@ -173,7 +147,6 @@
                 <i data-feather="users" class="w-6 h-6 {{ request()->routeIs('find-friends') ? 'fill-indigo-100' : '' }}"></i>
             </a>
 
-            <!-- Floating Action Button (Center) -->
             <a href="#" class="relative -top-5 bg-gradient-to-br from-indigo-600 to-purple-600 p-3.5 rounded-2xl shadow-lg shadow-indigo-500/30 text-white transform active:scale-95 transition-transform">
                 <i data-feather="plus" class="w-6 h-6"></i>
             </a>
@@ -188,7 +161,6 @@
         </div>
     </nav>
 
-    <!-- Icon Initialization -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             feather.replace();

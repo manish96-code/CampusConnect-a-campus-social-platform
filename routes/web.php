@@ -3,6 +3,7 @@
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\User\Assignment;
+use App\Livewire\User\EventLive;
 use App\Livewire\User\FindFriend;
 use App\Livewire\User\Home;
 use App\Livewire\User\Library;
@@ -23,6 +24,7 @@ Route::middleware('auth')->group(function(){
     Route::get('/find-friends', FindFriend::class)->name('find-friends');
     Route::get('library', Library::class)->name('library');
     Route::get('assignment', Assignment::class)->name('assignment');
+    Route::get('/events', EventLive::class)->name('events');
     Route::get('/logout', function(){
         Auth::logout();
         return redirect()->route('login');

@@ -24,20 +24,15 @@ class Assignment extends Model
         'due_date' => 'date',
     ];
 
-    public function user()
-    {
+    public function user(){
         return $this->belongsTo(User::class);
     }
 
-    // 👇 ADD THIS: Relationship to get ALL submissions (for teachers)
-    public function submissions()
-    {
+    public function submissions(){
         return $this->hasMany(AssignmentSubmission::class);
     }
 
-    // 👇 ADD THIS: Relationship to get ONLY the current user's submission
-    public function my_submission()
-    {
+    public function my_submission(){
         return $this->hasOne(AssignmentSubmission::class)->where('user_id', Auth::id());
     }
 }

@@ -2,11 +2,8 @@
     
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-
-        <!-- 2. MAIN CONTENT -->
         <div class="lg:col-span-9 space-y-6">
             
-            <!-- Header -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Assignments</h1>
@@ -28,7 +25,6 @@
                 </button>
             </div>
 
-            <!-- Filters -->
             <div class="flex gap-2 overflow-x-auto pb-2 border-b border-slate-200">
                 @foreach(['all' => 'All Tasks', 'pending' => 'Pending', 'completed' => 'Completed'] as $key => $label)
                     <button wire:click="setFilter('{{ $key }}')" 
@@ -38,7 +34,6 @@
                 @endforeach
             </div>
 
-            <!-- 3. CREATE FORM (Visible when $isCreating is true) -->
             @if($isCreating)
                 <div class="bg-white border border-indigo-100 rounded-2xl p-6 shadow-md mb-6 animate-fade-in-down">
                     <div class="flex justify-between items-center mb-4">
@@ -82,7 +77,6 @@
                 </div>
             @endif
 
-            <!-- 4. ASSIGNMENT LIST -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 @forelse($assignments as $assignment)
                     <div wire:click="showDetails({{ $assignment->id }})" 
@@ -95,7 +89,12 @@
                                 <span class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">{{ $assignment->course }}</span>
                                 @if($assignment->my_submission)
                                     <span class="text-emerald-600 text-xs font-bold flex items-center gap-1"><i data-feather="check" class="w-3 h-3"></i> Done</span>
+                                    @elseif($assignment->due_date->isPast())
+                                    <span class="text-rose-600 text-xs font-bold flex items-center gap-1"><i data-feather="alert-circle" class="w-3 h-3"></i> Overdue</span>
+                                    @else
+                                    <span class="text-indigo-600 text-xs font-bold flex items-center gap-1"><i data-feather="clock" class="w-3 h-3"></i> Pending</span>
                                 @endif
+
                             </div>
                             
                             <h3 class="text-lg font-bold text-slate-800 mt-2 group-hover:text-indigo-600 transition-colors line-clamp-1">{{ $assignment->title }}</h3>
@@ -118,7 +117,6 @@
         </div>
     </div>
 
-    <!-- 5. DETAILS MODAL (Visible when $selectedAssignment is set) -->
     @if($selectedAssignment)
         <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
