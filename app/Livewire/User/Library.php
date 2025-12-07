@@ -23,7 +23,7 @@ class Library extends Component
 
     public $isCreating = false;
 
-    // 🔍 Viewer state
+    // Viewer state
     public $showViewer = false;
     public $viewerUrl;
     public $viewerTitle;
@@ -36,8 +36,7 @@ class Library extends Component
         $this->reset(['title', 'file']);
     }
 
-    public function create()
-    {
+    public function create(){
         $this->validate();
 
         $path = $this->file->store('library_docs', 'public');
@@ -54,8 +53,7 @@ class Library extends Component
         session()->flash('message', 'Document uploaded successfully!');
     }
 
-    public function delete($id)
-    {
+    public function delete($id){
         $doc = LibraryModel::find($id);
         
         if ($doc && $doc->user_id === Auth::id()) {
@@ -67,19 +65,18 @@ class Library extends Component
         }
     }
 
-    // ✅ Open viewer
-    public function view($id)
-    {
+    //  Open viewer
+    public function view($id){
         $doc = LibraryModel::with('user')->findOrFail($id);
 
-        $this->viewerUrl   = Storage::url($doc->file); // same as asset('storage/...')
+        $this->viewerUrl   = Storage::url($doc->file);
         $this->viewerTitle = $doc->title;
         $this->viewerExt   = strtolower(pathinfo($doc->file, PATHINFO_EXTENSION));
 
         $this->showViewer = true;
     }
 
-    // ❌ Close viewer
+    //  Close viewer
     public function closeViewer()
     {
         $this->reset(['showViewer', 'viewerUrl', 'viewerTitle', 'viewerExt']);

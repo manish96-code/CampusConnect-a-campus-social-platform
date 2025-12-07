@@ -134,8 +134,7 @@ class EventLive extends Component{
         $this->showViewModal   = true;
     }
 
-    public function closeViewModal()
-    {
+    public function closeViewModal(){
         $this->reset([
             'showViewModal',
             'viewTitle',
@@ -146,8 +145,19 @@ class EventLive extends Component{
         ]);
     }
 
-    public function render()
-    {
+    // request to join event
+    // public function joinEvent($id){
+    //     if (Event::find($id)->participants()->where('user_id', Auth::id())->exists()) {
+    //         return;
+    //     }
+    //     $event = Event::findOrFail($id);
+    //     $event->participants()->create([
+    //         'user_id' => Auth::id(),
+    //         'status'  => 'pending',
+    //     ]);
+    // }
+
+    public function render(){
         return view('livewire.user.event-live', [
             'events' => Event::with('user')->orderBy('event_date', 'asc')->get(),
         ]);
