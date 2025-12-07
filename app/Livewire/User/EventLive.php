@@ -9,8 +9,7 @@ use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 #[Layout("components.layouts.user")]
-class EventLive extends Component
-{
+class EventLive extends Component{
     #[Validate('required|string|max:200')]
     public $title;
 
@@ -25,6 +24,7 @@ class EventLive extends Component
 
     public $isCreating = false;
 
+    // VIEW MODAL
     public $showViewModal = false;
     public $viewTitle;
     public $viewDescription;
@@ -32,17 +32,70 @@ class EventLive extends Component
     public $viewLocation;
     public $viewOrganizer;
 
-    public function toggleCreate()
-    {
+    // for edit
+    public $showEditModal = false;
+    public $eventId;
+
+    // open edit form and pre-fill
+    public function edit($id){
+        $event = Event::findOrFail($id);
+
+        if ($event->user_id !== Auth::id()) {
+            return;
+        }
+
+        // store id for updateEvent()
+        $this->eventId = $event->id;
+
+        // pre-fill form fields
+        $this->title       = $event->title;
+        $this->description = $event->description;
+        // format for datetime-local input
+        $this->event_date  = $event->event_date?->format('Y-m-d\TH:i');
+        $this->location    = $event->location;
+
+        $this->showEditModal = true;
+    }
+
+    // update event
+    public function updateEvent(){
+        $this->validate();
+
+        $event = Event::findOrFail($this->eventId);
+
+        if ($event->user_id !== Auth::id()) {
+            return;
+        }
+
+        $event->update([
+            'title'       => $this->title,
+            'description' => $this->description,
+            'event_date'  => $this->event_date,
+            'location'    => $this->location,
+        ]);
+
+        $this->showEditModal = false;
+
+        $this->reset(['eventId', 'title', 'description', 'event_date', 'location']);
+
+        session()->flash('message', 'Event updated successfully!');
+    }
+
+    public function closeEditModal(){
+        $this->showEditModal = false;
+        $this->reset(['eventId', 'title', 'description', 'event_date', 'location']);
+    }
+
+    public function toggleCreate(){
         $this->isCreating = ! $this->isCreating;
         $this->resetValidation();
-        if(!$this->isCreating) {
+        if (!$this->isCreating) {
             $this->reset(['title', 'description', 'event_date', 'location']);
         }
     }
 
-    public function createEvent()
-    {
+    // create event
+    public function createEvent(){
         $this->validate();
 
         Event::create([
@@ -62,12 +115,12 @@ class EventLive extends Component
     public function delete($id)
     {
         $event = Event::find($id);
-        if($event && $event->user_id == Auth::id()){
+        if ($event && $event->user_id == Auth::id()) {
             $event->delete();
         }
     }
 
-    //  view modal
+    // VIEW MODAL
     public function view($id)
     {
         $event = Event::with('user')->findOrFail($id);
@@ -81,7 +134,6 @@ class EventLive extends Component
         $this->showViewModal   = true;
     }
 
-    //  close view modal
     public function closeViewModal()
     {
         $this->reset([

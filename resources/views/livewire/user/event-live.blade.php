@@ -170,11 +170,19 @@
                                 </div>
 
                                 @if ($event->user_id === auth()->id())
-                                    <button wire:click="delete({{ $event->id }})" wire:confirm="Cancel event?"
-                                        class="text-slate-300 hover:text-rose-500 transition">
-                                        <i data-feather="trash-2" class="w-4 h-4"></i>
-                                    </button>
+                                    <div class="flex items-center gap-2">
+                                        <button wire:click="edit({{ $event->id }})"
+                                            class="text-slate-300 hover:text-indigo-600 transition" title="Edit event">
+                                            <i data-feather="edit-2" class="w-4 h-4"></i>
+                                        </button>
+
+                                        <button wire:click="delete({{ $event->id }})" wire:confirm="Cancel event?"
+                                            class="text-slate-300 hover:text-rose-500 transition" title="Delete event">
+                                            <i data-feather="trash-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
                                 @endif
+
                             </div>
 
                             <div class="mt-4 mb-4">
@@ -216,7 +224,7 @@
         </div>
 
 
-
+        {{-- Show Detail --}}
         @if ($showViewModal)
             @php
                 $modalDate = $viewEventDate ? \Carbon\Carbon::parse($viewEventDate) : null;
@@ -273,6 +281,91 @@
 
                 </div>
             </div>
+        @endif
+
+
+        {{-- edit event --}}
+        @if ($showEditModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60">
+            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden animate-fade-in-down">
+
+                {{-- Header --}}
+                <div class="px-6 py-4 border-b flex items-center justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Edit Event</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Update your event details and save changes.</p>
+                    </div>
+                    <button wire:click="closeEditModal" class="p-2 rounded-lg hover:bg-slate-100">
+                        <i data-feather="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                {{-- Body: form --}}
+                <form wire:submit.prevent="updateEvent" class="px-6 py-5 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">
+                            Event Title
+                        </label>
+                        <input type="text" wire:model.live="title"
+                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                            placeholder="e.g. Tech Fest 2025">
+                        @error('title')
+                            <span class="text-rose-500 text-xs font-bold">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">
+                                Date & Time
+                            </label>
+                            <input type="datetime-local" wire:model.live="event_date"
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm text-slate-600">
+                            @error('event_date')
+                                <span class="text-rose-500 text-xs font-bold">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">
+                                Location
+                            </label>
+                            <input type="text" wire:model.live="location"
+                                class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm"
+                                placeholder="e.g. Auditorium Hall">
+                            @error('location')
+                                <span class="text-rose-500 text-xs font-bold">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">
+                            Description
+                        </label>
+                        <textarea wire:model.live="description" rows="3"
+                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm resize-none"
+                            placeholder="What's happening?"></textarea>
+                        @error('description')
+                            <span class="text-rose-500 text-xs font-bold">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    {{-- Footer --}}
+                    <div class="pt-3 flex justify-end gap-2 border-t border-slate-100 mt-2">
+                        <button type="button" wire:click="closeEditModal"
+                            class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="px-6 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 flex items-center gap-2">
+                            <span wire:loading.remove wire:target="updateEvent">Save Changes</span>
+                            <span wire:loading wire:target="updateEvent">Updating...</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
         @endif
 
 
