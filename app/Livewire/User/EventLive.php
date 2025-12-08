@@ -3,6 +3,7 @@
 namespace App\Livewire\User;
 
 use App\Models\Event;
+use App\Models\EventParticipant;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
@@ -35,6 +36,7 @@ class EventLive extends Component{
     // for edit
     public $showEditModal = false;
     public $eventId;
+    // public $viewEventId;
 
     // open edit form and pre-fill
     public function edit($id){
@@ -121,9 +123,14 @@ class EventLive extends Component{
     }
 
     // VIEW MODAL
+    public $viewEventId;
+    public $viewOwnerId;
     public function view($id)
     {
         $event = Event::with('user')->findOrFail($id);
+
+        $this->viewEventId = $event->id;
+        $this->viewOwnerId = $event->user_id;
 
         $this->viewTitle       = $event->title;
         $this->viewDescription = $event->description;
@@ -157,9 +164,81 @@ class EventLive extends Component{
     //     ]);
     // }
 
-    public function render(){
-        return view('livewire.user.event-live', [
-            'events' => Event::with('user')->orderBy('event_date', 'asc')->get(),
-        ]);
+    // event participate button component will handle join/cancel logic
+    // public function mount($event = null){
+    //     // no specific mount logic for now
+        
+    //     if ($event) {
+    //         // for possible future use
+
+    //     }
+      
+    // }
+
+    // organizer: accept participation request
+public function acceptParticipationRequest($participantId)
+{
+    $participant = EventParticipant::with('event')->findOrFail($participantId);
+
+    if ($participant->event->user_id !== Auth::id()) {
+        return;
     }
+
+    $participant->update([
+        'status' => 'approved',
+    ]);
+}
+
+// organizer: reject participation request
+public function rejectParticipationRequest($participantId)
+{
+    $participant = EventParticipant::with('event')->findOrFail($participantId);
+
+    if ($participant->event->user_id !== Auth::id()) {
+        return;
+    }
+
+    $participant->update([
+        'status' => 'rejected',
+    ]);
+}
+
+    // participants list for organizer view modal
+    public $participantListModal = false;
+    public $participantEventId;
+    public function participantsList($id)
+    {
+        $event = Event::with('participants.user')->findOrFail($id);
+        if ($event->user_id !== Auth::id()) {
+            return;
+        }
+        $this->participantEventId = $event->id;
+        $this->participantListModal = true;
+    }
+
+
+    // public function render(){
+    //     return view('livewire.user.event-live', [
+    //         'events' => Event::with('user')->orderBy('event_date', 'asc')->get(),
+    //         'participants' => EventParticipant::with('user')->get(),
+    //     ]);
+    // }
+
+    public function render()
+{
+    $participants = collect(); // empty by default
+
+    if ($this->participantEventId) {
+        $participants = EventParticipant::with('user')
+            ->where('event_id', $this->participantEventId)
+            ->orderBy('created_at', 'asc')
+            ->get();
+    }
+
+    return view('livewire.user.event-live', [
+        'events'       => Event::with('user')->orderBy('event_date', 'asc')->get(),
+        'participants' => $participants,
+    ]);
+}
+
 }
