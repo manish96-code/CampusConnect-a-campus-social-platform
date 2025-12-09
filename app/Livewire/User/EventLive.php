@@ -231,10 +231,40 @@ class EventLive extends Component
     //     ]);
     // }
 
+    
+    public $filter = 'upcoming';
+
+     public function setFilter($filter)
+    {
+        $allowed = ['all', 'upcoming', 'past', 'mine'];
+        if (! in_array($filter, $allowed)) {
+            $filter = 'upcoming';
+        }
+        $this->filter = $filter;
+    }
+
     public function render()
     {
-        $participants = collect(); // empty by default
 
+        $query = Event::with('user')->orderBy('event_date', 'asc');
+        $now = now();
+        
+        if ($this->filter === 'upcoming') {
+            $query->where('event_date', '>=', $now);
+        } elseif ($this->filter === 'past') {
+            $query->where('event_date', '<', $now);
+        } elseif ($this->filter === 'mine') {
+            if (auth()->check()) {
+                $query->where('user_id', auth()->id());
+            } else {
+                $query->whereRaw('0 = 1');
+            }
+        }
+        $events = $query->get();
+
+
+        $participants = collect();
+        
         if ($this->participantEventId) {
             $participants = EventParticipant::with('user')
                 ->where('event_id', $this->participantEventId)
@@ -243,7 +273,7 @@ class EventLive extends Component
         }
 
         return view('livewire.user.event-live', [
-            'events'       => Event::with('user')->orderBy('event_date', 'asc')->get(),
+            'events'       => $events,
             'participants' => $participants,
         ]);
     }

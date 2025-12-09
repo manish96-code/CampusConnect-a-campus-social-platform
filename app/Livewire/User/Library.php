@@ -2,7 +2,7 @@
 
 namespace App\Livewire\User;
 
-use App\Models\Library as LibraryModel; 
+use App\Models\Library as LibraryModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
@@ -11,7 +11,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 
 #[Layout("components.layouts.user")]
-class Library extends Component 
+class Library extends Component
 {
     use WithFileUploads;
 
@@ -36,7 +36,8 @@ class Library extends Component
         $this->reset(['title', 'file']);
     }
 
-    public function create(){
+    public function create()
+    {
         $this->validate();
 
         $path = $this->file->store('library_docs', 'public');
@@ -49,13 +50,14 @@ class Library extends Component
 
         $this->reset(['title', 'file']);
         $this->isCreating = false;
-        
+
         session()->flash('message', 'Document uploaded successfully!');
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         $doc = LibraryModel::find($id);
-        
+
         if ($doc && $doc->user_id === Auth::id()) {
             if ($doc->file) {
                 Storage::disk('public')->delete($doc->file);
@@ -66,7 +68,8 @@ class Library extends Component
     }
 
     //  Open viewer
-    public function view($id){
+    public function view($id)
+    {
         $doc = LibraryModel::with('user')->findOrFail($id);
 
         $this->viewerUrl   = Storage::url($doc->file);
@@ -82,11 +85,50 @@ class Library extends Component
         $this->reset(['showViewer', 'viewerUrl', 'viewerTitle', 'viewerExt']);
     }
 
+    public $search = "";
+    // filter
+    public $filter = 'all';
+    public function setFilter($filter)
+    {
+        $allowed = ['all', 'mine'];
+        if (! in_array($filter, $allowed)) {
+            $filter = 'all';
+        }
+        $this->filter = $filter;
+        // $this->search = '';
+        $this->reset('search');
+    }
+
+
     public function render()
     {
-        $documents = LibraryModel::with('user')->latest()->get();
+        $query = LibraryModel::with('user')->latest();
 
-        return view('livewire.user.library', [ 
+        if ($this->filter === 'mine') {
+            if (Auth::check()) {
+                $query->where('user_id', Auth::id());
+            } else {
+                // not logged in => nothing
+                $query->whereRaw('0 = 1');
+            }
+        }
+
+        if (!empty(trim($this->search))) {
+            $term = '%' . trim($this->search) . '%';
+
+            $query->where(function ($q) use ($term) {
+                $q->where('title', 'like', $term)
+                    ->orWhereHas('user', function ($u) use ($term) {
+                        $u->where('first_name', 'like', $term)
+                            ->orWhere('last_name', 'like', $term);
+                    });
+            });
+        }
+
+
+        $documents = $query->get();
+
+        return view('livewire.user.library', [
             'documents' => $documents
         ]);
     }

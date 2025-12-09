@@ -140,6 +140,33 @@
                     </div>
                 @endif
 
+
+                {{-- FILTER CONTROLS --}}
+                <div class="flex items-center gap-3 flex-wrap mb-4 px-3">
+                    {{-- <div class="text-sm text-slate-500 font-semibold mr-2">Filter:</div> --}}
+
+                    <button wire:click="setFilter('all')" class="px-3 py-1.5 rounded-full text-sm font-medium transition {{ $filter === 'all' ? 'bg-indigo-600 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100' }}">
+                        All
+                    </button>
+
+                    <button wire:click="setFilter('upcoming')" class="px-3 py-1.5 rounded-full text-sm font-medium transition {{ $filter === 'upcoming' ? 'bg-indigo-600 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100' }}">
+                        Upcoming
+                    </button>
+
+                    <button wire:click="setFilter('past')" class="px-3 py-1.5 rounded-full text-sm font-medium transition {{ $filter === 'past' ? 'bg-indigo-600 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100' }}">
+                        Past
+                    </button>
+
+                    <button wire:click="setFilter('mine')" class="px-3 py-1.5 rounded-full text-sm font-medium transition {{ $filter === 'mine' ? 'bg-indigo-600 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100' }}">
+                        My Events
+                    </button>
+
+                    <div class="ml-auto text-xs text-slate-500">
+                        Showing: <span class="font-semibold text-slate-700">{{ $events->count() }}</span>
+                    </div>
+                </div>
+
+                {{-- EVENTS LIST --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @forelse($events as $event)
                         @php $date = \Carbon\Carbon::parse($event->event_date); @endphp
@@ -149,11 +176,12 @@
 
                             <div class="flex items-start gap-4">
                                 <div
-                                    class="flex-shrink-0 w-16 h-16 bg-indigo-50 rounded-2xl flex flex-col items-center justify-center border border-indigo-100 group-hover:border-indigo-200 transition-colors">
+                                {{-- if event past change background color --}}
+                                    class="flex-shrink-0 w-16 h-16 {{ $date->isPast() ? 'bg-red-200 border-red-300' : 'bg-indigo-50 border-indigo-100' }} rounded-2xl flex flex-col items-center justify-center border transition-colors">
                                     <span
-                                        class="text-xs font-bold text-indigo-500 uppercase">{{ $date->format('M') }}</span>
+                                        class="text-xs font-bold {{ $date->isPast() ? 'text-red-700' : 'text-indigo-500' }} uppercase">{{ $date->format('M') }}</span>
                                     <span
-                                        class="text-2xl font-extrabold text-indigo-700 leading-none">{{ $date->format('d') }}</span>
+                                        class="text-2xl font-extrabold {{ $date->isPast() ? 'text-red-700' : 'text-indigo-700' }} leading-none">{{ $date->format('d') }}</span>
                                 </div>
 
                                 <div class="flex-1 min-w-0 pt-1">
@@ -183,7 +211,8 @@
                                         </button>
 
                                         <button wire:click="delete({{ $event->id }})" wire:confirm="Cancel event?"
-                                            class="text-slate-300 hover:text-rose-500 transition" title="Delete event">
+                                            class="text-slate-300 hover:text-rose-500 transition"
+                                            title="Delete event">
                                             <i data-feather="trash-2" class="w-4 h-4"></i>
                                         </button>
                                     </div>
@@ -280,15 +309,9 @@
                         <div>
                             @if ($viewOwnerId !== auth()->id())
                                 {{-- participation button --}}
-                                {{-- @livewire('user.event-participate-button', ['eventId' => $viewEventId]) --}}
-                                {{-- <livewire:user.event-participate-button :event="$event" /> --}}
-                                {{-- @livewire('user.event-participate-button', ['event' => $viewEventId], key('event-participate-' . $viewEventId)) --}}
                                 <livewire:user.event-participate-button :event-id="$viewEventId"
                                     key="event-participate-{{ $viewEventId }}" />
-
-                                {{-- <livewire:user.event-participate-button :event-id="$viewEventId" /> --}}
                             @endif
-                            {{-- @livewire('user.event-participate-button', ['event' => $event]) --}}
                         </div>
 
                         <button wire:click="closeViewModal"
@@ -440,7 +463,8 @@
                                                             wire:target="acceptParticipationRequest({{ $participant->id }})">
                                                             Accept
                                                         </span>
-                                                        <span wire:loading wire:target="acceptParticipationRequest({{ $participant->id }})">
+                                                        <span wire:loading
+                                                            wire:target="acceptParticipationRequest({{ $participant->id }})">
                                                             Accepting...
                                                         </span>
                                                     </button>
@@ -452,7 +476,8 @@
                                                             wire:target="rejectParticipationRequest({{ $participant->id }})">
                                                             Reject
                                                         </span>
-                                                        <span wire:loading wire:target="rejectParticipationRequest({{ $participant->id }})">
+                                                        <span wire:loading
+                                                            wire:target="rejectParticipationRequest({{ $participant->id }})">
                                                             Rejecting...
                                                         </span>
                                                     </button>
