@@ -10,7 +10,8 @@ use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 #[Layout("components.layouts.user")]
-class EventLive extends Component{
+class EventLive extends Component
+{
     #[Validate('required|string|max:200')]
     public $title;
 
@@ -39,7 +40,8 @@ class EventLive extends Component{
     // public $viewEventId;
 
     // open edit form and pre-fill
-    public function edit($id){
+    public function edit($id)
+    {
         $event = Event::findOrFail($id);
 
         if ($event->user_id !== Auth::id()) {
@@ -60,7 +62,8 @@ class EventLive extends Component{
     }
 
     // update event
-    public function updateEvent(){
+    public function updateEvent()
+    {
         $this->validate();
 
         $event = Event::findOrFail($this->eventId);
@@ -83,12 +86,14 @@ class EventLive extends Component{
         session()->flash('message', 'Event updated successfully!');
     }
 
-    public function closeEditModal(){
+    public function closeEditModal()
+    {
         $this->showEditModal = false;
         $this->reset(['eventId', 'title', 'description', 'event_date', 'location']);
     }
 
-    public function toggleCreate(){
+    public function toggleCreate()
+    {
         $this->isCreating = ! $this->isCreating;
         $this->resetValidation();
         if (!$this->isCreating) {
@@ -97,7 +102,8 @@ class EventLive extends Component{
     }
 
     // create event
-    public function createEvent(){
+    public function createEvent()
+    {
         $this->validate();
 
         Event::create([
@@ -136,12 +142,13 @@ class EventLive extends Component{
         $this->viewDescription = $event->description;
         $this->viewEventDate   = $event->event_date;
         $this->viewLocation    = $event->location;
-        $this->viewOrganizer   = $event->user->first_name ?? 'Unknown';
+        $this->viewOrganizer   = $event->user->first_name . ' ' . $event->user->last_name ?? 'Unknown';
 
         $this->showViewModal   = true;
     }
 
-    public function closeViewModal(){
+    public function closeViewModal()
+    {
         $this->reset([
             'showViewModal',
             'viewTitle',
@@ -167,41 +174,41 @@ class EventLive extends Component{
     // event participate button component will handle join/cancel logic
     // public function mount($event = null){
     //     // no specific mount logic for now
-        
+
     //     if ($event) {
     //         // for possible future use
 
     //     }
-      
+
     // }
 
     // organizer: accept participation request
-public function acceptParticipationRequest($participantId)
-{
-    $participant = EventParticipant::with('event')->findOrFail($participantId);
+    public function acceptParticipationRequest($participantId)
+    {
+        $participant = EventParticipant::with('event')->findOrFail($participantId);
 
-    if ($participant->event->user_id !== Auth::id()) {
-        return;
+        if ($participant->event->user_id !== Auth::id()) {
+            return;
+        }
+
+        $participant->update([
+            'status' => 'approved',
+        ]);
     }
 
-    $participant->update([
-        'status' => 'approved',
-    ]);
-}
+    // organizer: reject participation request
+    public function rejectParticipationRequest($participantId)
+    {
+        $participant = EventParticipant::with('event')->findOrFail($participantId);
 
-// organizer: reject participation request
-public function rejectParticipationRequest($participantId)
-{
-    $participant = EventParticipant::with('event')->findOrFail($participantId);
+        if ($participant->event->user_id !== Auth::id()) {
+            return;
+        }
 
-    if ($participant->event->user_id !== Auth::id()) {
-        return;
+        $participant->update([
+            'status' => 'rejected',
+        ]);
     }
-
-    $participant->update([
-        'status' => 'rejected',
-    ]);
-}
 
     // participants list for organizer view modal
     public $participantListModal = false;
@@ -225,20 +232,19 @@ public function rejectParticipationRequest($participantId)
     // }
 
     public function render()
-{
-    $participants = collect(); // empty by default
+    {
+        $participants = collect(); // empty by default
 
-    if ($this->participantEventId) {
-        $participants = EventParticipant::with('user')
-            ->where('event_id', $this->participantEventId)
-            ->orderBy('created_at', 'asc')
-            ->get();
+        if ($this->participantEventId) {
+            $participants = EventParticipant::with('user')
+                ->where('event_id', $this->participantEventId)
+                ->orderBy('created_at', 'asc')
+                ->get();
+        }
+
+        return view('livewire.user.event-live', [
+            'events'       => Event::with('user')->orderBy('event_date', 'asc')->get(),
+            'participants' => $participants,
+        ]);
     }
-
-    return view('livewire.user.event-live', [
-        'events'       => Event::with('user')->orderBy('event_date', 'asc')->get(),
-        'participants' => $participants,
-    ]);
-}
-
 }

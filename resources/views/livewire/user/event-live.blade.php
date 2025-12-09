@@ -239,7 +239,6 @@
             <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60">
                 <div class="bg-white rounded-3xl shadow-2xl w-full max-w-xl mx-4 overflow-hidden animate-fade-in-down">
 
-                    {{-- Header --}}
                     <div class="px-5 py-4 border-b flex items-center justify-between">
                         <div>
                             <h2 class="text-base font-bold text-slate-800">
@@ -256,7 +255,6 @@
                         </button>
                     </div>
 
-                    {{-- Body --}}
                     <div class="px-5 py-4 space-y-4 text-sm text-slate-700">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
@@ -394,7 +392,6 @@
             <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60">
                 <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 overflow-hidden animate-fade-in-down">
 
-                    {{-- Header --}}
                     <div class="px-6 py-4 border-b flex items-center justify-between">
                         <div>
                             <h2 class="text-lg font-bold text-slate-800">Event Participants</h2>
@@ -406,7 +403,6 @@
                         </button>
                     </div>
 
-                    {{-- Body --}}
                     <div class="px-6 py-5 max-h-96 overflow-y-auto space-y-4">
                         @if ($participants->isEmpty())
                             <p class="text-sm text-slate-600">No participants yet.</p>
@@ -441,10 +437,10 @@
                                                         wire:loading.attr="disabled"
                                                         class="px-3 py-1.5 rounded-md text-xs bg-green-600 text-white">
                                                         <span wire:loading.remove
-                                                            wire:target="acceptParticipationRequest">
+                                                            wire:target="acceptParticipationRequest({{ $participant->id }})">
                                                             Accept
                                                         </span>
-                                                        <span wire:loading wire:target="acceptParticipationRequest">
+                                                        <span wire:loading wire:target="acceptParticipationRequest({{ $participant->id }})">
                                                             Accepting...
                                                         </span>
                                                     </button>
@@ -453,10 +449,10 @@
                                                         wire:loading.attr="disabled"
                                                         class="px-3 py-1.5 rounded-md text-xs border bg-white text-slate-600">
                                                         <span wire:loading.remove
-                                                            wire:target="rejectParticipationRequest">
+                                                            wire:target="rejectParticipationRequest({{ $participant->id }})">
                                                             Reject
                                                         </span>
-                                                        <span wire:loading wire:target="rejectParticipationRequest">
+                                                        <span wire:loading wire:target="rejectParticipationRequest({{ $participant->id }})">
                                                             Rejecting...
                                                         </span>
                                                     </button>

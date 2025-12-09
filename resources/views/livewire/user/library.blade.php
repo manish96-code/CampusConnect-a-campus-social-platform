@@ -1,42 +1,37 @@
 <div class="max-w-7xl mx-auto px-4 lg:px-8 py-8 min-h-[80vh]">
 
-    @if($showViewer && $viewerUrl)
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-5xl h-[80vh] flex flex-col overflow-hidden">
+    @if ($showViewer && $viewerUrl)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-5xl h-[80vh] flex flex-col overflow-hidden">
 
-            {{-- Modal header --}}
-            <div class="px-4 py-3 border-b flex items-center justify-between">
-                <div>
-                    <h2 class="text-sm font-bold text-slate-800 truncate">{{ $viewerTitle }}</h2>
-                    <p class="text-xs text-slate-500 uppercase">{{ strtoupper($viewerExt) }} Preview</p>
+                {{-- Modal header --}}
+                <div class="px-4 py-3 border-b flex items-center justify-between">
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-800 truncate">{{ $viewerTitle }}</h2>
+                        <p class="text-xs text-slate-500 uppercase">{{ strtoupper($viewerExt) }} Preview</p>
+                    </div>
+                    <button wire:click="closeViewer" class="p-2 rounded-lg hover:bg-slate-100">Close
+                        <i data-feather="x" class="w-4 h-4"></i>
+                    </button>
                 </div>
-                <button wire:click="closeViewer" class="p-2 rounded-lg hover:bg-slate-100">Close
-                    <i data-feather="x" class="w-4 h-4"></i>
-                </button>
-            </div>
 
-            {{-- Modal body --}}
-            <div class="flex-1 bg-slate-50">
-                @if(in_array($viewerExt, ['jpg','jpeg','png','gif','webp']))
-                    <img src="{{ $viewerUrl }}" class="w-full h-full object-contain">
-                @elseif($viewerExt === 'pdf')
-                    <iframe 
-                        src="{{ $viewerUrl }}" 
-                        class="w-full h-full" 
-                        frameborder="0">
-                    </iframe>
-                @else
-                    {{-- For doc/docx etc. use Google Docs Viewer --}}
-                    <iframe
-                        src="https://docs.google.com/gview?url={{ urlencode($viewerUrl) }}&embedded=true"
-                        class="w-full h-full"
-                        frameborder="0">
-                    </iframe>
-                @endif
+                {{-- Modal body --}}
+                <div class="flex-1 bg-slate-50">
+                    @if (in_array($viewerExt, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                        <img src="{{ $viewerUrl }}" class="w-full h-full object-contain">
+                    @elseif($viewerExt === 'pdf')
+                        <iframe src="{{ $viewerUrl }}" class="w-full h-full" frameborder="0">
+                        </iframe>
+                    @else
+                        {{-- For doc/docx etc. use Google Docs Viewer --}}
+                        <iframe src="https://docs.google.com/gview?url={{ urlencode($viewerUrl) }}&embedded=true"
+                            class="w-full h-full" frameborder="0">
+                        </iframe>
+                    @endif
+                </div>
             </div>
         </div>
-    </div>
-@endif
+    @endif
 
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -167,5 +162,5 @@
         document.addEventListener('livewire:initialized', () => feather.replace());
         document.addEventListener('livewire:navigated', () => feather.replace());
     </script>
-    
+
 </div>
