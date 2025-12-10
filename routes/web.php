@@ -5,6 +5,7 @@ use App\Livewire\Auth\Register;
 use App\Livewire\User\Assignment;
 use App\Livewire\User\EventLive;
 use App\Livewire\User\FindFriend;
+use App\Livewire\User\GroupView;
 use App\Livewire\User\Home;
 use App\Livewire\User\Library;
 use App\Livewire\User\Post\CreatePost;
@@ -25,6 +26,7 @@ Route::middleware('auth')->group(function(){
     Route::get('library', Library::class)->name('library');
     Route::get('assignment', Assignment::class)->name('assignment');
     Route::get('/events', EventLive::class)->name('events');
+    Route::get('/group', GroupView::class)->name('group');
     Route::get('/logout', function(){
         Auth::logout();
         return redirect()->route('login');
