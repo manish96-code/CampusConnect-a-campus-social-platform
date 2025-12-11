@@ -1,10 +1,10 @@
 <div>
-    <div class="max-w-7xl mx-auto px-4 lg:px-8 py-8 min-h-screen">
+    <div class=" px-4 lg:px-8 py-8 min-h-screen">
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
             <!-- MAIN CONTENT -->
-            <div class="lg:col-span-9 xl:col-span-8">
+            <div class="lg:col-span-12">
 
                 <!-- Breadcrumb / Header -->
                 <div class="mb-6 flex items-center gap-3">
@@ -62,7 +62,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <!-- Public Option -->
                                     <label class="relative cursor-pointer group">
-                                        <input type="radio" wire:model.live="group_type" value="public"
+                                        <input type="radio" wire:model.live="group_type" name="group_type" value="public"
                                             class="peer sr-only">
                                         <div
                                             class="p-4 rounded-xl border-2 transition-all duration-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50/50 border-slate-200 hover:border-indigo-200">
@@ -83,7 +83,7 @@
 
                                     <!-- Private Option -->
                                     <label class="relative cursor-pointer group">
-                                        <input type="radio" wire:model.live="group_type" value="private"
+                                        <input type="radio" wire:model.live="group_type" name="group_type" value="private"
                                             class="peer sr-only">
                                         <div
                                             class="p-4 rounded-xl border-2 transition-all duration-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50/50 border-slate-200 hover:border-indigo-200">
@@ -119,7 +119,7 @@
 
                                 <!-- Profile_pic Upload -->
                                 <div class="md:col-span-1">
-                                    <label class="block text-sm font-bold text-slate-700 mb-2">Icon / Logo</label>
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">Profile Pic</label>
                                     <div class="flex flex-col items-center">
                                         <label
                                             class="relative w-32 h-32 rounded-full border-2 border-dashed border-slate-300 hover:border-indigo-500 cursor-pointer transition flex items-center justify-center bg-slate-50 overflow-hidden group">
@@ -160,7 +160,7 @@
 
                                 <!-- Cover Image Upload -->
                                 <div class="md:col-span-2">
-                                    <label class="block text-sm font-bold text-slate-700 mb-2">Cover Banner</label>
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">Cover Pic</label>
                                     <label
                                         class="relative block w-full h-32 rounded-xl border-2 border-dashed border-slate-300 hover:border-indigo-500 cursor-pointer transition bg-slate-50 overflow-hidden group">
 
@@ -206,10 +206,10 @@
 
                         <!-- Footer Actions -->
                         <div class="pt-6 border-t border-slate-100 flex items-center justify-end gap-4">
-                            <a href="{{ route('home') }}"
+                            {{-- <a href=""
                                 class="px-6 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition">
                                 Cancel
-                            </a>
+                            </a> --}}
                             <button type="submit"
                                 class="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 hover:shadow-indigo-300 hover:-translate-y-0.5 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                                 <span wire:loading.remove wire:target="create">Create Group</span>

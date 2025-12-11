@@ -97,9 +97,11 @@
             <span>Events</span>
         </a>
 
-        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all duration-200 group">
-            <i data-feather="flag" class="w-4 h-4 group-hover:stroke-indigo-600"></i>
-            <span>Clubs & Groups</span>
+        <a href="{{ route('group') }}" 
+           class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group
+           {{ request()->routeIs('group') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-600 hover:bg-slate-50 hover:text-indigo-600' }}">
+            <i data-feather="grid" class="w-4 h-4 group-hover:stroke-indigo-600"></i>
+            <span>Groups</span>
         </a>
 
         <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all duration-200 group">
