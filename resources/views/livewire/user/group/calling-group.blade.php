@@ -97,9 +97,9 @@
                                 Manage
                             </button>
                         @else
-                            <button wire:click="joinGroup({{ $group->id }})" class="text-xs font-bold text-white bg-indigo-600 px-4 py-1.5 rounded-lg hover:bg-indigo-700 shadow-md shadow-indigo-200 transition">
-                                Join Group
-                            </button>
+                            <a wire:navigate href="{{route('group-profile', ['id' => $group->id])}}" class="text-xs font-bold text-white bg-indigo-600 px-4 py-1.5 rounded-lg hover:bg-indigo-700 shadow-md shadow-indigo-200 transition">
+                                View
+                            </a>
                         @endif
                     </div>
                 </div>

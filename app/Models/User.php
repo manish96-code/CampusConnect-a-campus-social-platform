@@ -55,9 +55,12 @@ class User extends Authenticatable
         return User::whereIn('id', $friendsIds);
     }
 
-    public function stories()
-    {
+    public function stories(){
         return $this->hasMany(Story::class, 'user_id');
+    }
+
+    public function group(){
+        return $this->belongsToMany(Group::class, 'group_members', 'user_id', 'group_id')->withPivot('id','role','status')->withTimestamps();;
     }
 
 

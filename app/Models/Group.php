@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Group extends Model{
 
@@ -20,8 +21,7 @@ class Group extends Model{
     //     return $this->belongsTo(User::class, 'user_id');
     // }
 
-    public function members()
-    {
+    public function members(){
         return $this->belongsToMany(
             User::class,
             'group_members',   // pivot table name
@@ -31,6 +31,14 @@ class Group extends Model{
         ->withPivot('id', 'role', 'status') // pivot extra columns you might have
         ->withTimestamps();
     }
+
+    public function requests(){
+        return $this->belongsToMany(User::class, 'group_members', 'group_id', 'user_id')
+                    ->withPivot('id','role','status')
+                    ->wherePivot('status', 'pending')
+                    ->withTimestamps();
+    }
+
 
     public function creator(){
         return $this->belongsTo(User::class, 'created_by');

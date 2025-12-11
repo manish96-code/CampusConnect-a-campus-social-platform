@@ -1,12 +1,3 @@
-{{-- <div>
-    <div>
-        <livewire:user.group.create-group />
-
-        <livewire:user.group.calling-group />
-    </div>
-</div> --}}
-
-
 
 <div class="flex justify-center px-4 lg:px-8 py-8 min-h-[80vh] w-full " x-data="{ showCreate: false }">
     
@@ -47,6 +38,11 @@
             <div>
                 <livewire:user.group.calling-group />
             </div>
+
+
+            {{-- <div>
+                <livewire:user.group.profile />
+            </div> --}}
 
         </div>
 
