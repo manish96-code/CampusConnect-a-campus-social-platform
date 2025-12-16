@@ -10,16 +10,14 @@ use Livewire\Component;
 class GroupButton extends Component
 {
     public Group $group;
-    public $targetUserId; // The user being acted upon (defaults to Auth user)
-    public $status;       // 'not_member', 'pending', 'approved', 'admin'
+    public $targetUserId;
+    public $status;
     public $isGroupAdmin = false;
 
     public function mount(Group $group, $candidateId = null)
     {
         $this->group = $group;
         $this->targetUserId = $candidateId ?? Auth::id();
-        
-        // Check if the *Logged In* user is an admin of this group
         $this->isGroupAdmin = $this->group->members()
             ->where('users.id', Auth::id())
             ->wherePivot('role', 'admin')
@@ -43,13 +41,10 @@ class GroupButton extends Component
     //     }
     // }
 
-    protected function checkStatus()
-{
-    // Find membership (this will return a User model if exists via belongsToMany)
+    protected function checkStatus(){
     $member = $this->group->members()->where('user_id', $this->targetUserId)->first();
 
     if ($member) {
-        // They are on the pivot table — examine pivot columns
         $pivot = $member->pivot;
         $pivotStatus = $pivot->status ?? null;
         $pivotRole   = $pivot->role ?? null;
@@ -62,13 +57,12 @@ class GroupButton extends Component
             $this->status = 'approved';
         }
     } else {
-        // Not on the pivot -> no membership and no pending request
         $this->status = 'not_member';
     }
 }
 
 
-    // --- USER ACTIONS (Managing Self) ---
+    // USER ACTIONS
 
     public function join()
     {
@@ -80,20 +74,19 @@ class GroupButton extends Component
             $this->group->members()->attach(Auth::id(), ['role' => 'member', 'status' => 'pending']);
         }
         $this->checkStatus();
-        $this->dispatch('group-updated'); // Optional: refresh parent
     }
 
     // public function cancelRequest()
     // {
     //     $this->group->members()->detach(Auth::id());
     //     $this->checkStatus();
-    //     // $this->dispatch('group-updated');
+    //     // 
     // }
 
     public function cancelRequest(){
-        $this->group->requests()->detach(Auth::id());
+        $this->group->members()->detach(Auth::id());
         $this->checkStatus();
-        $this->dispatch('group-updated');
+        
     }
 
     public function leave_group(){
@@ -104,7 +97,7 @@ class GroupButton extends Component
         
         $this->group->members()->detach(Auth::id());
         $this->checkStatus();
-        $this->dispatch('group-updated');
+        
     }
 
     // ADMIN ACTIONS

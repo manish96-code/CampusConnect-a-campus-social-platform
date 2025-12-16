@@ -7,7 +7,7 @@
             <button wire:click="join" wire:loading.attr="disabled"
                 class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-indigo-200 transition-all transform active:scale-95 flex items-center justify-center gap-2 text-sm">
                 
-                <span wire:loading.remove wire:target="join">
+                <span wire:loading.remove wire:target="join" class="flex items-center gap-2">
                     <i data-feather="user-plus" class="w-4 h-4"></i>
                     {{ $group->group_type === 'private' ? 'Request to Join' : 'Join Group' }}
                 </span>

@@ -7,15 +7,13 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout("components.layouts.user")] // Uses your main layout (without adding extra sidebars manually)
-class Profile extends Component
-{
-    public $group;
-    public $activeTab = 'discussion'; // discussion, members, events, about
+#[Layout("components.layouts.user")]
 
-    public function mount($id)
-    {
-        // Load group with relationships
+class Profile extends Component{
+    public $group;
+    public $activeTab = 'discussion';
+
+    public function mount($id){
         $this->group = Group::with(['creator', 'members'])->findOrFail($id);
     }
 

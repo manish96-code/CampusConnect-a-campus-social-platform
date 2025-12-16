@@ -50,14 +50,22 @@
                             @endif
                         </span>
                         <span class="w-1 h-1 rounded-full bg-slate-300"></span>
-                        <span>{{ $group->members->count() }} Members</span>
+                        {{-- <span>{{ $group->members->count() }} Members</span> --}}
+                        <p>{{ $group->members->where('pivot.status', 'approved')->count() }} Members</p>
+
                     </div>
                 </div>
 
 
 
                 <div>
-                    <livewire:user.group.group-button :group="$group" />
+                    {{-- <livewire:user.group.group-button :group="$group" /> --}}
+                    <div class="w-full md:w-auto">
+    <livewire:user.group.group-button 
+        :group="$group" 
+        :wire:key="'group-btn-'.$group->id" />
+</div>
+
                 </div>
 
             </div>
@@ -130,6 +138,13 @@
                 </div>
             @endif
 
+            @if ($activeTab === 'members')
+    <livewire:user.group.group-members
+        :group="$group"
+        :wire:key="'group-members-'.$group->id" />
+@endif
+
+
         </div>
 
         <!-- RIGHT COLUMN (Widgets) -->
@@ -162,9 +177,11 @@
                     <img src="https://ui-avatars.com/api/?name={{ $group->creator->first_name ?? 'Admin' }}&background=random"
                         class="w-10 h-10 rounded-xl">
                     <div>
-                        <p class="text-sm font-bold text-slate-700">{{ $group->creator->first_name ?? 'Unknown' }}
+                        <a href="{{route('profile', $group->creator->id)}}">
+                        <p class="text-sm font-bold text-slate-700 capitalize">{{ $group->creator->first_name ?? 'Unknown' }}
                             {{ $group->creator->last_name ?? '' }}</p>
                         <p class="text-[10px] text-indigo-600 font-bold uppercase tracking-wider">Owner</p>
+                        </a>
                     </div>
                 </div>
             </div>

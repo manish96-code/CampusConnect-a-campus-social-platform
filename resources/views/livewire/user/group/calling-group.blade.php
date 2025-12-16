@@ -93,9 +93,9 @@
 
                         <!-- Action Button -->
                         @if($group->created_by === auth()->id())
-                            <button class="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-lg hover:bg-slate-200 transition">
+                            <a wire:navigate href="{{route('group-profile', ['id' => $group->id])}}" class="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-lg hover:bg-slate-200 transition">
                                 Manage
-                            </button>
+                            </a>
                         @else
                             <a wire:navigate href="{{route('group-profile', ['id' => $group->id])}}" class="text-xs font-bold text-white bg-indigo-600 px-4 py-1.5 rounded-lg hover:bg-indigo-700 shadow-md shadow-indigo-200 transition">
                                 View
