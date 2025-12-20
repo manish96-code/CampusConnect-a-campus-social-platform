@@ -19,7 +19,6 @@ class GroupMembers extends Component
 {
     $this->group = $group;
 
-    // ✅ 100% reliable admin check (DB-level)
     $this->isAdmin = $this->group->members()
         ->where('users.id', Auth::id())
         ->wherePivot('role', 'admin')

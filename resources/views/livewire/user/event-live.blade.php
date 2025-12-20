@@ -15,9 +15,9 @@
                     <button wire:click="toggleCreate"
                         class="flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm transition-all shadow-lg shadow-indigo-200 {{ $isCreating ? 'bg-slate-200 text-slate-600' : 'bg-indigo-600 text-white hover:bg-indigo-700' }}">
                         @if ($isCreating)
-                            <i data-feather="x" class="w-4 h-4"></i> Cancel
+                            <x-heroicon-o-x-mark class="w-4 h-4" /> Cancel
                         @else
-                            <i data-feather="plus" class="w-4 h-4"></i> Host Event
+                            <x-heroicon-o-plus class="w-4 h-4" /> Host Event
                         @endif
                     </button>
                 </div>
@@ -25,7 +25,8 @@
                 @if (session()->has('message'))
                     <div
                         class="px-4 py-3 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-xl flex items-center gap-2 text-sm font-bold animate-fade-in-down">
-                        <i data-feather="check-circle" class="w-4 h-4"></i> {{ session('message') }}
+                        <x-heroicon-o-check-circle class="w-4 h-4" />
+                        {{ session('message') }}
                     </div>
                 @endif
 
@@ -118,12 +119,12 @@
                                         </h3>
                                         <div class="flex items-center gap-2 text-xs text-slate-500">
                                             <div class="flex items-center gap-1">
-                                                <i data-feather="clock" class="w-3 h-3"></i>
+                                                <x-heroicon-o-clock class="w-3 h-3" />
                                                 {{ $event_date ? \Carbon\Carbon::parse($event_date)->format('h:i A') : '10:00 AM' }}
                                             </div>
                                             <span>•</span>
                                             <div class="flex items-center gap-1">
-                                                <i data-feather="map-pin" class="w-3 h-3"></i>
+                                                <x-heroicon-o-clock class="w-3 h-3" /><x-heroicon-o-map-pin class="w-3 h-3" />
                                                 {{ $location ?: 'Location' }}
                                             </div>
                                         </div>
@@ -145,19 +146,23 @@
                 <div class="flex items-center gap-3 flex-wrap mb-4 px-3">
                     {{-- <div class="text-sm text-slate-500 font-semibold mr-2">Filter:</div> --}}
 
-                    <button wire:click="setFilter('all')" class="px-3 py-1.5 rounded-full text-sm font-medium transition {{ $filter === 'all' ? 'bg-indigo-600 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100' }}">
+                    <button wire:click="setFilter('all')"
+                        class="px-3 py-1.5 rounded-full text-sm font-medium transition {{ $filter === 'all' ? 'bg-indigo-600 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100' }}">
                         All
                     </button>
 
-                    <button wire:click="setFilter('upcoming')" class="px-3 py-1.5 rounded-full text-sm font-medium transition {{ $filter === 'upcoming' ? 'bg-indigo-600 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100' }}">
+                    <button wire:click="setFilter('upcoming')"
+                        class="px-3 py-1.5 rounded-full text-sm font-medium transition {{ $filter === 'upcoming' ? 'bg-indigo-600 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100' }}">
                         Upcoming
                     </button>
 
-                    <button wire:click="setFilter('past')" class="px-3 py-1.5 rounded-full text-sm font-medium transition {{ $filter === 'past' ? 'bg-indigo-600 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100' }}">
+                    <button wire:click="setFilter('past')"
+                        class="px-3 py-1.5 rounded-full text-sm font-medium transition {{ $filter === 'past' ? 'bg-indigo-600 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100' }}">
                         Past
                     </button>
 
-                    <button wire:click="setFilter('mine')" class="px-3 py-1.5 rounded-full text-sm font-medium transition {{ $filter === 'mine' ? 'bg-indigo-600 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100' }}">
+                    <button wire:click="setFilter('mine')"
+                        class="px-3 py-1.5 rounded-full text-sm font-medium transition {{ $filter === 'mine' ? 'bg-indigo-600 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100' }}">
                         My Events
                     </button>
 
@@ -175,8 +180,7 @@
                             class="group bg-white rounded-3xl p-5 border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
 
                             <div class="flex items-start gap-4">
-                                <div
-                                {{-- if event past change background color --}}
+                                <div {{-- if event past change background color --}}
                                     class="flex-shrink-0 w-16 h-16 {{ $date->isPast() ? 'bg-red-200 border-red-300' : 'bg-indigo-50 border-indigo-100' }} rounded-2xl flex flex-col items-center justify-center border transition-colors">
                                     <span
                                         class="text-xs font-bold {{ $date->isPast() ? 'text-red-700' : 'text-indigo-500' }} uppercase">{{ $date->format('M') }}</span>
@@ -202,18 +206,18 @@
                                         <button wire:click="participantsList({{ $event->id }})"
                                             class="text-slate-300 hover:text-indigo-600 transition"
                                             title="View Participants">
-                                            <i data-feather="users" class="w-4 h-4"></i>
+                                            <x-heroicon-o-users class="w-4 h-4" />
                                         </button>
 
                                         <button wire:click="edit({{ $event->id }})"
                                             class="text-slate-300 hover:text-indigo-600 transition" title="Edit event">
-                                            <i data-feather="edit-2" class="w-4 h-4"></i>
+                                            <x-heroicon-o-pencil class="w-3 h-3" />
                                         </button>
 
                                         <button wire:click="delete({{ $event->id }})" wire:confirm="Cancel event?"
                                             class="text-slate-300 hover:text-rose-500 transition"
                                             title="Delete event">
-                                            <i data-feather="trash-2" class="w-4 h-4"></i>
+                                            <x-heroicon-o-trash class="w-4 h-4" />
                                         </button>
                                     </div>
                                 @endif
@@ -280,7 +284,7 @@
                             @endif
                         </div>
                         <button wire:click="closeViewModal" class="p-2 rounded-lg hover:bg-slate-100">
-                            <i data-feather="x" class="w-4 h-4"></i>
+                            <x-heroicon-o-x-mark class="w-4 h-4" />
                         </button>
                     </div>
 
@@ -337,7 +341,7 @@
                             <p class="text-xs text-slate-500 mt-0.5">Update your event details and save changes.</p>
                         </div>
                         <button wire:click="closeEditModal" class="p-2 rounded-lg hover:bg-slate-100">
-                            <i data-feather="x" class="w-4 h-4"></i>
+                            <x-heroicon-o-x-mark class="w-4 h-4" />
                         </button>
                     </div>
 
@@ -499,22 +503,6 @@
             </div>
         @endif
 
-
-
-
-        {{-- <script>
-        document.addEventListener('livewire:initialized', () => feather.replace());
-        document.addEventListener('livewire:navigated', () => feather.replace());
-    </script> --}}
-        <script>
-            document.addEventListener('livewire:load', () => {
-                feather.replace();
-
-                Livewire.hook('message.processed', () => {
-                    feather.replace();
-                });
-            });
-        </script>
 
     </div>
 </div>

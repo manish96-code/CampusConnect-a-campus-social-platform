@@ -8,7 +8,7 @@
                 class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-indigo-200 transition-all transform active:scale-95 flex items-center justify-center gap-2 text-sm">
                 
                 <span wire:loading.remove wire:target="join" class="flex items-center gap-2">
-                    <i data-feather="user-plus" class="w-4 h-4"></i>
+                    <x-heroicon-o-user-plus class="w-4 h-4" />
                     {{ $group->group_type === 'private' ? 'Request to Join' : 'Join Group' }}
                 </span>
                 
@@ -26,8 +26,8 @@
             <div x-data="{ open: false }" class="relative w-full">
                 <button @click="open = !open" @click.outside="open = false"
                     class="w-full bg-emerald-50 text-emerald-600 font-bold py-2.5 px-6 rounded-xl border border-emerald-100 hover:bg-emerald-100 transition flex items-center justify-center gap-2 text-sm">
-                    <i data-feather="check" class="w-4 h-4"></i> Joined
-                    <i data-feather="chevron-down" class="w-4 h-4"></i>
+                    <x-heroicon-o-check class="w-4 h-4" /> Joined
+                    <x-heroicon-o-chevron-down class="w-4 h-4" />
                 </button>
 
                 <!-- Dropdown -->
@@ -36,14 +36,14 @@
                     <button wire:click="leave_group" 
                             wire:confirm="Are you sure you want to leave this group?"
                             class="w-full text-left px-4 py-3 text-sm text-rose-600 hover:bg-rose-50 flex items-center gap-2 font-medium">
-                        <i data-feather="log-out" class="w-4 h-4"></i> Leave Group
+                        <x-heroicon-o-arrow-right-on-rectangle class="w-4 h-4" /> Leave Group
                     </button>
                 </div>
             </div>
 
         @elseif($status === 'admin')
             <button class="w-full bg-slate-100 text-slate-500 font-bold py-2.5 px-6 rounded-xl border border-slate-200 cursor-default text-sm flex items-center justify-center gap-2">
-                <i data-feather="shield" class="w-4 h-4"></i> Admin
+                <x-heroicon-o-shield-check class="w-4 h-4" /> Admin
             </button>
         @endif
 
@@ -68,8 +68,4 @@
 
     @endif
 
-    <!-- Init Icons -->
-    <script>
-        document.addEventListener('livewire:initialized', () => feather.replace());
-    </script>
 </div>

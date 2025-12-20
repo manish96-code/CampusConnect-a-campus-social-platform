@@ -23,11 +23,11 @@
                 </button>
             </div>
 
-            <!-- CREATE GROUP FORM (Collapsible) -->
+            <!-- CREATE GROUP FORM BUTTON -->
             <div x-show="showCreate" x-collapse x-cloak>
                 <div class="bg-white border border-indigo-100 rounded-3xl p-1 shadow-sm mb-8 relative overflow-hidden">
                     <div class="absolute top-4 right-4 z-10">
-                         <button @click="showCreate = false" class="p-2 bg-white/80 hover:bg-slate-100 rounded-full text-slate-400 transition"><i data-feather="x" class="w-4 h-4"></i></button>
+                         <button @click="showCreate = false" class="p-2 bg-white/80 hover:bg-slate-100 rounded-full text-slate-400 transition"><x-heroicon-o-x-mark class="w-4 h-4" /></button>
                     </div>
                     
                     <livewire:user.group.create-group />
@@ -39,18 +39,7 @@
                 <livewire:user.group.calling-group />
             </div>
 
-
-            {{-- <div>
-                <livewire:user.group.profile />
-            </div> --}}
-
         </div>
 
     </div>
-
-    <!-- Icons & Animations -->
-    <script>
-        document.addEventListener('livewire:initialized', () => feather.replace());
-        document.addEventListener('livewire:navigated', () => feather.replace());
-    </script>
 </div>

@@ -8,10 +8,6 @@
 
                 <!-- Breadcrumb / Header -->
                 <div class="mb-6 flex items-center gap-3">
-                    {{-- <a href="{{ route('home') }}"
-                        class="p-2 rounded-full bg-white border border-slate-200 text-slate-500 hover:text-indigo-600 transition">
-                        <i data-feather="arrow-left" class="w-4 h-4"></i>
-                    </a> --}}
                     <div>
                         <h1 class="text-2xl font-bold text-slate-800">Create New Group</h1>
                         <p class="text-sm text-slate-500">Build a community for students to connect.</p>
@@ -60,6 +56,7 @@
                             <div>
                                 <label class="block text-sm font-bold text-slate-700 mb-3">Privacy Setting</label>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
                                     <!-- Public Option -->
                                     <label class="relative cursor-pointer group">
                                         <input type="radio" wire:model.live="group_type" name="group_type" value="public"
@@ -68,7 +65,7 @@
                                             class="p-4 rounded-xl border-2 transition-all duration-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50/50 border-slate-200 hover:border-indigo-200">
                                             <div class="flex items-center gap-3 mb-1">
                                                 <div class="p-2 rounded-lg bg-indigo-100 text-indigo-600">
-                                                    <i data-feather="globe" class="w-4 h-4"></i>
+                                                    <x-heroicon-o-globe-alt class="w-4 h-4" />
                                                 </div>
                                                 <span class="font-bold text-slate-800">Public Group</span>
                                             </div>
@@ -77,7 +74,7 @@
                                         </div>
                                         <div
                                             class="absolute top-4 right-4 text-indigo-600 opacity-0 peer-checked:opacity-100 transition-opacity">
-                                            <i data-feather="check-circle" class="w-5 h-5 fill-indigo-100"></i>
+                                            <x-heroicon-o-check-circle class="w-5 h-5" />
                                         </div>
                                     </label>
 
@@ -89,7 +86,7 @@
                                             class="p-4 rounded-xl border-2 transition-all duration-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50/50 border-slate-200 hover:border-indigo-200">
                                             <div class="flex items-center gap-3 mb-1">
                                                 <div class="p-2 rounded-lg bg-indigo-100 text-indigo-600">
-                                                    <i data-feather="lock" class="w-4 h-4"></i>
+                                                    <x-heroicon-o-lock-closed class="w-4 h-4" />
                                                 </div>
                                                 <span class="font-bold text-slate-800">Private Group</span>
                                             </div>
@@ -98,9 +95,10 @@
                                         </div>
                                         <div
                                             class="absolute top-4 right-4 text-indigo-600 opacity-0 peer-checked:opacity-100 transition-opacity">
-                                            <i data-feather="check-circle" class="w-5 h-5 fill-indigo-100"></i>
+                                            <x-heroicon-o-check-circle class="w-5 h-5" />
                                         </div>
                                     </label>
+
                                 </div>
                             </div>
                         </div>
@@ -127,15 +125,13 @@
                                             @if ($profile_pic)
                                                 <img src="{{ $profile_pic->temporaryUrl() }}"
                                                     class="w-full h-full object-cover">
-                                                <!-- Remove Overlay -->
                                                 <div
                                                     class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                                                    <i data-feather="edit-2" class="w-6 h-6 text-white"></i>
+                                                    <x-heroicon-o-pencil-square class="w-6 h-6 text-white" />
                                                 </div>
                                             @else
                                                 <div class="text-center p-4">
-                                                    <i data-feather="image"
-                                                        class="w-6 h-6 text-slate-400 mx-auto mb-1"></i>
+                                                    <x-heroicon-o-photo class="w-6 h-6 text-slate-400 mx-auto mb-1" />
                                                     <span
                                                         class="text-[10px] text-slate-500 uppercase font-bold">Upload</span>
                                                 </div>
@@ -144,7 +140,6 @@
                                             <input type="file" wire:model="profile_pic" class="hidden"
                                                 accept="image/*">
 
-                                            <!-- Loading Spinner -->
                                             <div wire:loading wire:target="profile_pic"
                                                 class="absolute inset-0 bg-white/80 flex items-center justify-center">
                                                 <div
@@ -170,13 +165,13 @@
                                             <div
                                                 class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
                                                 <span class="text-white text-sm font-bold flex items-center gap-2">
-                                                    <i data-feather="refresh-ccw" class="w-4 h-4"></i> Change Cover
+                                                    <x-heroicon-o-arrow-path class="w-4 h-4" /> Change Cover
                                                 </span>
                                             </div>
                                         @else
                                             <div
                                                 class="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
-                                                <i data-feather="image" class="w-8 h-8 mb-2 opacity-50"></i>
+                                                <x-heroicon-o-photo class="w-8 h-8 mb-2 opacity-50" />
                                                 <span class="text-sm font-medium">Click to upload cover image</span>
                                                 <span class="text-[10px] opacity-70">Recommended: 1200x400px</span>
                                             </div>
@@ -185,7 +180,6 @@
                                         <input type="file" wire:model="cover_pic" class="hidden"
                                             accept="image/*">
 
-                                        <!-- Loading -->
                                         <div wire:loading wire:target="cover_pic"
                                             class="absolute inset-0 bg-white/80 flex items-center justify-center">
                                             <div class="flex items-center gap-2 text-indigo-600 font-bold text-sm">
@@ -206,10 +200,6 @@
 
                         <!-- Footer Actions -->
                         <div class="pt-6 border-t border-slate-100 flex items-center justify-end gap-4">
-                            {{-- <a href=""
-                                class="px-6 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition">
-                                Cancel
-                            </a> --}}
                             <button type="submit"
                                 class="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 hover:shadow-indigo-300 hover:-translate-y-0.5 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                                 <span wire:loading.remove wire:target="create">Create Group</span>
@@ -231,18 +221,12 @@
 
                 @if (session()->has('message'))
                     <div class="mt-3 px-4 py-3 bg-emerald-100 text-emerald-700 rounded-xl flex items-center gap-2 text-sm font-bold">
-                        <i data-feather="check-circle" class="w-4 h-4"></i> {{ session('message') }}
+                        <x-heroicon-o-check-circle class="w-4 h-4" /> {{ session('message') }}
                     </div>
                 @endif
             </div>
 
-
         </div>
 
-        <!-- Init Icons -->
-        <script>
-            document.addEventListener('livewire:initialized', () => feather.replace());
-            document.addEventListener('livewire:navigated', () => feather.replace());
-        </script>
     </div>
 </div>

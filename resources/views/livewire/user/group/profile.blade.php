@@ -11,7 +11,6 @@
                 <div class="w-full h-full bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400"></div>
             @endif
 
-            <!-- Admin Edit Button (Optional) -->
             @if ($group->user_id === auth()->id())
                 <button
                     class="absolute top-4 right-4 bg-black/40 hover:bg-black/60 text-white px-3 py-1.5 rounded-lg text-xs font-bold backdrop-blur-md transition opacity-0 group-hover/cover:opacity-100">
@@ -44,32 +43,21 @@
                     <div class="flex items-center gap-4 text-sm text-slate-500 mt-1 font-medium">
                         <span class="flex items-center gap-1">
                             @if ($group->group_type === 'private')
-                                <i data-feather="lock" class="w-3 h-3"></i> Private Group
+                                <x-heroicon-o-lock-closed class="w-3 h-3" /> Private Group
                             @else
-                                <i data-feather="globe" class="w-3 h-3"></i> Public Group
+                                <x-heroicon-o-globe-alt class="w-3 h-3" /> Public Group
                             @endif
                         </span>
                         <span class="w-1 h-1 rounded-full bg-slate-300"></span>
-                        {{-- <span>{{ $group->members->count() }} Members</span> --}}
                         <p>{{ $group->members->where('pivot.status', 'approved')->count() }} Members</p>
-
                     </div>
                 </div>
 
-
-
-                <div>
-                    {{-- <livewire:user.group.group-button :group="$group" /> --}}
-                    <div class="w-full md:w-auto">
-    <livewire:user.group.group-button 
-        :group="$group" 
-        :wire:key="'group-btn-'.$group->id" />
-</div>
-
+                <div class="w-full md:w-auto">
+                    <livewire:user.group.group-button :group="$group" :wire:key="'group-btn-'.$group->id" />
                 </div>
 
             </div>
-
 
             <!-- Navigation Tabs -->
             <div class="mt-8 border-t border-slate-100 pt-1 flex gap-6 overflow-x-auto no-scrollbar">
@@ -86,13 +74,12 @@
     <!-- 2. CONTENT GRID -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <!-- LEFT COLUMN (Main Feed) -->
+        <!-- LEFT COLUMN -->
         <div class="lg:col-span-8 space-y-6">
 
             @if ($activeTab === 'discussion')
-                <!-- Create Post (If member) -->
-                @if ($group->members->contains(auth()->id()))
-                    <div
+                {{-- @if ($group->members->contains(auth()->id())) --}}
+                {{-- <div
                         class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex gap-4 items-center cursor-text hover:border-indigo-200 transition">
                         <img src="https://ui-avatars.com/api/?name={{ auth()->user()->first_name }}+{{ auth()->user()->last_name }}&background=6366f1&color=fff"
                             class="w-10 h-10 rounded-full border border-slate-100">
@@ -100,18 +87,27 @@
                             class="flex-1 bg-slate-50 hover:bg-slate-100 rounded-xl px-4 py-2.5 text-sm text-slate-500 transition">
                             Write something to the group...
                         </div>
-                        <button class="text-slate-400 hover:text-indigo-600 transition"><i data-feather="image"
-                                class="w-5 h-5"></i></button>
-                    </div>
-                @endif
+                        <button class="text-slate-400 hover:text-indigo-600 transition">
+                            <x-heroicon-o-photo class="w-5 h-5" />
+                        </button>
+                    </div> --}}
+                {{-- <livewire:user.group.create-group-post :group="$group" /> --}}
+                {{-- <livewire:user.group.create-group-post :group="$group" :key="'group-post-form-' . $group->id" /> --}}
+                {{-- @endif --}}
 
-                <!-- Feed Content -->
-                <div class="bg-white rounded-2xl p-8 border border-slate-100 text-center py-16">
+                {{-- <div class="bg-white rounded-2xl p-8 border border-slate-100 text-center py-16">
                     <div class="inline-flex p-4 rounded-full bg-slate-50 mb-3">
-                        <i data-feather="message-square" class="w-6 h-6 text-slate-300"></i>
+                        <x-heroicon-o-chat-bubble-left-right class="w-6 h-6 text-slate-300" />
                     </div>
                     <p class="text-slate-500 text-sm">No recent posts. Start the conversation!</p>
-                </div>
+                </div> --}}
+
+
+                {{-- Create Post --}}
+                <livewire:user.group.create-group-post :group="$group" :key="'create-group-post-' . $group->id" />
+
+                {{-- Calling Post --}}
+                <livewire:user.group.calling-group-post :group="$group" :key="'calling-group-post-' . $group->id" />
             @endif
 
             @if ($activeTab === 'about')
@@ -139,18 +135,14 @@
             @endif
 
             @if ($activeTab === 'members')
-    <livewire:user.group.group-members
-        :group="$group"
-        :wire:key="'group-members-'.$group->id" />
-@endif
-
+                <livewire:user.group.group-members :group="$group" :wire:key="'group-members-'.$group->id" />
+            @endif
 
         </div>
 
-        <!-- RIGHT COLUMN (Widgets) -->
+        <!-- RIGHT COLUMN -->
         <div class="hidden lg:block lg:col-span-4 space-y-6">
 
-            <!-- About Widget -->
             <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
                 <h3 class="font-bold text-slate-800 text-sm mb-3">About</h3>
                 <p class="text-xs text-slate-500 leading-relaxed mb-4 line-clamp-3">
@@ -158,17 +150,16 @@
                 </p>
                 <div class="space-y-3">
                     <div class="flex items-center gap-3 text-slate-600 text-xs font-medium">
-                        <i data-feather="clock" class="w-4 h-4"></i>
+                        <x-heroicon-o-clock class="w-4 h-4" />
                         <span>Created {{ $group->created_at->diffForHumans() }}</span>
                     </div>
                     <div class="flex items-center gap-3 text-slate-600 text-xs font-medium">
-                        <i data-feather="tag" class="w-4 h-4"></i>
+                        <x-heroicon-o-tag class="w-4 h-4" />
                         <span class="capitalize">{{ $group->group_type }} Group</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Admins Widget -->
             <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold text-slate-800 text-sm">Admins</h3>
@@ -177,16 +168,16 @@
                     <img src="https://ui-avatars.com/api/?name={{ $group->creator->first_name ?? 'Admin' }}&background=random"
                         class="w-10 h-10 rounded-xl">
                     <div>
-                        <a href="{{route('profile', $group->creator->id)}}">
-                        <p class="text-sm font-bold text-slate-700 capitalize">{{ $group->creator->first_name ?? 'Unknown' }}
-                            {{ $group->creator->last_name ?? '' }}</p>
-                        <p class="text-[10px] text-indigo-600 font-bold uppercase tracking-wider">Owner</p>
+                        <a href="{{ route('profile', $group->creator->id) }}">
+                            <p class="text-sm font-bold text-slate-700 capitalize">
+                                {{ $group->creator->first_name ?? 'Unknown' }} {{ $group->creator->last_name ?? '' }}
+                            </p>
+                            <p class="text-[10px] text-indigo-600 font-bold uppercase tracking-wider">Owner</p>
                         </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Media Widget -->
             <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="font-bold text-slate-800 text-sm">Recent Media</h3>
@@ -203,9 +194,4 @@
 
     </div>
 
-    <!-- Init Icons -->
-    <script>
-        document.addEventListener('livewire:initialized', () => feather.replace());
-        document.addEventListener('livewire:navigated', () => feather.replace());
-    </script>
 </div>

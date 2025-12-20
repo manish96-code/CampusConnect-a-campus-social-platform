@@ -41,11 +41,11 @@
                     <div class="absolute top-3 right-3">
                         @if($group->group_type === 'private')
                             <span class="bg-black/50 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded-lg flex items-center gap-1">
-                                <i data-feather="lock" class="w-3 h-3"></i> Private
+                                <x-heroicon-o-lock-closed class="w-3 h-3" /> Private
                             </span>
                         @else
                             <span class="bg-white/90 backdrop-blur-md text-indigo-600 text-[10px] font-bold px-2 py-1 rounded-lg flex items-center gap-1 shadow-sm">
-                                <i data-feather="globe" class="w-3 h-3"></i> Public
+                                <x-heroicon-o-globe-alt class="w-3 h-3" /> Public
                             </span>
                         @endif
                     </div>
@@ -66,7 +66,9 @@
                     <!-- Option Menu -->
                     <div class="flex justify-end pt-3">
                          @if($group->created_by === auth()->id())
-                            <button class="text-slate-400 hover:text-indigo-600 transition"><i data-feather="more-horizontal" class="w-5 h-5"></i></button>
+                            <button class="text-slate-400 hover:text-indigo-600 transition">
+                                <x-heroicon-o-ellipsis-horizontal class="w-5 h-5" />
+                            </button>
                          @endif
                     </div>
                 </div>
@@ -84,7 +86,6 @@
                     <!-- Stats Row -->
                     <div class="flex items-center justify-between border-t border-slate-50 pt-4 mt-auto">
                         <div class="flex -space-x-2">
-                            <!-- Fake Member Avatars -->
                             <img class="w-6 h-6 rounded-full border-2 border-white" src="https://ui-avatars.com/api/?name=A&background=random" alt="">
                             <img class="w-6 h-6 rounded-full border-2 border-white" src="https://ui-avatars.com/api/?name=B&background=random" alt="">
                             <img class="w-6 h-6 rounded-full border-2 border-white" src="https://ui-avatars.com/api/?name=C&background=random" alt="">
@@ -107,15 +108,12 @@
         @empty
             <div class="col-span-full py-12 text-center bg-white rounded-2xl border border-dashed border-slate-200">
                 <div class="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i data-feather="users" class="w-8 h-8 text-indigo-400"></i>
+                    <x-heroicon-o-users class="w-8 h-8 text-indigo-400" />
                 </div>
                 <h3 class="text-lg font-bold text-slate-700">No Groups Found</h3>
                 <p class="text-slate-500 text-sm max-w-xs mx-auto mt-1">Be the first to create a community on campus!</p>
             </div>
         @endforelse
     </div>
-    
-    <script>
-        document.addEventListener('livewire:initialized', () => feather.replace());
-    </script>
+
 </div>
