@@ -20,4 +20,16 @@ class GroupPost extends Model{
     public function group(){
         return $this->belongsTo(Group::class);
     }
+
+    // likes
+    public function likes()
+    {
+        return $this->hasMany(GroupPostLike::class);
+    }
+
+    // comments
+    public function comments()
+    {
+        return $this->hasMany(GroupPostComment::class)->latest();
+    }
 }

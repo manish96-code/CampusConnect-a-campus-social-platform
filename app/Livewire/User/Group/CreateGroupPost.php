@@ -23,10 +23,6 @@ class CreateGroupPost extends Component
     public function mount($group)
     {
         $this->group = $group;
-
-        // if (! $group->members->contains(Auth::id())) {
-        //     abort(403, 'You are not a member of this group.');
-        // }
     }
 
     public function createPost()

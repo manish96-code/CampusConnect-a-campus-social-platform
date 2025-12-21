@@ -77,38 +77,30 @@
         <!-- LEFT COLUMN -->
         <div class="lg:col-span-8 space-y-6">
 
-            @if ($activeTab === 'discussion')
-                {{-- @if ($group->members->contains(auth()->id())) --}}
-                {{-- <div
-                        class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex gap-4 items-center cursor-text hover:border-indigo-200 transition">
-                        <img src="https://ui-avatars.com/api/?name={{ auth()->user()->first_name }}+{{ auth()->user()->last_name }}&background=6366f1&color=fff"
-                            class="w-10 h-10 rounded-full border border-slate-100">
-                        <div
-                            class="flex-1 bg-slate-50 hover:bg-slate-100 rounded-xl px-4 py-2.5 text-sm text-slate-500 transition">
-                            Write something to the group...
-                        </div>
-                        <button class="text-slate-400 hover:text-indigo-600 transition">
-                            <x-heroicon-o-photo class="w-5 h-5" />
-                        </button>
-                    </div> --}}
-                {{-- <livewire:user.group.create-group-post :group="$group" /> --}}
-                {{-- <livewire:user.group.create-group-post :group="$group" :key="'group-post-form-' . $group->id" /> --}}
-                {{-- @endif --}}
+           @if ($activeTab === 'discussion')
 
-                {{-- <div class="bg-white rounded-2xl p-8 border border-slate-100 text-center py-16">
-                    <div class="inline-flex p-4 rounded-full bg-slate-50 mb-3">
-                        <x-heroicon-o-chat-bubble-left-right class="w-6 h-6 text-slate-300" />
-                    </div>
-                    <p class="text-slate-500 text-sm">No recent posts. Start the conversation!</p>
-                </div> --}}
+<div class="relative h-[calc(100vh-160px)] bg-slate-50 rounded-2xl overflow-hidden">
 
+    {{-- CHAT MESSAGES (scrollable) --}}
+    <div class="absolute inset-0 bottom-20 overflow-y-auto px-4 py-4 space-y-4">
+        <livewire:user.group.calling-group-post
+            :group="$group"
+            :wire:key="'group-chat-messages-'.$group->id"
+        />
+    </div>
 
-                {{-- Create Post --}}
-                <livewire:user.group.create-group-post :group="$group" :key="'create-group-post-' . $group->id" />
+    {{-- FIXED INPUT AT BOTTOM --}}
+    <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4">
+        <livewire:user.group.create-group-post
+            :group="$group"
+            :wire:key="'group-chat-input-'.$group->id"
+        />
+    </div>
 
-                {{-- Calling Post --}}
-                <livewire:user.group.calling-group-post :group="$group" :key="'calling-group-post-' . $group->id" />
-            @endif
+</div>
+
+@endif
+
 
             @if ($activeTab === 'about')
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
