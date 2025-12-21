@@ -1,4 +1,6 @@
 <div>
+    {{-- <h1>CREATE GROUP COMPONENT LOADED</h1> --}}
+
     <div class=" px-4 lg:px-8 py-8 min-h-screen">
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -32,7 +34,7 @@
                             <!-- Name -->
                             <div>
                                 <label class="block text-sm font-bold text-slate-700 mb-1.5">Group Name</label>
-                                <input type="text" wire:model.live="group_name"
+                                <input type="text" wire:model="group_name"
                                     class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition font-medium text-slate-800 placeholder-slate-400"
                                     placeholder="e.g. Coding Club 2025">
                                 @error('group_name')
@@ -59,7 +61,7 @@
 
                                     <!-- Public Option -->
                                     <label class="relative cursor-pointer group">
-                                        <input type="radio" wire:model.live="group_type" name="group_type" value="public"
+                                        <input type="radio" wire:model="group_type" name="group_type" value="public"
                                             class="peer sr-only">
                                         <div
                                             class="p-4 rounded-xl border-2 transition-all duration-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50/50 border-slate-200 hover:border-indigo-200">
@@ -80,7 +82,7 @@
 
                                     <!-- Private Option -->
                                     <label class="relative cursor-pointer group">
-                                        <input type="radio" wire:model.live="group_type" name="group_type" value="private"
+                                        <input type="radio" wire:model="group_type" name="group_type" value="private"
                                             class="peer sr-only">
                                         <div
                                             class="p-4 rounded-xl border-2 transition-all duration-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50/50 border-slate-200 hover:border-indigo-200">
@@ -202,8 +204,8 @@
                         <div class="pt-6 border-t border-slate-100 flex items-center justify-end gap-4">
                             <button type="submit"
                                 class="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 hover:shadow-indigo-300 hover:-translate-y-0.5 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                                <span wire:loading.remove wire:target="create">Create Group</span>
-                                <span wire:loading wire:target="create" class="flex items-center gap-2">
+                                <span wire:loading.remove wire:target="create_group">Create Group</span>
+                                <span wire:loading wire:target="create_group" class="flex items-center gap-2">
                                     <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10"
                                             fill="none" stroke="currentColor" stroke-width="4"></circle>

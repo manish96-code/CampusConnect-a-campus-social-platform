@@ -1,24 +1,12 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{{ $title ?? 'Campus Connect' }}</title>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<<head>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
 
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    {{-- <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
 
     @livewireStyles
-
-    <style>
-        [x-cloak] { display: none !important; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-    </style>
 </head>
 
 <body class="bg-[#F4F7FE] text-slate-800 antialiased min-h-screen relative pb-16 md:pb-0">
@@ -160,17 +148,15 @@
         </div>
     </nav>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            feather.replace();
-        });
-    </script>
+    {{-- <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
 
+@livewireScripts
 
-
- @livewireScripts
-
-
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        feather.replace();
+    });
+</script>
 
 
 </body>
