@@ -4,7 +4,7 @@
     <div class="bg-white rounded-b-3xl rounded-t-2xl shadow-sm border border-slate-100 overflow-hidden mb-6 relative">
 
         <!-- Cover Photo -->
-        <div class="h-48 md:h-80 w-full bg-slate-200 relative group/cover">
+        {{-- <div class="h-48 md:h-80 w-full bg-slate-200 relative group/cover">
             @if ($group->cover_pic)
                 <img src="{{ asset('storage/' . $group->cover_pic) }}" class="w-full h-full object-cover">
             @else
@@ -17,14 +17,32 @@
                     Edit Cover
                 </button>
             @endif
+        </div> --}}
+
+
+        <div class="relative h-52 bg-slate-200 group">
+
+            <img src="{{ $group->cover_pic
+                ? asset('storage/' . $group->cover_pic)
+                : 'https://images.unsplash.com/photo-1557683316-973673baf926' }}"
+                class="w-full h-full object-cover">
+
+            @if ($this->isAdmin)
+                <label
+                    class="absolute top-4 right-4 bg-black/60 text-white text-xs px-3 py-1.5 rounded-lg cursor-pointer opacity-0 group-hover:opacity-100 transition">
+                    📷 Edit Cover
+                    <input type="file" wire:model="cover_pic" class="hidden" accept="image/*">
+                </label>
+            @endif
         </div>
+
 
         <!-- Group Info Bar -->
         <div class="px-6 pb-6 relative">
             <div class="flex flex-col md:flex-row items-start md:items-end -mt-10 gap-5">
 
                 <!-- Group Icon -->
-                <div class="relative flex-shrink-0">
+                {{-- <div class="relative flex-shrink-0">
                     <div
                         class="h-28 w-28 rounded-2xl border-4 border-white bg-white shadow-md overflow-hidden flex items-center justify-center">
                         @if ($group->profile_pic)
@@ -34,7 +52,26 @@
                                 class="text-3xl font-bold text-indigo-500 uppercase">{{ substr($group->name, 0, 1) }}</span>
                         @endif
                     </div>
+                </div> --}}
+
+
+                <div class="relative -mt-12 ml-6 group">
+
+                    <img src="{{ $group->profile_pic
+                        ? asset('storage/' . $group->profile_pic)
+                        : 'https://ui-avatars.com/api/?name=' . urlencode($group->group_name) }}"
+                        class="w-28 h-28 rounded-full border-4 border-white object-cover">
+
+                    @if ($this->isAdmin)
+                        <label
+                            class="absolute inset-0 bg-black/40 flex items-center justify-center rounded-full
+                   opacity-0 group-hover:opacity-100 cursor-pointer transition">
+                            📷
+                            <input type="file" wire:model="profile_pic" class="hidden" accept="image/*">
+                        </label>
+                    @endif
                 </div>
+
 
                 <!-- Text Info -->
                 <div class="flex-1 min-w-0 mb-1">
@@ -81,9 +118,8 @@
                 <div class="relative h-[calc(100vh-160px)] bg-slate-50 rounded-2xl overflow-hidden">
 
                     {{-- CHAT MESSAGES (scrollable) --}}
-                    <div class="absolute inset-0 bottom-20 overflow-y-auto space-y-4 mb-4"
-                        x-data="{ scroll() { this.$el.scrollTop = this.$el.scrollHeight } }" x-init="scroll()"
-                        x-on:post-created.window="$nextTick(() => scroll())">
+                    <div class="absolute inset-0 bottom-20 overflow-y-auto space-y-4 mb-4" x-data="{ scroll() { this.$el.scrollTop = this.$el.scrollHeight } }"
+                        x-init="scroll()" x-on:post-created.window="$nextTick(() => scroll())">
                         <livewire:user.group.calling-group-post :group="$group"
                             :wire:key="'group-chat-messages-'.$group->id" />
                     </div>

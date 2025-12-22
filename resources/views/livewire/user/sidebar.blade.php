@@ -1,7 +1,7 @@
-<div class="hidden lg:flex flex-col fixed left-0 top-16 h-[calc(100vh-4rem)] w-70 bg-white border-r border-slate-200 z-40">
+<div class="hidden lg:flex flex-col fixed left-0 top-16 h-[calc(100vh-4rem)] w-72 bg-white border-r border-slate-200 z-40">
     
     <!-- 1. Mini Profile Header (Fixed at Top) -->
-    <div class="p-5 border-b border-slate-50 bg-slate-50/50 flex-shrink-0">
+    {{-- <div class="p-5 border-b border-slate-50 bg-slate-50/50 flex-shrink-0">
         <a wire:navigate href="{{ route('profile') }}" class="flex items-center gap-3 group">
             <div class="relative flex-shrink-0">
                 <img src="https://ui-avatars.com/api/?name={{ auth()->user()->first_name }}+{{ auth()->user()->last_name }}&background=6366f1&color=fff" 
@@ -15,7 +15,7 @@
                 <p class="text-xs text-slate-500 truncate">@ {{ strtolower(auth()->user()->first_name) }}</p>
             </div>
         </a>
-    </div>
+    </div> --}}
 
     <!-- 2. Navigation Menu (Scrollable Middle) -->
     <nav class="flex-1 overflow-y-auto no-scrollbar p-3 space-y-1">
