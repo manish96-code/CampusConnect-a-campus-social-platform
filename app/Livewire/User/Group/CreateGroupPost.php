@@ -37,7 +37,7 @@ class CreateGroupPost extends Component
         GroupPost::create([
             'group_id' => $this->group->id,
             'user_id'  => Auth::id(),
-            'caption'  => $this->caption,
+            'caption'  => ucfirst(trim($this->caption)),
             'image'    => $this->image
                 ? $this->image->store('group_posts', 'public')
                 : null,

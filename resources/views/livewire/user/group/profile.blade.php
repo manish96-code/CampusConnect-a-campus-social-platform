@@ -77,29 +77,26 @@
         <!-- LEFT COLUMN -->
         <div class="lg:col-span-8 space-y-6">
 
-           @if ($activeTab === 'discussion')
+            @if ($activeTab === 'discussion')
+                <div class="relative h-[calc(100vh-160px)] bg-slate-50 rounded-2xl overflow-hidden">
 
-<div class="relative h-[calc(100vh-160px)] bg-slate-50 rounded-2xl overflow-hidden">
+                    {{-- CHAT MESSAGES (scrollable) --}}
+                    <div class="absolute inset-0 bottom-20 overflow-y-auto space-y-4 mb-4"
+                        x-data="{ scroll() { this.$el.scrollTop = this.$el.scrollHeight } }" x-init="scroll()"
+                        x-on:post-created.window="$nextTick(() => scroll())">
+                        <livewire:user.group.calling-group-post :group="$group"
+                            :wire:key="'group-chat-messages-'.$group->id" />
+                    </div>
 
-    {{-- CHAT MESSAGES (scrollable) --}}
-    <div class="absolute inset-0 bottom-20 overflow-y-auto px-4 py-4 space-y-4">
-        <livewire:user.group.calling-group-post
-            :group="$group"
-            :wire:key="'group-chat-messages-'.$group->id"
-        />
-    </div>
 
-    {{-- FIXED INPUT AT BOTTOM --}}
-    <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4">
-        <livewire:user.group.create-group-post
-            :group="$group"
-            :wire:key="'group-chat-input-'.$group->id"
-        />
-    </div>
+                    {{-- FIXED INPUT AT BOTTOM --}}
+                    <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4">
+                        <livewire:user.group.create-group-post :group="$group"
+                            :wire:key="'group-chat-input-'.$group->id" />
+                    </div>
 
-</div>
-
-@endif
+                </div>
+            @endif
 
 
             @if ($activeTab === 'about')
