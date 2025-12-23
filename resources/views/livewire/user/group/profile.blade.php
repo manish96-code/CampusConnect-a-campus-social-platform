@@ -3,23 +3,6 @@
     <!-- 1. GROUP HEADER -->
     <div class="bg-white rounded-b-3xl rounded-t-2xl shadow-sm border border-slate-100 overflow-hidden mb-6 relative">
 
-        <!-- Cover Photo -->
-        {{-- <div class="h-48 md:h-80 w-full bg-slate-200 relative group/cover">
-            @if ($group->cover_pic)
-                <img src="{{ asset('storage/' . $group->cover_pic) }}" class="w-full h-full object-cover">
-            @else
-                <div class="w-full h-full bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400"></div>
-            @endif
-
-            @if ($group->user_id === auth()->id())
-                <button
-                    class="absolute top-4 right-4 bg-black/40 hover:bg-black/60 text-white px-3 py-1.5 rounded-lg text-xs font-bold backdrop-blur-md transition opacity-0 group-hover/cover:opacity-100">
-                    Edit Cover
-                </button>
-            @endif
-        </div> --}}
-
-
         <div class="relative h-52 bg-slate-200 group">
 
             <img src="{{ $group->cover_pic
@@ -27,7 +10,7 @@
                 : 'https://images.unsplash.com/photo-1557683316-973673baf926' }}"
                 class="w-full h-full object-cover">
 
-            @if ($this->isAdmin)
+            @if ($isAdmin)
                 <label
                     class="absolute top-4 right-4 bg-black/60 text-white text-xs px-3 py-1.5 rounded-lg cursor-pointer opacity-0 group-hover:opacity-100 transition">
                     📷 Edit Cover
@@ -41,21 +24,8 @@
         <div class="px-6 pb-6 relative">
             <div class="flex flex-col md:flex-row items-start md:items-end -mt-10 gap-5">
 
-                <!-- Group Icon -->
-                {{-- <div class="relative flex-shrink-0">
-                    <div
-                        class="h-28 w-28 rounded-2xl border-4 border-white bg-white shadow-md overflow-hidden flex items-center justify-center">
-                        @if ($group->profile_pic)
-                            <img src="{{ asset('storage/' . $group->profile_pic) }}" class="w-full h-full object-cover">
-                        @else
-                            <span
-                                class="text-3xl font-bold text-indigo-500 uppercase">{{ substr($group->name, 0, 1) }}</span>
-                        @endif
-                    </div>
-                </div> --}}
 
-
-                <div class="relative -mt-12 ml-6 group">
+                <div class="relative -mt-2 ml-6 group">
 
                     <img src="{{ $group->profile_pic
                         ? asset('storage/' . $group->profile_pic)
@@ -65,7 +35,7 @@
                     @if ($this->isAdmin)
                         <label
                             class="absolute inset-0 bg-black/40 flex items-center justify-center rounded-full
-                   opacity-0 group-hover:opacity-100 cursor-pointer transition">
+                            opacity-0 group-hover:opacity-100 cursor-pointer transition">
                             📷
                             <input type="file" wire:model="profile_pic" class="hidden" accept="image/*">
                         </label>
@@ -75,7 +45,7 @@
 
                 <!-- Text Info -->
                 <div class="flex-1 min-w-0 mb-1">
-                    <h1 class="text-3xl font-extrabold text-slate-900 leading-tight">{{ $group->name }}</h1>
+                    <h1 class="text-3xl font-extrabold text-slate-900 leading-tight">{{ $group->group_name }}</h1>
 
                     <div class="flex items-center gap-4 text-sm text-slate-500 mt-1 font-medium">
                         <span class="flex items-center gap-1">
@@ -136,28 +106,87 @@
 
 
             @if ($activeTab === 'about')
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-slate-800 text-lg mb-4">About this group</h3>
-                    <p class="text-slate-600 text-sm leading-relaxed">
-                        {{ $group->description ?? 'No description available for this group.' }}
-                    </p>
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-6">
 
-                    <div class="mt-6 pt-6 border-t border-slate-100 grid grid-cols-2 gap-4">
-                        <div>
-                            <span
-                                class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Created</span>
-                            <span
-                                class="text-sm font-semibold text-slate-800">{{ $group->created_at->format('M d, Y') }}</span>
-                        </div>
-                        <div>
-                            <span
-                                class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Privacy</span>
-                            <span
-                                class="text-sm font-semibold text-slate-800 capitalize">{{ $group->group_type }}</span>
-                        </div>
+                    {{-- HEADER --}}
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800">
+                            {{ $group->group_name }}
+                        </h3>
                     </div>
+
+                    {{-- DESCRIPTION --}}
+                    <div class="bg-slate-50 rounded-xl p-4 text-sm text-slate-700 leading-relaxed">
+                        {{ $group->description ?? 'No description available for this group.' }}
+                    </div>
+
+                    {{-- DETAILS GRID --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+
+                        {{-- CREATED BY --}}
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                Created By
+                            </span>
+                            <span class="font-semibold text-slate-800 capitalize">
+                                {{ $group->creator->first_name }} {{ $group->creator->last_name }}
+                            </span>
+                        </div>
+
+                        {{-- PRIVACY --}}
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                Privacy
+                            </span>
+                            <span class="font-semibold text-slate-800 capitalize">
+                                {{ $group->group_type }}
+                            </span>
+                        </div>
+
+                        {{-- CREATED DATE --}}
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                Created On
+                            </span>
+                            <span class="font-semibold text-slate-800">
+                                {{ $group->created_at->format('d M Y') }}
+                            </span>
+                        </div>
+
+                        {{-- MEMBERS COUNT --}}
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                Members
+                            </span>
+                            <span class="font-semibold text-slate-800">
+                                {{ $group->approvedMembers->count() }} Members
+                            </span>
+                        </div>
+
+                    </div>
+
+                    {{-- QUICK ACTIONS --}}
+                    <div class="pt-6 border-t border-slate-100 flex flex-wrap gap-3">
+
+                        {{-- VIEW CHAT --}}
+                        <button wire:click="setTab('discussion')"
+                            class="px-4 py-2 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition">
+                            💬 View Chat
+                        </button>
+
+                        {{-- VIEW MEMBERS --}}
+                        @if ($isAdmin)
+                            <button wire:click="setTab('members')"
+                                class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
+                                👥 View Members
+                            </button>
+                        @endif
+
+                    </div>
+
                 </div>
             @endif
+
 
             @if ($activeTab === 'members')
                 <livewire:user.group.group-members :group="$group" :wire:key="'group-members-'.$group->id" />
@@ -203,7 +232,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+            {{-- <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="font-bold text-slate-800 text-sm">Recent Media</h3>
                     <a href="#" class="text-xs text-indigo-600 font-bold hover:underline">See all</a>
@@ -213,7 +242,50 @@
                     <div class="aspect-square bg-slate-100 rounded-lg"></div>
                     <div class="aspect-square bg-slate-100 rounded-lg"></div>
                 </div>
-            </div>
+            </div> --}}
+
+            @if (auth()->check() &&
+                    $group->members()->where('users.id', auth()->id())->wherePivot('status', 'approved')->exists())
+
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100" x-data="{ showAll: false }">
+
+                    {{-- HEADER --}}
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-bold text-slate-800 text-sm">Recent Media</h3>
+
+                        @if ($media->count() > 3)
+                            <button @click="showAll = !showAll"
+                                class="text-xs text-indigo-600 font-bold hover:underline">
+                                <span x-show="!showAll">See all</span>
+                                <span x-show="showAll">Show less</span>
+                            </button>
+                        @endif
+                    </div>
+
+                    {{-- MEDIA GRID --}}
+                    @if ($media->count())
+                        <div class="grid grid-cols-3 gap-2 transition-all duration-300"
+                            :class="showAll ? 'max-h-64 overflow-y-auto pr-1' : ''">
+                            @foreach ($media as $index => $item)
+                                <template x-if="showAll || {{ $index }} < 3">
+                                    <a href="{{ asset('storage/' . $item->image) }}" target="_blank">
+                                        <img src="{{ asset('storage/' . $item->image) }}"
+                                            class="aspect-square w-full rounded-lg object-cover hover:opacity-90 transition">
+                                    </a>
+                                </template>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-xs text-slate-500 text-center py-6">
+                            No media shared yet
+                        </p>
+                    @endif
+
+                </div>
+
+            @endif
+
+
 
         </div>
 

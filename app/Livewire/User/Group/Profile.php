@@ -3,6 +3,7 @@
 namespace App\Livewire\User\Group;
 
 use App\Models\Group;
+use App\Models\GroupPost;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
@@ -18,6 +19,8 @@ class Profile extends Component
 
     public $group;
     public $activeTab = 'discussion';
+    public $isAdmin = false;
+    public $media = [];
 
     #[Validate('nullable|image|max:2048')]
     public $profile_pic;
@@ -28,15 +31,28 @@ class Profile extends Component
     public function mount($id)
     {
         $this->group = Group::with('members')->findOrFail($id);
+
+        $this->isAdmin = $this->group->members()
+            ->where('users.id', auth()->id())
+            ->wherePivot('role', 'admin')
+            ->wherePivot('status', 'approved')
+            ->exists();
+
+        $this->media = GroupPost::where('group_id', $this->group->id)
+            ->whereNotNull('image')
+            ->latest()
+            ->get();
     }
 
-    public function getIsAdminProperty()
-    {
-        return $this->group->members()
-            ->where('users.id', Auth::id())
-            ->wherePivot('role', 'admin')
-            ->exists();
-    }
+
+    // public function getIsAdminProperty()
+    // {
+    //     return $this->group->members()
+    //         ->where('users.id', Auth::id())
+    //         ->wherePivot('role', 'admin')
+    //         ->exists();
+    // }
+
 
     public function updatedProfilePic()
     {
