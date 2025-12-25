@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
-<<head>
+<head>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
 
@@ -116,7 +116,7 @@
             </div>
         </header>
 
-        <main class="relative z-0 pt-16">
+        <main class="relative z-0">
             <div class=" px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 

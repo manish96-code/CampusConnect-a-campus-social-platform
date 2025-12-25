@@ -1,5 +1,5 @@
 <div>
-    @if ($group->members->contains(auth()->id()))
+    @if ($group->members()->where('users.id', auth()->id())->wherePivot('status', 'approved')->exists())
 
         <form wire:submit.prevent="createPost"
             class="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm space-y-2">

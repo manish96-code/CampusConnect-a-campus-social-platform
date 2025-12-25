@@ -61,7 +61,18 @@
                 </div>
 
                 <div class="w-full md:w-auto">
-                    <livewire:user.group.group-button :group="$group" :wire:key="'group-btn-'.$group->id" />
+                    <div class="flex gap-3">
+                        @if ($isAdmin)
+                            <button wire:click="setTab('edit')"
+                                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold
+                                    py-2.5 px-6 rounded-xl text-sm
+                                    flex items-center justify-center gap-2 transition">
+                                <x-heroicon-o-pencil-square class="w-4 h-4" /> Edit
+                            </button>
+                        @endif
+
+                        <livewire:user.group.group-button :group="$group" :wire:key="'group-btn-'.$group->id" />
+                    </div>
                 </div>
 
             </div>
@@ -191,6 +202,84 @@
             @if ($activeTab === 'members')
                 <livewire:user.group.group-members :group="$group" :wire:key="'group-members-'.$group->id" />
             @endif
+
+
+            @if ($activeTab === 'edit' && $isAdmin)
+                <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+
+                    {{-- HEADER --}}
+                    <form wire:submit.prevent="saveGroup" class=" space-y-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800">Edit Group</h3>
+                                <p class="text-sm text-slate-500">Update group details and settings</p>
+                            </div>
+                        </div>
+
+                        {{-- GROUP NAME --}}
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">
+                                Group Name
+                            </label>
+                            <input type="text" wire:model.defer="group_name"
+                                class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm
+                        focus:ring-2 ">
+                            @error('group_name')
+                                <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- DESCRIPTION --}}
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">
+                                Description
+                            </label>
+                            <textarea rows="4" wire:model.defer="description"
+                                class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm
+                        focus:ring-2  resize-none"></textarea>
+                        </div>
+
+                        {{-- PRIVACY --}}
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 uppercase mb-2">
+                                Privacy
+                            </label>
+
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2 text-sm cursor-pointer">
+                                    <input type="radio" wire:model="group_type" value="public"
+                                        class="text-indigo-600 ">
+                                    Public
+                                </label>
+
+                                <label class="flex items-center gap-2 text-sm cursor-pointer">
+                                    <input type="radio" wire:model="group_type" value="private"
+                                        class="text-indigo-600 ">
+                                    Private
+                                </label>
+                            </div>
+                        </div>
+
+                        {{-- ACTIONS --}}
+                        <div class="pt-6 border-t border-slate-100 flex justify-end gap-3">
+                            <button wire:click="setTab('discussion')"
+                                class="px-4 py-2 text-sm font-bold rounded-xl
+                        bg-slate-100 text-slate-600 hover:bg-slate-200">
+                                Cancel
+                            </button>
+
+                            <button type="submit" wire:loading.attr="disabled"
+                                class="px-5 py-2 text-sm font-bold rounded-xl
+                   bg-indigo-600 text-white hover:bg-indigo-700
+                   disabled:opacity-50">
+                                Save Changes
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            @endif
+
 
         </div>
 

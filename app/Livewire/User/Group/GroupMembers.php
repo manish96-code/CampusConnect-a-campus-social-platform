@@ -49,7 +49,7 @@ class GroupMembers extends Component{
             'status'   => 'approved',
         ]);
 
-        $this->filter = 'approved';
+        // $this->filter = 'approved';
         $this->dispatch('group-updated');
     }
 

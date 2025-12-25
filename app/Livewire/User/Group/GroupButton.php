@@ -3,6 +3,7 @@
 namespace App\Livewire\User\Group;
 
 use App\Models\Group;
+use App\Models\GroupMember;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -18,6 +19,7 @@ class GroupButton extends Component
     {
         $this->group = $group;
         $this->targetUserId = $candidateId ?? Auth::id();
+
         $this->isGroupAdmin = $this->group->members()
             ->where('users.id', Auth::id())
             ->wherePivot('role', 'admin')
@@ -26,40 +28,26 @@ class GroupButton extends Component
         $this->checkStatus();
     }
 
-    // public function checkStatus()
-    // {
-    //     // Check the status of the *Target* user
-    //     $member = $this->group->members()->where('users.id', $this->targetUserId)->first();
-        
-    //     if (!$member) {
-    //         // Check pending requests
-    //         $request = $this->group->requests()->where('users.id', $this->targetUserId)->first();
-    //         $this->status = $request ? 'pending' : 'not_member';
-    //     } else {
-    //         // They are a member, check role
-    //         $this->status = $member->pivot->role === 'admin' ? 'admin' : 'approved';
-    //     }
-    // }
+    protected function checkStatus()
+    {
+        $member = $this->group->members()->where('user_id', $this->targetUserId)->first();
 
-    protected function checkStatus(){
-    $member = $this->group->members()->where('user_id', $this->targetUserId)->first();
+        if ($member) {
+            $pivot = $member->pivot;
+            $pivotStatus = $pivot->status ?? null;
+            $pivotRole   = $pivot->role ?? null;
 
-    if ($member) {
-        $pivot = $member->pivot;
-        $pivotStatus = $pivot->status ?? null;
-        $pivotRole   = $pivot->role ?? null;
-
-        if ($pivotStatus === 'pending') {
-            $this->status = 'pending';
-        } elseif ($pivotRole === 'admin') {
-            $this->status = 'admin';
+            if ($pivotStatus === 'pending') {
+                $this->status = 'pending';
+            } elseif ($pivotRole === 'admin') {
+                $this->status = 'admin';
+            } else {
+                $this->status = 'approved';
+            }
         } else {
-            $this->status = 'approved';
+            $this->status = 'not_member';
         }
-    } else {
-        $this->status = 'not_member';
     }
-}
 
 
     // USER ACTIONS
@@ -83,27 +71,28 @@ class GroupButton extends Component
     //     // 
     // }
 
-    public function cancelRequest(){
+    public function cancelRequest()
+    {
         $this->group->members()->detach(Auth::id());
         $this->checkStatus();
-        
     }
 
-    public function leave_group(){
+    public function leave_group()
+    {
         if ($this->status === 'admin' && $this->group->members()->wherePivot('role', 'admin')->count() === 1) {
             session()->flash('error', 'You are the only admin. Delete the group instead.');
             return;
         }
-        
+
         $this->group->members()->detach(Auth::id());
         $this->checkStatus();
-        
     }
 
     // ADMIN ACTIONS
-    public function approve(){
+    public function approve()
+    {
         if (!$this->isGroupAdmin) return;
-        
+
         $this->group->members()->updateExistingPivot($this->targetUserId, ['status' => 'approved']);
         $this->checkStatus();
     }
@@ -121,8 +110,47 @@ class GroupButton extends Component
         if (!$this->isGroupAdmin) return;
 
         $this->group->members()->detach($this->targetUserId);
+        $this->dispatch('group-updated');
+        // $this->checkStatus();
+    }
+
+    public function deleteGroup()
+    {
+        if (!$this->isGroupAdmin) return;
+
+        $this->group->delete();
+
+        return redirect()
+            ->route('group')
+            ->with('message', 'Group deleted successfully.');
+    }
+
+    public function makeAdmin()
+    {
+        if (! $this->isGroupAdmin) return;
+
+        GroupMember::where('group_id', $this->group->id)
+            ->where('user_id', $this->targetUserId)
+            ->update(['role' => 'admin']);
+
+        $this->dispatch('group-updated');
         $this->checkStatus();
     }
+
+    public function removeAdmin()
+    {
+        if (! $this->isGroupAdmin) return;
+
+        // Safety: prevent self-demotion
+        if ($this->targetUserId === auth()->id()) return;
+
+        GroupMember::where('group_id', $this->group->id)
+            ->where('user_id', $this->targetUserId)
+            ->update(['role' => 'member']);
+
+        $this->dispatch('group-updated');
+    }
+
 
     public function render()
     {

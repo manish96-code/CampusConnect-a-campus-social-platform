@@ -5,6 +5,7 @@ namespace App\Livewire\User\Group;
 use App\Models\Group;
 use App\Models\GroupPost;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -22,6 +23,11 @@ class Profile extends Component
     public $isAdmin = false;
     public $media = [];
 
+    public string $group_name = '';
+    public ?string $description = null;
+    public string $group_type = 'public';
+
+
     #[Validate('nullable|image|max:2048')]
     public $profile_pic;
 
@@ -38,11 +44,17 @@ class Profile extends Component
             ->wherePivot('status', 'approved')
             ->exists();
 
+        // 🔥 THIS WAS MISSING (MANDATORY)
+        $this->group_name = $this->group->group_name;
+        $this->description = $this->group->description;
+        $this->group_type = $this->group->group_type;
+
         $this->media = GroupPost::where('group_id', $this->group->id)
             ->whereNotNull('image')
             ->latest()
             ->get();
     }
+
 
 
     // public function getIsAdminProperty()
@@ -99,6 +111,34 @@ class Profile extends Component
     {
         $this->activeTab = $tab;
     }
+
+
+    public function saveGroup()
+    {
+        if (! $this->isAdmin) return;
+
+        $this->validate([
+            'group_name' => [
+                'required',
+                'string',
+                'min:3',
+                'max:50',
+                Rule::unique('groups', 'group_name')->ignore($this->group->id),
+            ],
+            'description' => 'nullable|string|max:500',
+            'group_type'  => 'required|in:public,private',
+        ]);
+
+        $this->group->update([
+            'group_name' => $this->group_name,
+            'description' => $this->description,
+            'group_type' => $this->group_type,
+        ]);
+
+        session()->flash('message', 'Group updated successfully ✅');
+        $this->activeTab = 'discussion';
+    }
+
 
     public function render()
     {

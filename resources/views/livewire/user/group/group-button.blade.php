@@ -1,71 +1,148 @@
 <div class="w-full inline-block">
-    
-    <!-- CASE 1: Managing Myself (Join/Leave) -->
-    @if($targetUserId === auth()->id())
 
-        @if($status === 'not_member')
-            <button wire:click="join" wire:loading.attr="disabled"
-                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-indigo-200 transition-all transform active:scale-95 flex items-center justify-center gap-2 text-sm">
-                
-                <span wire:loading.remove wire:target="join" class="flex items-center gap-2">
-                    <x-heroicon-o-user-plus class="w-4 h-4" />
-                    {{ $group->group_type === 'private' ? 'Request to Join' : 'Join Group' }}
-                </span>
-                
-                <span wire:loading wire:target="join" class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+{{-- =====================================================
+   CASE 1: THIS BUTTON IS FOR ME (SELF)
+   ===================================================== --}}
+@if ($targetUserId === auth()->id())
+
+    {{-- NOT A MEMBER --}}
+    @if ($status === 'not_member')
+        <button wire:click="join" wire:loading.attr="disabled"
+            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl
+                   shadow-lg shadow-indigo-200 transition flex items-center justify-center gap-2 text-sm">
+            <x-heroicon-o-user-plus class="w-4 h-4" />
+            {{ $group->group_type === 'private' ? 'Request to Join' : 'Join Group' }}
+        </button>
+
+    {{-- PENDING --}}
+    @elseif ($status === 'pending')
+        <button wire:click="cancelRequest"
+            class="w-full bg-slate-100 text-slate-600 font-semibold py-2.5 px-6 rounded-xl
+                   border border-slate-200 hover:bg-slate-200 transition text-sm">
+            Request Sent (Cancel)
+        </button>
+
+    {{-- APPROVED MEMBER --}}
+    @elseif ($status === 'approved')
+        <div x-data="{ open: false }" class="relative w-full">
+            <button @click="open = !open" @click.outside="open = false"
+                class="w-full bg-emerald-50 text-emerald-600 font-bold py-2.5 px-6 rounded-xl
+                       border border-emerald-100 hover:bg-emerald-100 transition flex gap-2 justify-center text-sm">
+                <x-heroicon-o-check class="w-4 h-4" />
+                Joined
+                <x-heroicon-o-chevron-down class="w-4 h-4" />
             </button>
 
-        @elseif($status === 'pending')
-            <button wire:click="cancelRequest" wire:loading.attr="disabled"
-                class="w-full bg-slate-100 text-slate-500 font-semibold py-2.5 px-6 rounded-xl border border-slate-200 hover:bg-slate-200 hover:text-slate-700 transition flex items-center justify-center gap-2 text-sm">
-                <span wire:loading.remove wire:target="cancelRequest">Request Sent (Cancel)</span>
-                <span wire:loading wire:target="cancelRequest">Cancelling...</span>
+            <div x-show="open" x-cloak
+                class="absolute right-0 mt-2 w-full bg-white rounded-xl shadow-xl border z-50">
+                <button wire:click="leave_group"
+                    wire:confirm="Are you sure you want to leave this group?"
+                    class="w-full px-4 py-3 text-sm text-rose-600 hover:bg-rose-50 flex gap-2">
+                    <x-heroicon-o-arrow-right-on-rectangle class="w-4 h-4" />
+                    Leave Group
+                </button>
+            </div>
+        </div>
+
+    {{-- ADMIN (ME) --}}
+    @elseif ($status === 'admin')
+        <div x-data="{ open: false }" class="relative w-full">
+            <button @click="open = !open" @click.outside="open = false"
+                class="w-full bg-slate-100 text-slate-700 font-bold py-2.5 px-6 rounded-xl
+                       border border-slate-200 hover:bg-slate-200 transition flex gap-2 justify-center text-sm">
+                <x-heroicon-o-shield-check class="w-4 h-4" />
+                Admin
+                <x-heroicon-o-chevron-down class="w-4 h-4" />
             </button>
 
-        @elseif($status === 'approved')
-            <div x-data="{ open: false }" class="relative w-full">
+            <div x-show="open" x-cloak
+                class="absolute right-0 mt-2 w-full bg-white rounded-xl shadow-xl border z-50">
+                <button wire:click="deleteGroup"
+                    wire:confirm="⚠️ This will permanently delete the group. Continue?"
+                    class="w-full px-4 py-3 text-sm text-rose-600 hover:bg-rose-50 flex gap-2">
+                    <x-heroicon-o-trash class="w-4 h-4" />
+                    Delete Group
+                </button>
+            </div>
+        </div>
+    @endif
+
+
+{{-- =====================================================
+   CASE 2: THIS BUTTON IS FOR ANOTHER USER
+   ===================================================== --}}
+@else
+
+    {{-- ONLY ADMINS CAN MANAGE OTHERS --}}
+    @if ($isGroupAdmin)
+
+        {{-- PENDING USER --}}
+        @if ($status === 'pending')
+            <div class="flex gap-2">
+                <button wire:click="approve"
+                    class="bg-indigo-600 text-white text-xs font-bold px-4 py-2 rounded-lg">
+                    Approve
+                </button>
+                <button wire:click="reject"
+                    class="bg-white border text-xs font-bold px-4 py-2 rounded-lg">
+                    Reject
+                </button>
+            </div>
+
+        {{-- APPROVED MEMBER --}}
+        @elseif ($status === 'approved')
+            <div x-data="{ open: false }" class="relative">
                 <button @click="open = !open" @click.outside="open = false"
-                    class="w-full bg-emerald-50 text-emerald-600 font-bold py-2.5 px-6 rounded-xl border border-emerald-100 hover:bg-emerald-100 transition flex items-center justify-center gap-2 text-sm">
-                    <x-heroicon-o-check class="w-4 h-4" /> Joined
-                    <x-heroicon-o-chevron-down class="w-4 h-4" />
+                    class="text-slate-400 hover:text-indigo-600">
+                    <x-heroicon-o-ellipsis-vertical class="w-5 h-5" />
                 </button>
 
-                <!-- Dropdown -->
-                <div x-show="open" x-cloak x-transition
-                     class="absolute top-full mt-2 right-0 w-full min-w-[160px] bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden">
-                    <button wire:click="leave_group" 
-                            wire:confirm="Are you sure you want to leave this group?"
-                            class="w-full text-left px-4 py-3 text-sm text-rose-600 hover:bg-rose-50 flex items-center gap-2 font-medium">
-                        <x-heroicon-o-arrow-right-on-rectangle class="w-4 h-4" /> Leave Group
+                <div x-show="open" x-cloak
+                    class="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-xl border z-50 space-y-1">
+
+                    <button wire:click="makeAdmin"
+                        wire:confirm="Make this user an admin?"
+                        class="w-full px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50 flex gap-2">
+                        <x-heroicon-o-shield-check class="w-4 h-4" />
+                        Make Admin
+                    </button>
+
+                    <button wire:click="removeUser"
+                        wire:confirm="Remove user from group?"
+                        class="w-full px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 flex gap-2">
+                        Remove User
                     </button>
                 </div>
             </div>
 
-        @elseif($status === 'admin')
-            <button class="w-full bg-slate-100 text-slate-500 font-bold py-2.5 px-6 rounded-xl border border-slate-200 cursor-default text-sm flex items-center justify-center gap-2">
-                <x-heroicon-o-shield-check class="w-4 h-4" /> Admin
-            </button>
-        @endif
-
-    <!-- CASE 2: Managing Others (Approve/Reject/Remove) -->
-    @elseif($isGroupAdmin)
-
-        @if($status === 'pending')
-            <div class="flex gap-2 w-full">
-                <button wire:click="approve" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2 px-3 rounded-lg shadow-sm transition">
-                    Approve
+        {{-- OTHER ADMIN --}}
+        @elseif ($status === 'admin')
+            <div x-data="{ open: false }" class="relative">
+                <button @click="open = !open" @click.outside="open = false"
+                    class="text-slate-400 hover:text-indigo-600">
+                    <x-heroicon-o-ellipsis-vertical class="w-5 h-5" />
                 </button>
-                <button wire:click="reject" class="flex-1 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-bold py-2 px-3 rounded-lg transition">
-                    Reject
-                </button>
+
+                <div x-show="open" x-cloak
+                    class="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-xl border z-50">
+                    <button wire:click="removeAdmin"
+                        wire:confirm="Remove admin role from this user?"
+                        class="w-full px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex gap-2">
+                        <x-heroicon-o-shield-exclamation class="w-4 h-4" />
+                        Remove Admin
+                    </button>
+                </div>
             </div>
-        @elseif($status === 'approved')
-            <button wire:click="removeUser" wire:confirm="Remove user?" 
-                class="w-full text-xs font-bold text-rose-500 hover:text-rose-700 border border-rose-200 hover:bg-rose-50 px-3 py-1.5 rounded-lg transition">
-                Remove
-            </button>
         @endif
 
+    {{-- NON-ADMIN VIEWING ADMIN --}}
+    @elseif ($status === 'admin')
+        <div class="bg-slate-100 text-slate-500 py-2.5 px-6 rounded-xl text-sm font-bold flex gap-2 justify-center">
+            <x-heroicon-o-shield-check class="w-4 h-4" />
+            Admin
+        </div>
     @endif
+
+@endif
 
 </div>

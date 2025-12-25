@@ -1,5 +1,5 @@
 
-<div class="flex justify-center px-4 lg:px-8 py-8 min-h-[80vh] w-full " x-data="{ showCreate: false }">
+<div class="flex justify-center px-4 lg:px-8 py-8 min-h-[78vh] w-full" x-data="{ showCreate: false }">
     
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 

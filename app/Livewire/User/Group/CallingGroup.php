@@ -10,6 +10,7 @@ use Livewire\Component;
 class CallingGroup extends Component
 {
     public $filter = 'all';
+    public $search = '';
 
     public function joinGroup($groupId)
     {
@@ -42,28 +43,45 @@ class CallingGroup extends Component
         );
     }
 
+    public function updatedSearch()
+    {
+        // When searching, reset filter to 'all'
+        if ($this->search !== '') {
+            $this->filter = 'all';
+        }
+    }
+
+
     public function render()
     {
         $query = Group::with([
-                'creator',
-                'members' => function ($q) {
-                    $q->wherePivot('status', 'approved')
-                      ->select('users.id', 'first_name', 'dp');
-                }
-            ])
+            'creator',
+            'members' => function ($q) {
+                $q->wherePivot('status', 'approved')
+                    ->select('users.id', 'first_name', 'dp');
+            }
+        ])
             ->withCount([
                 'members as members_count' => function ($q) {
                     $q->where('status', 'approved');
                 }
-            ]);
+            ])
+            ->when($this->search, function ($q) {
+                $q->where(function ($qq) {
+                    $qq->where('group_name', 'like', '%' . $this->search . '%')
+                        ->orWhere('description', 'like', '%' . $this->search . '%');
+                });
+            });
 
         if ($this->filter === 'my_groups') {
             $query->whereHas('members', function ($q) {
                 $q->where('users.id', Auth::id())
-                  ->where('status', 'approved');
+                    ->where('status', 'approved');
             });
         } elseif ($this->filter === 'public') {
             $query->where('group_type', 'public');
+        } elseif ($this->filter === 'private') {
+            $query->where('group_type', 'private');
         }
 
         return view('livewire.user.group.calling-group', [

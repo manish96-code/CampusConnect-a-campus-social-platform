@@ -37,7 +37,7 @@
                 <!-- Search -->
                 <div class="relative w-full lg:w-64">
                     <input type="search" wire:model.live="search"
-                        placeholder="{{ $filter === 'add' ? 'Search users…' : 'Search members…' }}"
+                        placeholder="{{ $filter === 'add' ? 'Search classmates…' : 'Search members…' }}"
                         class="w-full pl-9 pr-4 py-2 text-sm rounded-xl
                        border border-slate-200 bg-slate-50
                        focus:bg-white focus:ring-2 focus:ring-indigo-500
