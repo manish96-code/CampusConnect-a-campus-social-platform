@@ -3,6 +3,7 @@
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\User\Assignment;
+use App\Livewire\User\CourseView;
 use App\Livewire\User\EventLive;
 use App\Livewire\User\FindFriend;
 use App\Livewire\User\Group\Profile as GroupProfile;
@@ -12,6 +13,8 @@ use App\Livewire\User\Library;
 use App\Livewire\User\Post\CreatePost;
 use App\Livewire\User\Profile;
 use App\Livewire\User\Profile\MyProfile;
+use App\Livewire\User\Quiz\QuizView;
+use App\Models\Course;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +32,9 @@ Route::middleware('auth')->group(function(){
     Route::get('/events', EventLive::class)->name('events');
     Route::get('/group', GroupView::class)->name('group');
     Route::get('/group-profile/{id}', GroupProfile::class)->name('group-profile');
+    Route::get('/quiz', QuizView::class)->name('quiz');
+    Route::get('/course', CourseView::class)->name('courses');
+
     Route::get('/logout', function(){
         Auth::logout();
         return redirect()->route('login');

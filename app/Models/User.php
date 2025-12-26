@@ -70,11 +70,17 @@ class User extends Authenticatable
     }
 
     public function friends()
-{
-    return Friend::where(function ($query) {
+    {
+        return Friend::where(function ($query) {
             $query->where('sender_id', $this->id)
-                  ->orWhere('receiver_id', $this->id);
+                ->orWhere('receiver_id', $this->id);
         })
-        ->where('status', 'accepted');
+            ->where('status', 'accepted');
+    }
+
+    public function courses()
+{
+    return $this->belongsToMany(Course::class, 'course_users')->withTimestamps();
 }
+
 }
