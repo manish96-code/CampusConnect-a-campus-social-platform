@@ -12,4 +12,9 @@ class Course extends Model
     {
         return $this->belongsToMany(User::class)->withTimestamps();
     }
+
+     public function quizzes()
+    {
+        return $this->hasMany(Quiz::class);
+    }
 }

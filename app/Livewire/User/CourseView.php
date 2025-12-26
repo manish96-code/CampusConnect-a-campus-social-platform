@@ -21,7 +21,7 @@ class CourseView extends Component
     {
         auth()->user()
             ->courses()
-            ->syncWithoutDetaching([$courseId]); // prevents duplicate enroll
+            ->syncWithoutDetaching([$courseId]);
     }
 
     public function render()
