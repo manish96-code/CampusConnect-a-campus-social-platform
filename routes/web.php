@@ -13,6 +13,8 @@ use App\Livewire\User\Library;
 use App\Livewire\User\Post\CreatePost;
 use App\Livewire\User\Profile;
 use App\Livewire\User\Profile\MyProfile;
+use App\Livewire\User\Quiz\AddQuestions;
+use App\Livewire\User\Quiz\CreateQuiz;
 use App\Livewire\User\Quiz\QuizView;
 use App\Models\Course;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +25,7 @@ use Illuminate\Support\Facades\Route;
 // });
 
 
-Route::middleware('auth')->group(function(){
+Route::middleware('auth')->group(function () {
     Route::get('/', Home::class)->name('home');
     Route::get('/profile/{id?}', Profile::class)->name('profile');
     Route::get('/find-friends', FindFriend::class)->name('find-friends');
@@ -33,16 +35,17 @@ Route::middleware('auth')->group(function(){
     Route::get('/group', GroupView::class)->name('group');
     Route::get('/group-profile/{id}', GroupProfile::class)->name('group-profile');
     Route::get('/quiz', QuizView::class)->name('quiz');
+    // Route::get('/quiz/create', CreateQuiz::class)->name('quiz.create');
+    // Route::get('/quiz/{quiz}/questions', AddQuestions::class)->name('quiz.questions');
     Route::get('/course', CourseView::class)->name('courses');
 
-    Route::get('/logout', function(){
+    Route::get('/logout', function () {
         Auth::logout();
         return redirect()->route('login');
     })->name('logout');
 });
 
-Route::middleware('guest')->group(function(){
+Route::middleware('guest')->group(function () {
     Route::get('/register', Register::class)->name('register');
     Route::get('/login', Login::class)->name('login');
 });
-
