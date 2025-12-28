@@ -4,7 +4,6 @@ namespace App\Livewire\User\Quiz;
 
 use App\Models\Course;
 use App\Models\Quiz;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class CreateQuiz extends Component
@@ -13,7 +12,6 @@ class CreateQuiz extends Component
     public $description;
     public $total_marks = 10;
     public $course_id;
-
     public $courses = [];
 
     protected $rules = [
@@ -33,19 +31,20 @@ class CreateQuiz extends Component
         $this->validate();
 
         $quiz = Quiz::create([
-            'user_id' => auth()->id(),
-            'title' => $this->title,
+            'user_id'     => auth()->id(),
+            'course_id'   => $this->course_id,
+            'title'       => $this->title,
             'description' => $this->description,
             'total_marks' => $this->total_marks,
-            'course_id' => $this->course_id,
+            // is_published = false (default)
         ]);
 
-        // 🔥 EMIT EVENT INSTEAD OF REDIRECT
+        // ✅ Tell parent to open AddQuestions
         $this->dispatch('quiz-created', $quiz->id);
 
-        // $this->reset();
+        // Optional reset
+        // $this->reset(['title', 'description', 'total_marks', 'course_id']);
     }
-
 
     public function render()
     {

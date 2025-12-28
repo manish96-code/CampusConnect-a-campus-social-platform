@@ -12,6 +12,7 @@ class Quiz extends Model
         'title',
         'description',
         'total_marks',
+        'is_published',
     ];
 
     public function user()

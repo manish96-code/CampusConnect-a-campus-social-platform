@@ -5,6 +5,7 @@ namespace App\Livewire\User\Quiz;
 use App\Models\Quiz;
 use App\Models\QuizQuestion;
 use Livewire\Component;
+use Illuminate\Support\Facades\DB;
 
 class AddQuestions extends Component
 {
@@ -22,7 +23,6 @@ class AddQuestions extends Component
     public function mount(Quiz $quiz)
     {
         $this->quiz = $quiz;
-
         $this->addQuestion();
     }
 
@@ -45,19 +45,27 @@ class AddQuestions extends Component
     {
         $this->validate();
 
-        foreach ($this->questions as $q) {
-            QuizQuestion::create([
-                'quiz_id' => $this->quiz->id,
-                'question' => $q['question'],
-                'option_a' => $q['options'][0],
-                'option_b' => $q['options'][1],
-                'option_c' => $q['options'][2],
-                'option_d' => $q['options'][3],
-                'correct_option' => ['A','B','C','D'][$q['correct']],
-            ]);
-        }
+        DB::transaction(function () {
 
-        session()->flash('message', 'Questions added successfully');
+            foreach ($this->questions as $q) {
+                QuizQuestion::create([
+                    'quiz_id'        => $this->quiz->id,
+                    'question'       => $q['question'],
+                    'option_a'       => $q['options'][0],
+                    'option_b'       => $q['options'][1],
+                    'option_c'       => $q['options'][2],
+                    'option_d'       => $q['options'][3],
+                    'correct_option' => ['A','B','C','D'][$q['correct']],
+                ]);
+            }
+
+            // ✅ PUBLISH QUIZ
+            $this->quiz->update([
+                'is_published' => true
+            ]);
+        });
+
+        session()->flash('message', 'Quiz published successfully ✅');
 
         return redirect()->route('quiz');
     }

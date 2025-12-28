@@ -4,7 +4,6 @@ namespace App\Livewire\User\Quiz;
 
 use App\Models\Course;
 use App\Models\Quiz;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class CallingQuiz extends Component
@@ -15,6 +14,7 @@ class CallingQuiz extends Component
     public function render()
     {
         $quizzes = Quiz::with(['course', 'user'])
+            ->where('is_published', true)
             ->when($this->search, function ($q) {
                 $q->where('title', 'like', '%' . $this->search . '%');
             })
@@ -26,7 +26,7 @@ class CallingQuiz extends Component
 
         return view('livewire.user.quiz.calling-quiz', [
             'quizzes' => $quizzes,
-            'courses' => Course::all(),
+            'courses' => Course::select('id', 'course_name')->get(),
         ]);
     }
 }

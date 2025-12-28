@@ -28,7 +28,6 @@ class AttemptQuiz extends Component
         $this->quizId = $quizId;
         $this->quiz = Quiz::with('questions')->findOrFail($quizId);
 
-        // prevent re-attempt
         $this->attempt = QuizAttempt::where('quiz_id', $quizId)
             ->where('user_id', Auth::id())
             ->first();
@@ -36,7 +35,6 @@ class AttemptQuiz extends Component
         if ($this->attempt) {
             $this->submitted = true;
 
-            // preload answers if already attempted
             foreach ($this->attempt->answers as $ans) {
                 $this->answers[$ans->quiz_question_id] = $ans->selected_option;
             }

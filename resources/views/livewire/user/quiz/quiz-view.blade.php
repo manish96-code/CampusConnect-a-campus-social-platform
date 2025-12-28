@@ -42,11 +42,11 @@
     @endif
 
     @if($tab === 'result' && $quizId)
-        <livewire:user.quiz.quiz-result :quizId="$quizId" />
+        {{-- <livewire:user.quiz.quiz-result :quizId="$quizId" /> --}}
     @endif
 
     @if($tab === 'manage' && $quizId)
-        <livewire:user.quiz.manage-quiz :quizId="$quizId" />
+        {{-- <livewire:user.quiz.manage-quiz :quizId="$quizId" /> --}}
     @endif
 
 </div>
