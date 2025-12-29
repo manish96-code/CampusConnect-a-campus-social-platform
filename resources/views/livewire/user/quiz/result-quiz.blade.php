@@ -9,8 +9,15 @@
                 <h2 class="text-2xl font-extrabold text-slate-800">
                     Quiz Result
                 </h2>
-                <p class="text-sm text-slate-500">
+
+                <p class="text-sm text-slate-500 capitalize">
                     {{ $quiz->title }}
+
+                    @if ($attempt->user_id !== auth()->id())
+                        · Student: <strong>{{ $attempt->user->first_name }} {{ $attempt->user->last_name }}</strong>
+                    @else
+                        · Your Result
+                    @endif
                 </p>
             </div>
 
@@ -75,7 +82,7 @@
                 Review Answers
             </button>
 
-            <a href="{{ route('quiz') }}"
+            <a wire:navigate href="{{ route('quiz') }}"
                 class="flex-1 py-3 rounded-xl bg-indigo-600 text-white font-bold text-center hover:bg-indigo-700">
                 Back to Quizzes
             </a>
@@ -121,7 +128,7 @@
                 <!-- OPTIONS -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
 
-                    @foreach (['A', 'B', 'C', 'D'] as $opt)
+                    {{-- @foreach (['A', 'B', 'C', 'D'] as $opt)
                         @php
                             $text = $question->{'option_' . strtolower($opt)};
                             $isCorrect = $opt === $correct;
@@ -151,6 +158,45 @@
                                 </span>
                             @endif
 
+                        </div>
+                    @endforeach --}}
+
+                    @foreach (['A', 'B', 'C', 'D'] as $opt)
+                        @php
+                            $text = $question->{'option_' . strtolower($opt)};
+                            $isCorrect = $opt === $correct;
+                            $isSelected = $opt === $selected;
+
+                            // seen by user
+                            $isOwnResult = $attempt->user_id === auth()->id();
+
+                            // seen by quiz admin/creater
+                            $userResult = $isOwnResult ? 'Your' : 'Their';
+                        @endphp
+
+                        <div
+                            class="p-3 rounded-xl border text-sm font-medium
+                            {{ $isCorrect
+                                ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
+                                : ($isSelected
+                                    ? 'border-rose-500 bg-rose-50 text-rose-700'
+                                    : 'border-slate-200 bg-slate-50') }}">
+
+                            <strong>{{ $opt }}.</strong> {{ $text }}
+
+                            @if ($isCorrect && $isSelected)
+                                <span class="ml-2 text-xs font-bold text-emerald-700">
+                                    ({{ $userResult }} Answer · Correct)
+                                </span>
+                            @elseif ($isCorrect)
+                                <span class="ml-2 text-xs font-bold text-emerald-700">
+                                    (Correct Answer)
+                                </span>
+                            @elseif ($isSelected)
+                                <span class="ml-2 text-xs font-bold text-rose-700">
+                                    ({{ $userResult }} Answer)
+                                </span>
+                            @endif
                         </div>
                     @endforeach
 

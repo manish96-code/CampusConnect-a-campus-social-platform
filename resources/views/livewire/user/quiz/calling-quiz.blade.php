@@ -86,6 +86,10 @@
                         class="block w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold">
                         View Result
                     </button>
+                    {{-- <button wire:click="$dispatch('openResultQuiz', quizId: {{ $quiz->id }})"
+                        class="block w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold">
+                        View Result
+                    </button> --}}
                 @else
                     {{-- ATTEMPT --}}
                     <button wire:click="$dispatch('openAttemptQuiz', { quizId: {{ $quiz->id }} })"

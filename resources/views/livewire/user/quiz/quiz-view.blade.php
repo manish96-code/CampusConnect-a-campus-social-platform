@@ -39,16 +39,21 @@
         <livewire:user.quiz.attempt-quiz :quizId="$quizId" />
     @endif
 
-    @if ($tab === 'result' && $quizId)
+    {{-- @if ($tab === 'result' && $quizId)
     <livewire:user.quiz.result-quiz :quizId="$quizId" />
+    @endif --}}
+
+    @if ($tab === 'result' && $quizId)
+        <livewire:user.quiz.result-quiz :quizId="$quizId" :attemptId="$attemptId" />
     @endif
-    
+
+
     {{-- @if ($tab === 'reviewAns' && $quizId)
         <livewire:user.quiz.review-quiz-answer :quizId="$quizId" />
     @endif --}}
 
     @if ($tab === 'manage' && $quizId)
-        {{-- <livewire:user.quiz.manage-quiz :quizId="$quizId" /> --}}
+        <livewire:user.quiz.manage-quiz :quizId="$quizId" />
     @endif
 
 </div>
