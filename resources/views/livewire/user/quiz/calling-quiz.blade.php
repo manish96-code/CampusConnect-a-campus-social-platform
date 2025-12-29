@@ -48,7 +48,7 @@
                 </p>
 
                 <!-- META -->
-                <div class="flex items-center justify-between text-xs text-slate-500 mt-4">
+                <div class="flex items-center justify-between text-xs text-slate-500 my-4">
                     <span>Marks: <strong>{{ $quiz->total_marks }}</strong></span>
                     <span class="capitalize">By {{ $quiz->user->first_name ?? 'Admin' }}</span>
                 </div>

@@ -8,20 +8,38 @@ use Livewire\Component;
 #[Layout("components.layouts.user")]
 class QuizView extends Component
 {
-    public $tab = 'list'; // list | create | attempt | result | manage | questions
+    public $tab = 'list';
     public $quizId = null;
     protected $listeners = [
         'openAttemptQuiz' => 'openAttemptQuiz',
         'openResultQuiz'  => 'openResultQuiz',
         'openManageQuiz'  => 'openManageQuiz',
         'quiz-created'    => 'quizCreated',
+        'reviewQuizAnswer' => 'reviewQuizAnswer',
     ];
+
+
+    public function reviewQuizAnswer($quizId)
+    {
+        $this->quizId = $quizId;
+        $this->tab = 'reviewAns';
+    }
+
 
     public function openAttemptQuiz($quizId)
     {
         $this->quizId = $quizId;
         $this->tab = 'attempt';
     }
+
+    // #[On('reviewQuizAnswer')]
+    // public function openReview($quizId)
+    // {
+    //     $this->quizId = $quizId;
+    //     $this->showAttempt = false;
+    //     $this->showResult = false;
+    //     $this->showReview = true;
+    // }
 
     public function openResultQuiz($quizId)
     {

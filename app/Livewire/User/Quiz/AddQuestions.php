@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 class AddQuestions extends Component
 {
     public Quiz $quiz;
+    public $quizId;
     public $questions = [];
 
     protected $rules = [
@@ -20,11 +21,13 @@ class AddQuestions extends Component
         'questions.*.correct' => 'required|integer|between:0,3',
     ];
 
-    public function mount(Quiz $quiz)
+    public function mount($quizId)
     {
-        $this->quiz = $quiz;
+        $this->quizId = $quizId;
+        $this->quiz = Quiz::findOrFail($quizId);
         $this->addQuestion();
     }
+
 
     public function addQuestion()
     {
@@ -55,12 +58,13 @@ class AddQuestions extends Component
                     'option_b'       => $q['options'][1],
                     'option_c'       => $q['options'][2],
                     'option_d'       => $q['options'][3],
-                    'correct_option' => ['A','B','C','D'][$q['correct']],
+                    'correct_option' => ['A', 'B', 'C', 'D'][$q['correct']],
                 ]);
             }
 
-            // ✅ PUBLISH QUIZ
+            // changes made to the quiz table
             $this->quiz->update([
+                'total_marks' => count($this->questions),
                 'is_published' => true
             ]);
         });

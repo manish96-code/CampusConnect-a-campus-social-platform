@@ -10,7 +10,7 @@ class CreateQuiz extends Component
 {
     public $title;
     public $description;
-    public $total_marks = 10;
+    // public $total_marks = 10;
     public $course_id;
     public $courses = [];
 
@@ -18,7 +18,7 @@ class CreateQuiz extends Component
         'course_id'   => 'required|exists:courses,id',
         'title'       => 'required|min:3|max:150',
         'description' => 'nullable|max:500',
-        'total_marks' => 'required|integer|min:1',
+        // 'total_marks' => 'required|integer|min:1',
     ];
 
     public function mount()
@@ -35,7 +35,8 @@ class CreateQuiz extends Component
             'course_id'   => $this->course_id,
             'title'       => $this->title,
             'description' => $this->description,
-            'total_marks' => $this->total_marks,
+             'total_marks' => 0,
+            // 'total_marks' => $this->total_marks,
             // is_published = false (default)
         ]);
 
