@@ -44,11 +44,9 @@
                        placeholder:text-slate-400">
 
                     <!-- Search Icon -->
-                    <svg class="absolute left-3 top-2.5 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="m21 21-4.35-4.35M18 10.5a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z" />
-                    </svg>
+                    <x-heroicon-o-magnifying-glass
+                        class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+
                 </div>
             </div>
 
@@ -58,17 +56,18 @@
                 @if ($isAdmin)
                     <button wire:click="setFilter('add')"
                         class="px-3 py-1.5 text-xs font-bold rounded-lg transition
-                {{ $filter === 'add' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' }}">
-                        + Add Members
+                        {{ $filter === 'add' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' }}">
+                        <x-heroicon-o-user-plus class="w-4 h-4 mr-1 inline-block" />
+                        Add Members
                     </button>
                 @endif
 
                 @foreach ([
-                        'approved' => 'Members',
-                        'admin' => 'Admins',
-                        'pending' => 'Pending',
-                        'all' => 'All',
-                    ] as $key => $label)
+                    'approved' => 'Members',
+                    'admin' => 'Admins',
+                    'pending' => 'Pending',
+                    'all' => 'All',
+                ] as $key => $label)
                     <button wire:click="setFilter('{{ $key }}')"
                         class="px-3 py-1.5 text-xs font-bold rounded-lg transition
                 {{ $filter === $key ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
@@ -100,8 +99,14 @@
                                 class="flex items-center justify-between px-6 py-4">
 
                                 <div class="flex items-center gap-4">
-                                    <img src="https://ui-avatars.com/api/?name={{ $user->first_name }}+{{ $user->last_name }}&background=6366f1&color=fff"
-                                        class="w-11 h-11 rounded-xl">
+                                    {{-- <img src="https://ui-avatars.com/api/?name={{ $user->first_name }}+{{ $user->last_name }}&background=6366f1&color=fff"
+                                        class="w-11 h-11 rounded-xl"> --}}
+                                    <img src="@if ($user->dp) {{ asset('storage/images/dp/' . $user->dp) }}
+                                        @else
+                                            https://ui-avatars.com/api/?name={{ $user->first_name }}+{{ $user->last_name }}&background=6366f1&color=fff @endif"
+                                        alt="{{ $user->first_name }}"
+                                        class="w-11 h-11 rounded-full object-cover border">
+
 
                                     <div>
                                         <p class="text-sm font-bold text-slate-800 capitalize">
@@ -118,7 +123,7 @@
                                     class="px-4 py-1.5 text-xs font-bold rounded-lg
                                     bg-emerald-600 text-white hover:bg-emerald-700
                                     disabled:opacity-50 disabled:cursor-not-allowed transition">
-                                    + Add
+                                    <x-heroicon-o-user-plus class="w-4 h-4 mr-1 inline-block" /> Add
                                 </button>
 
                             </div>
@@ -140,8 +145,13 @@
 
                         <!-- User Info -->
                         <div class="flex items-center gap-4">
-                            <img src="https://ui-avatars.com/api/?name={{ $member->first_name }}+{{ $member->last_name }}&background=6366f1&color=fff"
-                                class="w-11 h-11 rounded-xl">
+                            {{-- <img src="https://ui-avatars.com/api/?name={{ $member->first_name }}+{{ $member->last_name }}&background=6366f1&color=fff"
+                                class="w-11 h-11 rounded-xl"> --}}
+                            <img src="@if ($member->dp) {{ asset('storage/images/dp/' . $member->dp) }}
+                                @else
+                                    https://ui-avatars.com/api/?name={{ $member->first_name }}+{{ $member->last_name }}&background=6366f1&color=fff @endif"
+                                alt="{{ $member->first_name }}" class="w-11 h-11 rounded-full object-cover border">
+
 
                             <div>
                                 <a href="{{ route('profile', $member->id) }}"

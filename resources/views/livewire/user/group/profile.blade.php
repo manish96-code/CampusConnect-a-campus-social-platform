@@ -13,7 +13,7 @@
             @if ($isAdmin)
                 <label
                     class="absolute top-4 right-4 bg-black/60 text-white text-xs px-3 py-1.5 rounded-lg cursor-pointer opacity-0 group-hover:opacity-100 transition">
-                    📷 Edit Cover
+                    <x-heroicon-o-camera class="w-6 h-6 text-white" />
                     <input type="file" wire:model="cover_pic" class="hidden" accept="image/*">
                 </label>
             @endif
@@ -36,7 +36,7 @@
                         <label
                             class="absolute inset-0 bg-black/40 flex items-center justify-center rounded-full
                             opacity-0 group-hover:opacity-100 cursor-pointer transition">
-                            📷
+                            <x-heroicon-o-camera class="w-6 h-6 text-white" />
                             <input type="file" wire:model="profile_pic" class="hidden" accept="image/*">
                         </label>
                     @endif
@@ -181,15 +181,17 @@
 
                         {{-- VIEW CHAT --}}
                         <button wire:click="setTab('discussion')"
-                            class="px-4 py-2 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition">
-                            💬 View Chat
+                            class="px-4 py-2 rounded-xl text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition flex gap-2 items-center">
+                            <x-heroicon-o-chat-bubble-left-right class="w-4 h-4" />
+                            View Chat
                         </button>
 
                         {{-- VIEW MEMBERS --}}
                         @if ($isAdmin)
                             <button wire:click="setTab('members')"
-                                class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
-                                👥 View Members
+                                class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex gap-2 items-center">
+                                <x-heroicon-o-users class="w-4 h-4" />
+                                View Members
                             </button>
                         @endif
 
@@ -263,15 +265,12 @@
                         {{-- ACTIONS --}}
                         <div class="pt-6 border-t border-slate-100 flex justify-end gap-3">
                             <button wire:click="setTab('discussion')"
-                                class="px-4 py-2 text-sm font-bold rounded-xl
-                        bg-slate-100 text-slate-600 hover:bg-slate-200">
+                                class="px-4 py-2 text-sm font-bold rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200">
                                 Cancel
                             </button>
 
                             <button type="submit" wire:loading.attr="disabled"
-                                class="px-5 py-2 text-sm font-bold rounded-xl
-                   bg-indigo-600 text-white hover:bg-indigo-700
-                   disabled:opacity-50">
+                                class="px-5 py-2 text-sm font-bold rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50">
                                 Save Changes
                             </button>
                         </div>
@@ -321,18 +320,6 @@
                 </div>
             </div>
 
-            {{-- <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="font-bold text-slate-800 text-sm">Recent Media</h3>
-                    <a href="#" class="text-xs text-indigo-600 font-bold hover:underline">See all</a>
-                </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <div class="aspect-square bg-slate-100 rounded-lg"></div>
-                    <div class="aspect-square bg-slate-100 rounded-lg"></div>
-                    <div class="aspect-square bg-slate-100 rounded-lg"></div>
-                </div>
-            </div> --}}
-
             @if (auth()->check() &&
                     $group->members()->where('users.id', auth()->id())->wherePivot('status', 'approved')->exists())
 
@@ -373,8 +360,6 @@
                 </div>
 
             @endif
-
-
 
         </div>
 

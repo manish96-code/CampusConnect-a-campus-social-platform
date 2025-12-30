@@ -20,7 +20,7 @@
                     focus:ring-2 focus:ring-white outline-none"
                 >
                 <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                    🔍
+                    <x-heroicon-o-magnifying-glass class="w-5 h-5" />
                 </span>
             </div>
         </div>
@@ -87,8 +87,9 @@
                     </div>
 
                     <div class="mt-5 flex items-center justify-between">
-                        <span class="text-xs text-slate-400">
-                            👨‍🏫 Admin
+                        <span class="text-xs text-slate-400 flex items-center">
+                            <x-heroicon-o-user class="w-4 h-4 mr-1" />
+                            Admin
                         </span>
 
                         @if($enrolled)

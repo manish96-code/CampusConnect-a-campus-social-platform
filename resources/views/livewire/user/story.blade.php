@@ -8,20 +8,26 @@
             <img src="https://ui-avatars.com/api/?name={{ auth()->user()->first_name . ' ' . auth()->user()->last_name ?? 'User' }}&background=random"
                 alt="Profile" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
         @endif
+
         <div class="absolute bottom-0 w-full bg-white h-12 flex justify-center items-center">
             <form wire:submit.prevent="createStory">
                 <input type="file" wire:model="media_path" id="story_media" class="hidden">
+
                 <label for="story_media"
-                    class="w-8 h-8 bg-blue-500 rounded-full border-4 border-white flex items-center justify-center -mt-8 text-white font-bold text-xl cursor-pointer">
-                    +
+                    class="w-8 h-8 bg-blue-500 rounded-full border-4 border-white flex items-center justify-center -mt-8 text-white cursor-pointer">
+                    <x-heroicon-o-plus class="w-4 h-4" />
                 </label>
+
                 @error('media_path')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
                 <input type="hidden" value="Create Story" class="hidden">
             </form>
         </div>
-        <div class="absolute bottom-2 w-full text-center text-xs font-semibold text-black">Create story</div>
+
+        <div class="absolute bottom-2 w-full text-center text-xs font-semibold text-black">
+            Create Story
+        </div>
     </div>
 
     {{-- calling stories --}}
@@ -29,35 +35,32 @@
         <div class="min-w-[112px] max-w-32 h-full bg-gray-200 rounded-xl overflow-hidden relative cursor-pointer">
             <img src="{{ asset('storage/' . $story->media_path) }}"
                 class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+
             <div class="absolute top-2 left-2 w-8 h-8 rounded-full border-4 border-blue-500 overflow-hidden">
                 @if ($story->user->dp)
-                    <img src="{{ asset('storage/images/dp/' . $story->user->dp) }}" class="w-full h-full object-cover">
+                    <img src="{{ asset('storage/images/dp/' . $story->user->dp) }}"
+                         class="w-full h-full object-cover">
                 @else
                     <img src="https://ui-avatars.com/api/?name={{ $story->user->first_name . ' ' . $story->user->last_name ?? 'User' }}&background=random"
                         class="w-full h-full object-cover">
                 @endif
             </div>
+
             <div
-                class="absolute bottom-2 left-2  text-white font-semibold text-xs shadow-black drop-shadow-md capitalize">
+                class="absolute bottom-2 left-2 text-white font-semibold text-xs shadow-black drop-shadow-md capitalize">
                 {{ $story->user->first_name }} {{ $story->user->last_name }}
             </div>
         </div>
     @endforeach
-
 
     <style>
         /* Hide scrollbar but keep scroll functionality */
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
         }
-
         .scrollbar-hide {
             -ms-overflow-style: none;
-            /* IE & Edge */
             scrollbar-width: none;
-            /* Firefox */
         }
     </style>
-
-
 </div>

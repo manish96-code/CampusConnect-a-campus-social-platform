@@ -10,7 +10,6 @@
                         <p class="text-xs text-slate-500 uppercase">{{ strtoupper($viewerExt) }} Preview</p>
                     </div>
                     <button wire:click="closeViewer" class="p-2 rounded-lg hover:bg-slate-100">
-                        {{-- <i data-feather="x" class="w-4 h-4"></i> --}}
                         <x-heroicon-o-x-mark class="w-4 h-4" />
                     </button>
                 </div>
@@ -22,7 +21,6 @@
                         <iframe src="{{ $viewerUrl }}" class="w-full h-full" frameborder="0">
                         </iframe>
                     @else
-                        {{-- For doc/docx etc. use Google Docs Viewer --}}
                         <iframe src="https://docs.google.com/gview?url={{ urlencode($viewerUrl) }}&embedded=true"
                             class="w-full h-full" frameborder="0">
                         </iframe>
@@ -49,7 +47,6 @@
                     @if ($isCreating)
                         <x-heroicon-o-x-mark class="w-4 h-4" /> Cancel
                     @else
-                        {{-- <i data-feather="upload" class="w-4 h-4"></i> Upload --}}
                         <x-heroicon-o-arrow-up-tray class="w-4 h-4" /> Upload
                     @endif
                 </button>
@@ -103,7 +100,6 @@
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
 
                 <div class="flex items-center justify-between gap-3 mb-4 p-4 border-b border-slate-100">
-                    {{-- <div class="text-sm text-slate-500 font-semibold">Filter:</div> --}}
 
                     <div class="flex items-center gap-2">
                         <button wire:click="setFilter('all')"
@@ -133,11 +129,11 @@
                         <div class="p-4 flex items-center gap-4 hover:bg-slate-50 transition">
                             <div
                                 class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0">
-                               @if (in_array(strtolower($ext), ['pdf', 'doc', 'docx']))
-    <x-heroicon-o-document-text class="w-5 h-5 text-indigo-600" />
-@else
-    <x-heroicon-o-photo class="w-5 h-5 text-indigo-600" />
-@endif
+                                @if (in_array(strtolower($ext), ['pdf', 'doc', 'docx']))
+                                    <x-heroicon-o-document-text class="w-5 h-5 text-indigo-600" />
+                                @else
+                                    <x-heroicon-o-photo class="w-5 h-5 text-indigo-600" />
+                                @endif
 
                             </div>
 
@@ -153,20 +149,17 @@
                             <div class="flex items-center gap-2">
                                 <button wire:click="view({{ $doc->id }})"
                                     class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition">
-                                    {{-- <i data-feather="eye" class="w-4 h-4"></i> --}}
                                     <x-heroicon-o-eye class="w-4 h-4" />
                                 </button>
 
                                 <a href="{{ asset('storage/' . $doc->file) }}" download
                                     class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition">
-                                    {{-- <i data-feather="download" class="w-4 h-4"></i> --}}
                                     <x-heroicon-o-arrow-down-tray class="w-4 h-4" />
                                 </a>
 
                                 @if ($doc->user_id === auth()->id())
                                     <button wire:click="delete({{ $doc->id }})" wire:confirm="Delete this file?"
                                         class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition">
-                                        {{-- <i data-feather="trash-2" class="w-4 h-4"></i> --}}
                                         <x-heroicon-o-trash class="w-4 h-4" />
                                     </button>
                                 @endif

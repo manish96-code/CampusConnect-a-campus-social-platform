@@ -142,7 +142,7 @@
 
         <textarea wire:model.defer="newQuestion.question" class="w-full rounded-xl border px-4 py-2"
             placeholder="Enter question">
-    </textarea>
+        </textarea>
 
         <div class="grid sm:grid-cols-2 gap-3">
             @foreach (['A', 'B', 'C', 'D'] as $i => $label)
@@ -235,7 +235,6 @@
                                     class="text-indigo-600 font-bold hover:underline">
                                     View
                                 </button>
-
                             </td>
 
                         </tr>

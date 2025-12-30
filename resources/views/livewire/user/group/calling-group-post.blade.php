@@ -21,8 +21,9 @@
         </div>
 
         {{-- Optional status --}}
-        <span class="ml-auto text-xs text-emerald-600 font-semibold">
-            ● Active
+        <span class="ml-auto text-xs text-emerald-600 font-semibold flex items-center gap-1">
+            <span class="bg-emerald-600 h-2.5 w-2.5 rounded-full"></span>
+            <span>Active</span>
         </span>
     </div>
 
@@ -30,11 +31,8 @@
     <div class="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-slate-50" x-data="{ scroll() { this.$el.scrollTop = this.$el.scrollHeight } }" x-init="scroll()"
         x-on:post-created.window="$nextTick(() => scroll())">
 
-        {{-- @if (auth()->check() &&
-    $group->members()->where('users.id', auth()->id())->exists()) --}}
         @if (auth()->check() &&
                 $group->members()->where('users.id', auth()->id())->wherePivot('status', 'approved')->exists())
-
 
             @forelse ($posts as $post)
                 @php
@@ -49,7 +47,6 @@
 
                     $canDelete = $isMe || $isAdmin;
                 @endphp
-                {{-- @php $isMe = $post->user_id === auth()->id(); @endphp --}}
 
                 <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }}">
                     <div class="max-w-[75%] flex gap-2 {{ $isMe ? 'flex-row-reverse' : '' }}">
@@ -75,8 +72,8 @@
                                 <div class="relative ml-2 mb-6" x-data="{ open: false }">
 
                                     {{-- 3 DOT BUTTON --}}
-                                    <button @click="open = !open" class="text opacity-80 hover:opacity-100 absolute right-2">
-                                        ⋮
+                                    <button @click="open = !open" class="opacity-80 hover:opacity-100 absolute right-2">
+                                        <x-heroicon-o-ellipsis-vertical class="w-4 h-4" />
                                     </button>
 
                                     {{-- DROPDOWN --}}
@@ -84,13 +81,13 @@
                                         class="absolute right-0 mt-1 w-28 bg-white border rounded-xl shadow-lg z-20">
 
                                         <button wire:click="deletePost({{ $post->id }})" @click="open = false"
-                                            class="w-full text-left px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 rounded-xl">
-                                            🗑 Delete
+                                            class="w-full text-left px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 rounded-xl flex items-center gap-2">
+                                            <x-heroicon-o-trash class="w-4 h-4" />
+                                            Delete
                                         </button>
                                     </div>
                                 </div>
                             @endif
-
 
                             @if ($post->caption)
                                 <p class="text-sm leading-relaxed">
@@ -112,7 +109,8 @@
 
             @empty
                 <div class="text-center text-sm text-slate-500 py-10">
-                    No messages yet. Start the conversation 👋
+                    No messages yet. Start the conversation
+                    <x-heroicon-o-hand-raised class="inline w-4 h-4 ml-1" />
                 </div>
             @endforelse
         @else

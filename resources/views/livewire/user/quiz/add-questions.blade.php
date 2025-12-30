@@ -19,7 +19,6 @@
                 @enderror
 
 
-
                 <div class="grid sm:grid-cols-2 gap-3">
                     @foreach (['A', 'B', 'C', 'D'] as $oIndex => $label)
                         <label class="flex gap-2">
@@ -52,12 +51,12 @@
                     </p>
                 @enderror
 
-
             </div>
         @endforeach
 
         <button type="button" wire:click="addQuestion" class="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl">
-            + Add Question
+            <x-heroicon-o-plus class="w-4 h-4 mr-1 inline-block" />
+            Add Question
         </button>
 
         <button class="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl">

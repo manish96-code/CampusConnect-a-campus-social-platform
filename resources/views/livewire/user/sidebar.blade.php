@@ -10,7 +10,7 @@
            {{ request()->routeIs('home')
                ? 'bg-indigo-50 text-indigo-600'
                : 'text-slate-600 hover:bg-slate-50 hover:text-indigo-600' }}">
-            <i data-feather="home" class="w-4 h-4"></i>
+            <x-heroicon-o-home class="w-4 h-4" />
             <span>Campus Feed</span>
         </a>
 
@@ -19,7 +19,7 @@
            {{ request()->routeIs('profile')
                ? 'bg-indigo-50 text-indigo-600'
                : 'text-slate-600 hover:bg-slate-50 hover:text-indigo-600' }}">
-            <i data-feather="user" class="w-4 h-4"></i>
+            <x-heroicon-o-user class="w-4 h-4" />
             <span>My Profile</span>
         </a>
 
@@ -28,7 +28,7 @@
            {{ request()->routeIs('find-friends')
                ? 'bg-indigo-50 text-indigo-600'
                : 'text-slate-600 hover:bg-slate-50 hover:text-indigo-600' }}">
-            <i data-feather="users" class="w-4 h-4"></i>
+            <x-heroicon-o-users class="w-4 h-4" />
             <span>Classmates</span>
         </a>
 
@@ -42,10 +42,9 @@
             {{ request()->routeIs('courses')
                 ? 'bg-indigo-50 text-indigo-600'
                 : 'text-slate-600 hover:bg-slate-50 hover:text-indigo-600' }}">
-            <i data-feather="layers" class="w-4 h-4"></i>
+            <x-heroicon-o-squares-2x2 class="w-4 h-4" />
             <span>Courses</span>
         </a>
-
 
         <a wire:navigate href="{{ route('assignment') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200
@@ -53,11 +52,9 @@
              ? 'bg-indigo-50 text-indigo-600'
              : 'text-slate-600 hover:bg-slate-50 hover:text-indigo-600' }}">
             <div class="flex items-center gap-3">
-                <i data-feather="clipboard" class="w-4 h-4 group-hover:stroke-indigo-600"></i>
+                <x-heroicon-o-clipboard-document class="w-4 h-4 group-hover:text-indigo-600" />
                 <span>Assignments</span>
             </div>
-            <!-- Notification Dot -->
-            {{-- <span class="bg-rose-100 text-rose-600 text-[10px] font-bold px-1.5 py-0.5 rounded-md">2</span> --}}
         </a>
 
         <a wire:navigate href="{{ route('library') }}"
@@ -65,7 +62,7 @@
            {{ request()->routeIs('library')
                ? 'bg-indigo-50 text-indigo-600'
                : 'text-slate-600 hover:bg-slate-50 hover:text-indigo-600' }}">
-            <i data-feather="book" class="w-4 h-4 group-hover:stroke-indigo-600"></i>
+            <x-heroicon-o-book-open class="w-4 h-4 group-hover:text-indigo-600" />
             <span>Library</span>
         </a>
 
@@ -74,15 +71,13 @@
             {{ request()->routeIs('quiz')
                 ? 'bg-indigo-50 text-indigo-600'
                 : 'text-slate-600 hover:bg-slate-50 hover:text-indigo-600' }}">
-
-            <i data-feather="help-circle" class="w-4 h-4"></i>
+            <x-heroicon-o-question-mark-circle class="w-4 h-4" />
             <span>Quiz</span>
         </a>
 
-
         <a wire:navigate href="#"
             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all duration-200 group">
-            <i data-feather="award" class="w-4 h-4 group-hover:stroke-indigo-600"></i>
+            <x-heroicon-o-trophy class="w-4 h-4 group-hover:text-indigo-600" />
             <span>Grades</span>
         </a>
 
@@ -96,26 +91,26 @@
            {{ request()->routeIs('events')
                ? 'bg-indigo-50 text-indigo-600'
                : 'text-slate-600 hover:bg-slate-50 hover:text-indigo-600' }}">
-            <i data-feather="calendar" class="w-4 h-4 group-hover:stroke-indigo-600"></i>
+            <x-heroicon-o-calendar-days class="w-4 h-4 group-hover:text-indigo-600" />
             <span>Events</span>
         </a>
 
         <a wire:navigate href="{{ route('group') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group
            {{ request()->routeIs('group') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-600 hover:bg-slate-50 hover:text-indigo-600' }}">
-            <i data-feather="grid" class="w-4 h-4 group-hover:stroke-indigo-600"></i>
+            <x-heroicon-o-squares-plus class="w-4 h-4 group-hover:text-indigo-600" />
             <span>Groups</span>
         </a>
 
         <a wire:navigate href="#"
             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all duration-200 group">
-            <i data-feather="shopping-bag" class="w-4 h-4 group-hover:stroke-indigo-600"></i>
+            <x-heroicon-o-shopping-bag class="w-4 h-4 group-hover:text-indigo-600" />
             <span>Marketplace</span>
         </a>
 
         <a wire:navigate href="#"
             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all duration-200 group">
-            <i data-feather="briefcase" class="w-4 h-4 group-hover:stroke-indigo-600"></i>
+            <x-heroicon-o-briefcase class="w-4 h-4 group-hover:text-indigo-600" />
             <span>Placements</span>
         </a>
 
@@ -125,17 +120,17 @@
         <!-- SETTINGS -->
         <a wire:navigate href="#"
             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all duration-200">
-            <i data-feather="settings" class="w-4 h-4"></i>
+            <x-heroicon-o-cog-6-tooth class="w-4 h-4" />
             <span>Settings</span>
         </a>
 
     </nav>
 
-    <!-- Bottom Footer Actions (Fixed at Bottom) -->
+    <!-- Bottom Footer Actions -->
     <div class="p-3 border-t border-slate-100 flex-shrink-0 bg-white">
         <a wire:navigate href="{{ route('logout') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition-all duration-200 group">
-            <i data-feather="log-out" class="w-4 h-4 group-hover:stroke-rose-600"></i>
+            <x-heroicon-o-arrow-right-on-rectangle class="w-4 h-4 group-hover:text-rose-600" />
             <span>Log Out</span>
         </a>
     </div>

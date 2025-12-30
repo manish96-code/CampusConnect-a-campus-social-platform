@@ -54,22 +54,6 @@
                 </div>
 
                 <!-- ACTION -->
-                {{-- <div class="mt-5">
-                    @if ($quiz->user_id === auth()->id())
-                        <a href=""
-                           class="block w-full text-center py-2.5 rounded-xl font-bold text-sm
-                                  bg-slate-100 text-slate-700 hover:bg-slate-200">
-                            Manage Quiz
-                        </a>
-                    @else
-                        <a href=""
-                           class="block w-full text-center py-2.5 rounded-xl font-bold text-sm
-                                  bg-indigo-600 text-white hover:bg-indigo-700">
-                            Attempt Quiz
-                        </a>
-                    @endif
-                </div> --}}
-
                 @php
                     $attempt = $quiz->attempts->where('user_id', auth()->id())->first();
                 @endphp
@@ -86,10 +70,6 @@
                         class="block w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold">
                         View Result
                     </button>
-                    {{-- <button wire:click="$dispatch('openResultQuiz', quizId: {{ $quiz->id }})"
-                        class="block w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold">
-                        View Result
-                    </button> --}}
                 @else
                     {{-- ATTEMPT --}}
                     <button wire:click="$dispatch('openAttemptQuiz', { quizId: {{ $quiz->id }} })"

@@ -124,7 +124,8 @@
                                             </div>
                                             <span>•</span>
                                             <div class="flex items-center gap-1">
-                                                <x-heroicon-o-clock class="w-3 h-3" /><x-heroicon-o-map-pin class="w-3 h-3" />
+                                                <x-heroicon-o-clock class="w-3 h-3" /><x-heroicon-o-map-pin
+                                                    class="w-3 h-3" />
                                                 {{ $location ?: 'Location' }}
                                             </div>
                                         </div>
@@ -144,7 +145,6 @@
 
                 {{-- FILTER CONTROLS --}}
                 <div class="flex items-center gap-3 flex-wrap mb-4 px-3">
-                    {{-- <div class="text-sm text-slate-500 font-semibold mr-2">Filter:</div> --}}
 
                     <button wire:click="setFilter('all')"
                         class="px-3 py-1.5 rounded-full text-sm font-medium transition {{ $filter === 'all' ? 'bg-indigo-600 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100' }}">
@@ -194,8 +194,9 @@
                                         {{ $event->title }}
                                     </h3>
                                     <div class="flex items-center gap-2 text-xs text-slate-500">
-                                        <span class="flex items-center gap-1"><i data-feather="clock"
-                                                class="w-3 h-3"></i> {{ $date->format('h:i A') }}</span>
+                                        <span class="flex items-center gap-1">
+                                            <x-heroicon-o-clock class="w-3 h-3" />
+                                            {{ $date->format('h:i A') }}</span>
                                         <span>•</span>
                                         <span class="truncate">{{ Str::limit($event->location, 20) }}</span>
                                     </div>
@@ -215,8 +216,7 @@
                                         </button>
 
                                         <button wire:click="delete({{ $event->id }})" wire:confirm="Cancel event?"
-                                            class="text-slate-300 hover:text-rose-500 transition"
-                                            title="Delete event">
+                                            class="text-slate-300 hover:text-rose-500 transition" title="Delete event">
                                             <x-heroicon-o-trash class="w-4 h-4" />
                                         </button>
                                     </div>
@@ -237,10 +237,9 @@
                                     <p class="text-xs font-medium text-slate-500 capitalize">Organized By <span
                                             class="font-bold text-slate-700">{{ $event->user->first_name }}</span></p>
                                 </div>
-                                {{-- <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg">View</span> --}}
                                 <button wire:click="view({{ $event->id }})"
                                     class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 hover:text-indigo-700 flex items-center gap-1 transition">
-                                    <i data-feather="eye" class="w-3 h-3"></i>
+                                    <x-heroicon-o-eye class="w-3 h-3" />
                                     View
                                 </button>
 
@@ -251,7 +250,7 @@
                             class="col-span-1 md:col-span-2 py-20 text-center bg-white rounded-3xl border border-dashed border-slate-200">
                             <div
                                 class="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i data-feather="calendar" class="w-8 h-8 text-indigo-400"></i>
+                                <x-heroicon-o-calendar class="w-8 h-8 text-indigo-400" />
                             </div>
                             <h3 class="text-lg font-bold text-slate-700">No Events Yet</h3>
                             <p class="text-slate-500 text-sm mt-1">Be the first to host an event on campus!</p>
@@ -426,7 +425,7 @@
                         </div>
                         <button wire:click="$set('participantListModal', false)"
                             class="p-2 rounded-lg hover:bg-slate-100">
-                            <i data-feather="x" class="w-4 h-4">Close</i>
+                            <x-heroicon-o-x-mark class="w-4 h-4" />
                         </button>
                     </div>
 
