@@ -1,17 +1,25 @@
 <div class="max-w-7xl mx-auto space-y-6" x-data="{ editingQuiz: false, adding: false }">
 
+    <livewire:user.quiz.quiz-view />
+
+
     <!-- ================= HEADER ================= -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
             <h2 class="text-2xl font-extrabold text-slate-800">
                 Manage Quiz
             </h2>
-            <p class="text-sm text-slate-500">
+            <p class="text-sm text-slate-500 capitalize">
                 {{ $quiz->title }}
             </p>
         </div>
 
         <div class="flex gap-3">
+            <a wire:navigate href="{{ route('quiz') }}"
+                class="flex-1 py-2 px-3 rounded-xl bg-slate-200 font-bold text-sm text-center hover:bg-slate-300">
+                Back to Quizzes
+            </a>
+
             <button @click="editingQuiz = !editingQuiz"
                 class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-bold">
                 Edit Quiz
@@ -24,12 +32,13 @@
         </div>
     </div>
 
+    
     <!-- ================= QUIZ DETAILS ================= -->
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
         <div class="bg-white border rounded-2xl p-5">
             <p class="text-xs text-slate-500">Course</p>
-            <p class="font-bold text-slate-800">
+            <p class="font-bold text-slate-800 capitalize">
                 {{ $quiz->course->course_name ?? 'General' }}
             </p>
         </div>
@@ -177,10 +186,6 @@
 
 
 
-
-
-
-
     <!-- ================= USER ATTEMPTS ================= -->
     <div class="bg-white border rounded-2xl overflow-hidden">
 
@@ -230,12 +235,13 @@
                             </td>
 
                             <td class="px-6 py-3">
-                                <button
-                                    wire:click="$dispatch('openResultQuiz', {quizId: {{ $quiz->id }}, attemptId: {{ $attempt->id }} })"
-                                    class="text-indigo-600 font-bold hover:underline">
+                                <a wire:navigate href="{{ route('quiz.result', [$quiz->id, $attempt->id]) }}"
+                                    class="inline-flex items-center gap-1.5 text-indigo-600 font-bold hover:text-indigo-800 transition">
+                                    <x-heroicon-o-eye class="w-4 h-4" />
                                     View
-                                </button>
+                                </a>
                             </td>
+
 
                         </tr>
 

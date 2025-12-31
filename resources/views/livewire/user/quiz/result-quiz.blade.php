@@ -78,9 +78,19 @@
 
         <!-- ACTIONS -->
         <div class="flex flex-col md:flex-row gap-4">
-            <button @click="showReview = true" class="flex-1 py-3 rounded-xl bg-slate-200 font-bold hover:bg-slate-300">
-                Review Answers
+
+            <button @click="showReview = !showReview"
+                class="flex-1 py-3 rounded-xl bg-slate-200 font-bold hover:bg-slate-300">
+
+                <span x-show="!showReview" x-cloak>
+                    Review Answers
+                </span>
+
+                <span x-show="showReview" x-cloak>
+                    Close Review
+                </span>
             </button>
+
 
             <a wire:navigate href="{{ route('quiz') }}"
                 class="flex-1 py-3 rounded-xl bg-indigo-600 text-white font-bold text-center hover:bg-indigo-700">

@@ -1,4 +1,6 @@
-<div class="space-y-6">
+<div class="space-y-6 p-5">
+
+    {{-- <livewire:user.quiz.quiz-view /> --}}
 
     <!-- HEADER -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -17,13 +19,40 @@
                     class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             </div>
 
+            <!-- ALL QUIZZES -->
+            <button wire:click="$set('myQuiz', false)"
+                class="px-3 py-2 text-xs font-bold rounded-lg transition
+                {{ !$myQuiz ? 'bg-indigo-600 text-white' : 'border border-slate-200 text-slate-600 hover:bg-slate-100' }}">
+                All Quizzes
+            </button>
+
+            <!-- MY QUIZZES -->
+            <button wire:click="$set('myQuiz', true)"
+                class="px-3 py-2 text-xs font-bold rounded-lg transition
+                {{ $myQuiz ? 'bg-indigo-600 text-white' : 'border border-slate-200 text-slate-600 hover:bg-slate-100' }}">
+                My Quizzes
+            </button>
+
+
             <!-- COURSE FILTER -->
-            <select wire:model="courseFilter" class="rounded-xl border border-slate-200 px-4 py-2 text-sm capitalize">
+            <select wire:model.live="courseFilter" class="rounded-xl border border-slate-200 px-4 py-2 text-sm capitalize">
                 <option value="all">All Courses</option>
                 @foreach ($courses as $course)
                     <option value="{{ $course->id }}">{{ $course->course_name }}</option>
                 @endforeach
             </select>
+
+            {{-- Create Quiz --}}
+            <a wire:navigate href="{{ route('quiz.create') }}"
+                class="flex items-center gap-2 px-4 py-2 text-sm font-bold rounded-lg transition
+                {{ request()->routeIs('quiz.create')
+                    ? 'bg-indigo-50 text-indigo-600'
+                    : 'border border-slate-200 text-slate-600 hover:text-indigo-600 hover:bg-slate-50' }}">
+
+                <x-heroicon-o-plus-circle class="w-4 h-4" />
+                Create Quiz
+            </a>
+
         </div>
     </div>
 
@@ -58,25 +87,32 @@
                     $attempt = $quiz->attempts->where('user_id', auth()->id())->first();
                 @endphp
 
-                @if ($quiz->user_id === auth()->id())
-                    {{-- MANAGE --}}
-                    <button wire:click="$dispatch('openManageQuiz', { quizId: {{ $quiz->id }} })"
-                        class="block w-full py-2.5 rounded-xl bg-slate-100 font-bold">
-                        Manage Quiz
-                    </button>
-                @elseif ($attempt)
-                    {{-- RESULT --}}
-                    <button wire:click="$dispatch('openResultQuiz', { quizId: {{ $quiz->id }} })"
-                        class="block w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold">
-                        View Result
-                    </button>
-                @else
-                    {{-- ATTEMPT --}}
-                    <button wire:click="$dispatch('openAttemptQuiz', { quizId: {{ $quiz->id }} })"
-                        class="block w-full py-2.5 rounded-xl bg-indigo-600 text-white font-bold">
-                        Attempt Quiz
-                    </button>
-                @endif
+                <div class="pt-4 mt-4 border-t border-slate-100">
+
+                    @if ($quiz->user_id === auth()->id())
+                        {{-- MANAGE --}}
+                        <a wire:navigate href="{{ route('quiz.manage', $quiz->id) }}"
+                            class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition">
+                            <x-heroicon-o-pencil-square class="w-4 h-4" />
+                            Manage Quiz
+                        </a>
+                    @elseif ($attempt)
+                        {{-- RESULT --}}
+                        <a wire:navigate href="{{ route('quiz.result', [$quiz->id, $attempt->id]) }}"
+                            class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 transition">
+                            <x-heroicon-o-check-circle class="w-4 h-4" />
+                            View Result
+                        </a>
+                    @else
+                        {{-- ATTEMPT --}}
+                        <a wire:navigate href="{{ route('quiz.attempt', $quiz->id) }}"
+                            class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition">
+                            <x-heroicon-o-play class="w-4 h-4" />
+                            Attempt Quiz
+                        </a>
+                    @endif
+
+                </div>
 
 
             </div>

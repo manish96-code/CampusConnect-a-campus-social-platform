@@ -5,7 +5,11 @@ namespace App\Livewire\User\Quiz;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
+
+#[Layout("components.layouts.user")]
+
 
 class ResultQuiz extends Component
 {

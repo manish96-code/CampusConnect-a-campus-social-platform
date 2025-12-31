@@ -14,8 +14,12 @@ use App\Livewire\User\Post\CreatePost;
 use App\Livewire\User\Profile;
 use App\Livewire\User\Profile\MyProfile;
 use App\Livewire\User\Quiz\AddQuestions;
+use App\Livewire\User\Quiz\AttemptQuiz;
+use App\Livewire\User\Quiz\CallingQuiz;
 use App\Livewire\User\Quiz\CreateQuiz;
+use App\Livewire\User\Quiz\ManageQuiz;
 use App\Livewire\User\Quiz\QuizView;
+use App\Livewire\User\Quiz\ResultQuiz;
 use App\Models\Course;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -34,9 +38,37 @@ Route::middleware('auth')->group(function () {
     Route::get('/events', EventLive::class)->name('events');
     Route::get('/group', GroupView::class)->name('group');
     Route::get('/group-profile/{id}', GroupProfile::class)->name('group-profile');
-    Route::get('/quiz', QuizView::class)->name('quiz');
+    // Route::get('/quiz', QuizView::class)->name('quiz');
     // Route::get('/quiz/create', CreateQuiz::class)->name('quiz.create');
     // Route::get('/quiz/{quiz}/questions', AddQuestions::class)->name('quiz.questions');
+
+
+
+
+     // Main Quiz Dashboard (tabs: list, create, etc.)
+    Route::get('/quiz', CallingQuiz::class)->name('quiz');
+
+    // Create Quiz
+    Route::get('/quiz/create', CreateQuiz::class)->name('quiz.create');
+
+    // Add Questions
+    Route::get('/quiz/{quizId}/questions', AddQuestions::class)
+        ->name('quiz.questions');
+
+    // Attempt Quiz
+    Route::get('/quiz/{quizId}/attempt', AttemptQuiz::class)
+        ->name('quiz.attempt');
+
+    // Result Page
+    Route::get('/quiz/{quizId}/result/{attemptId?}', ResultQuiz::class)
+        ->name('quiz.result');
+
+    // Manage Quiz (Creator/Admin)
+    Route::get('/quiz/{quizId}/manage', ManageQuiz::class)
+        ->name('quiz.manage');
+
+
+
     Route::get('/course', CourseView::class)->name('courses');
 
     Route::get('/logout', function () {

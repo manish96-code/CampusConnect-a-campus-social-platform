@@ -4,17 +4,33 @@ namespace App\Livewire\User\Quiz;
 
 use App\Models\Course;
 use App\Models\Quiz;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
+
+#[Layout("components.layouts.user")]
+
 
 class CallingQuiz extends Component
 {
     public $search = '';
     public $courseFilter = 'all';
+    public $myQuiz = false;
+
+    public function updatedMyQuiz()
+    {
+        $this->courseFilter = 'all';
+    }
 
     public function render()
     {
-        $quizzes = Quiz::with(['course', 'user'])
-            ->where('is_published', true)
+        $quizzes = Quiz::with(['course', 'user', 'attempts'])
+            ->where(function ($q) {
+                $q->where('is_published', true)              // everyone
+                    ->orWhere('user_id', auth()->id());        // creator see own (even unpublished)
+            })
+            ->when($this->myQuiz, function ($q) {
+                $q->where('user_id', auth()->id());
+            })
             ->when($this->search, function ($q) {
                 $q->where('title', 'like', '%' . $this->search . '%');
             })

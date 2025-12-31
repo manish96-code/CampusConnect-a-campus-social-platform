@@ -8,6 +8,10 @@ use App\Models\QuizAttemptAnswer;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
+
+#[Layout("components.layouts.user")]
+
 
 class AttemptQuiz extends Component
 {

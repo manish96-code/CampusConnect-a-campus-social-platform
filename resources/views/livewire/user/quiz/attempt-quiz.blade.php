@@ -53,11 +53,30 @@
                         </span>
                     </div>
                 @else
-                    <button wire:click="submitQuiz" @disabled($submitted)
-                        class="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 disabled:opacity-50">
-                        Submit Quiz
-                    </button>
+                    <div class="flex flex-col sm:flex-row gap-4">
+
+                        {{-- Submit Quiz (Primary) --}}
+                        <button wire:click="submitQuiz" @disabled($submitted)
+                            class="px-6 py-3 rounded-xl font-bold text-white
+                            bg-indigo-600 hover:bg-indigo-700
+                            transition
+                            disabled:opacity-50 disabled:cursor-not-allowed">
+                            Submit Quiz
+                        </button>
+
+                        {{-- Quit Quiz (Secondary) --}}
+                        <a wire:navigate href="{{ route('quiz') }}"
+                            onclick="return confirm('Are you sure you want to quit? Your progress will be lost.')"
+                            class="px-6 py-3 rounded-xl font-bold text-slate-600
+                            bg-slate-100 border border-slate-200
+                            hover:bg-slate-200 hover:text-slate-700
+                            transition text-center">
+                            Quit
+                        </a>
+
+                    </div>
                 @endif
+
 
             </div>
 

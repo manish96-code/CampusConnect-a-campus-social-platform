@@ -4,7 +4,11 @@ namespace App\Livewire\User\Quiz;
 
 use App\Models\Course;
 use App\Models\Quiz;
+use Livewire\Attributes\Layout;
 use Livewire\Component;
+
+#[Layout("components.layouts.user")]
+
 
 class CreateQuiz extends Component
 {
@@ -35,16 +39,12 @@ class CreateQuiz extends Component
             'course_id'   => $this->course_id,
             'title'       => $this->title,
             'description' => $this->description,
-             'total_marks' => 0,
+            'total_marks' => 0,
             // 'total_marks' => $this->total_marks,
             // is_published = false (default)
         ]);
 
-        // ✅ Tell parent to open AddQuestions
-        $this->dispatch('quiz-created', $quiz->id);
-
-        // Optional reset
-        // $this->reset(['title', 'description', 'total_marks', 'course_id']);
+        return redirect()->route('quiz.questions', $quiz->id);
     }
 
     public function render()

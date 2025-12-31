@@ -6,6 +6,10 @@ use App\Models\Quiz;
 use App\Models\QuizQuestion;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
+
+#[Layout("components.layouts.user")]
+
 
 class AddQuestions extends Component
 {
