@@ -79,7 +79,7 @@
 
             <!-- Navigation Tabs -->
             <div class="mt-8 border-t border-slate-100 pt-1 flex gap-6 overflow-x-auto no-scrollbar">
-                @foreach (['discussion' => 'Discussion', 'about' => 'About', 'members' => 'Members', 'events' => 'Events', 'media' => 'Media'] as $key => $label)
+                @foreach (['discussion' => 'Discussion', 'about' => 'About', 'members' => 'Members', 'media' => 'Media'] as $key => $label)
                     <button wire:click="setTab('{{ $key }}')"
                         class="pb-3 text-sm font-bold border-b-2 transition-colors whitespace-nowrap {{ $activeTab === $key ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700' }}">
                         {{ $label }}
@@ -206,6 +206,15 @@
             @endif
 
 
+            @if ($activeTab === 'media')
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-4">
+                    <h3 class="text-xl font-bold text-slate-800">Media</h3>
+
+                    <livewire:user.group.group-media :media="$media" />
+                </div>
+            @endif
+
+
             @if ($activeTab === 'edit' && $isAdmin)
                 <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
 
@@ -328,34 +337,25 @@
                     {{-- HEADER --}}
                     <div class="flex items-center justify-between mb-3">
                         <h3 class="font-bold text-slate-800 text-sm">Recent Media</h3>
-
+                        {{-- 
                         @if ($media->count() > 3)
                             <button @click="showAll = !showAll"
                                 class="text-xs text-indigo-600 font-bold hover:underline">
                                 <span x-show="!showAll">See all</span>
                                 <span x-show="showAll">Show less</span>
                             </button>
-                        @endif
+                        @endif --}}
                     </div>
 
-                    {{-- MEDIA GRID --}}
-                    @if ($media->count())
-                        <div class="grid grid-cols-3 gap-2 transition-all duration-300"
-                            :class="showAll ? 'max-h-64 overflow-y-auto pr-1' : ''">
-                            @foreach ($media as $index => $item)
-                                <template x-if="showAll || {{ $index }} < 3">
-                                    <a href="{{ asset('storage/' . $item->image) }}" target="_blank">
-                                        <img src="{{ asset('storage/' . $item->image) }}"
-                                            class="aspect-square w-full rounded-lg object-cover hover:opacity-90 transition">
-                                    </a>
-                                </template>
-                            @endforeach
-                        </div>
-                    @else
-                        <p class="text-xs text-slate-500 text-center py-6">
-                            No media shared yet
-                        </p>
+                    <livewire:user.group.group-media :media="$media" limit="3" />
+
+                    @if ($media->count() > 3)
+                        <button wire:click="setTab('media')"
+                            class="mt-3 text-xs text-indigo-600 font-bold hover:underline">
+                            See all
+                        </button>
                     @endif
+
 
                 </div>
 

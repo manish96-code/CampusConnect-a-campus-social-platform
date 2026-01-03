@@ -53,17 +53,12 @@ class Profile extends Component
             ->whereNotNull('image')
             ->latest()
             ->get();
+
+        $this->media = GroupPost::where('group_id', $this->group->id)
+            ->whereNotNull('image')
+            ->latest()
+            ->get();
     }
-
-
-
-    // public function getIsAdminProperty()
-    // {
-    //     return $this->group->members()
-    //         ->where('users.id', Auth::id())
-    //         ->wherePivot('role', 'admin')
-    //         ->exists();
-    // }
 
 
     public function updatedProfilePic()
@@ -96,16 +91,6 @@ class Profile extends Component
 
         $this->group->refresh();
     }
-
-
-
-    // public function mount($id){
-    //     $this->group = Group::with(['creator', 'members'])->findOrFail($id);
-    // }
-
-    // public function refreshGroup(){
-    //     $this->group->refresh();
-    // }
 
     public function setTab($tab)
     {
