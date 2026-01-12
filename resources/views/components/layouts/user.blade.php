@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
+
 <head>
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -21,7 +22,8 @@
 
             <!-- Logo -->
             <a href="{{ route('home') }}" class="flex items-center gap-2.5 group">
-                <div class="w-9 h-9 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+                <div
+                    class="w-9 h-9 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
                     <x-heroicon-o-academic-cap class="w-5 h-5" />
                 </div>
                 <div class="hidden sm:block leading-tight">
@@ -59,12 +61,9 @@
 
                 <!-- User -->
                 <div class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full">
-                    <img
-                        src="@if (auth()->user()->dp)
-                                {{ asset('storage/images/dp/' . auth()->user()->dp) }}
+                    <img src="@if (auth()->user()->dp) {{ asset('storage/images/dp/' . auth()->user()->dp) }}
                              @else
-                                https://ui-avatars.com/api/?name={{ auth()->user()->first_name }}+{{ auth()->user()->last_name }}&background=6366f1&color=fff
-                             @endif"
+                                https://ui-avatars.com/api/?name={{ auth()->user()->first_name }}+{{ auth()->user()->last_name }}&background=6366f1&color=fff @endif"
                         class="w-8 h-8 rounded-full border-2 border-white shadow-sm">
 
                     <div class="hidden lg:block text-left">
@@ -92,7 +91,42 @@
                     </div>
                 </aside>
 
-                <section class="col-span-1 lg:col-span-12 lg:ml-72">
+                {{-- <section class="col-span-1 lg:col-span-12 lg:ml-72">
+                    {{ $slot }}
+                </section> --}}
+
+                <section class="col-span-1 lg:col-span-12 lg:ml-72 relative">
+
+                    <!-- Loader -->
+                    {{-- <div id="page-loader"
+                        class="absolute inset-0 z-50 hidden flex items-center justify-center bg-white/70 backdrop-blur-sm">
+                        <div class="flex flex-col items-center gap-4">
+                            <div
+                                class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin">
+                            </div>
+                            <p class="text-sm font-semibold text-indigo-600">Loading...</p>
+                        </div>
+                    </div> --}}
+
+                    <!-- Loader -->
+                    <div id="page-loader"
+                        class="absolute inset-0 z-50 hidden flex items-center justify-center bg-white/70 backdrop-blur-md">
+
+                        <div class="flex flex-col items-center gap-4">
+                            <div class="flex gap-2">
+                                <span
+                                    class="w-2.5 h-2.5 bg-indigo-600 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                                <span
+                                    class="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                                <span class="w-2.5 h-2.5 bg-indigo-400 rounded-full animate-bounce"></span>
+                            </div>
+
+                            <p class="text-sm font-semibold text-slate-600">
+                                Loading content…
+                            </p>
+                        </div>
+                    </div>
+
                     {{ $slot }}
                 </section>
 
@@ -129,5 +163,47 @@
 
     @livewireScripts
 
+    <script>
+        (function() {
+            const showLoader = () => {
+                const loader = document.getElementById('page-loader');
+                if (!loader) return;
+                loader.classList.remove('hidden');
+                loader.classList.add('flex');
+            };
+
+            const hideLoader = () => {
+                const loader = document.getElementById('page-loader');
+                if (!loader) return;
+                loader.classList.add('hidden');
+                loader.classList.remove('flex');
+            };
+
+            // 1️⃣ Show loader on ANY internal link click
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('a[href]');
+                if (!link) return;
+
+                // Ignore cases
+                if (
+                    link.target === '_blank' ||
+                    link.hasAttribute('download') ||
+                    link.href.includes('#') ||
+                    (link.href.startsWith('http') && !link.href.startsWith(location.origin))
+                ) return;
+
+                showLoader();
+            }, true);
+
+            // 2️⃣ Show loader when browser is leaving page
+            window.addEventListener('beforeunload', showLoader);
+
+            // 3️⃣ Hide loader when page is ready (initial + back/forward)
+            window.addEventListener('pageshow', hideLoader);
+        })();
+    </script>
+
+
 </body>
+
 </html>

@@ -26,7 +26,7 @@ class CallingQuiz extends Component
         $quizzes = Quiz::with(['course', 'user', 'attempts'])
             ->where(function ($q) {
                 $q->where('is_published', true)              // everyone
-                    ->orWhere('user_id', auth()->id());        // creator see own (even unpublished)
+                    ->orWhere('user_id', auth()->id());        // creator see their unpublished)
             })
             ->when($this->myQuiz, function ($q) {
                 $q->where('user_id', auth()->id());
