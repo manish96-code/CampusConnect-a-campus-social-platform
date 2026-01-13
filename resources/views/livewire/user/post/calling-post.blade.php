@@ -1,17 +1,15 @@
 <div class="space-y-6">
-    {{-- @foreach ($posts as $post) --}}
     @forelse ($posts as $post)
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden transition-shadow hover:shadow-md"
             x-data="{ open: false }">
 
-            <!-- 1. POST HEADER -->
+            <!-- POST HEADER -->
             <div class="p-4 flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <!-- Avatar -->
                     <a href="{{ route('profile', ['id' => $post->user->id]) }}" class="relative block group">
-                        <img src="@if ($post->user->dp) {{ asset('storage/images/dp/' . $post->user->dp) }} @else https://ui-avatars.com/api/?name={{ $post->user->first_name }}+{{ $post->user->last_name }}&background=6366f1&color=fff @endif"
-                            alt="{{ $post->user->first_name }}"
-                            class="w-10 h-10 rounded-full object-cover border border-slate-100 group-hover:opacity-90 transition">
+                        <img src="{{ $post->user->dp ?: 'https://ui-avatars.com/api/?name=' . $post->user->first_name . '+' . $post->user->last_name . '&background=6366f1&color=fff' }}"
+                            class="w-10 h-10 rounded-full object-cover">
                     </a>
 
                     <!-- Meta -->
@@ -32,7 +30,7 @@
                 </button>
             </div>
 
-            <!-- 2. CONTENT -->
+            <!-- Caption -->
             @if ($post->caption)
                 <div class="px-4 pb-3">
                     <p class="text-slate-700 text-[15px] leading-relaxed whitespace-pre-line">{{ $post->caption }}</p>
@@ -41,12 +39,12 @@
 
             @if ($post->image)
                 <div class="w-full bg-slate-50 border-y border-slate-100">
-                    <img src="{{ asset('storage/' . $post->image) }}" alt="Post content"
-                        class="w-full max-h-[500px] object-cover" loading="lazy">
+                    <img src="{{ $post->image }}" alt="Post content" class="w-full max-h-[500px] object-cover"
+                        loading="lazy">
                 </div>
             @endif
 
-            <!-- 3. ACTION BAR -->
+            <!-- ACTION BAR -->
             <div class="px-4 py-3 flex items-center justify-between border-t border-slate-100">
                 <div class="flex items-center gap-6">
 
@@ -85,7 +83,7 @@
                 </div>
             </div>
 
-            <!-- 4. COMMENT SECTION -->
+            <!-- COMMENT SECTION -->
             <div x-show="open" x-cloak x-transition.origin.top class="bg-slate-50/50 border-t border-slate-100 p-4">
 
                 <!-- Existing Comments -->
@@ -93,14 +91,14 @@
                     <div class="space-y-4 mb-4 max-h-60 overflow-y-auto custom-scrollbar pr-2">
                         @foreach ($post->comments as $comment)
                             <div class="flex gap-3">
-                                <img src="@if ($comment->user->dp) {{ asset('storage/images/dp/' . $comment->user->dp) }} @else https://ui-avatars.com/api/?name={{ $comment->user->first_name }}+{{ $comment->user->last_name }}&background=random @endif"
-                                    class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-1">
+                                <img src="{{ $comment->user->dp ?: 'https://ui-avatars.com/api/?name=' . $comment->user->first_name . '&background=random' }}"
+                                    class="w-8 h-8 rounded-full object-cover">
 
                                 <div>
                                     <div
                                         class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-slate-100">
                                         <a href="{{ route('profile', ['id' => $comment->user->id]) }}"
-                                            class="font-bold text-xs text-slate-800 hover:underline block mb-0.5">
+                                            class="font-bold text-xs text-slate-800 hover:underline block mb-0.5 capitalize">
                                             {{ $comment->user->first_name }} {{ $comment->user->last_name }}
                                         </a>
                                         <p class="text-slate-600 text-sm">{{ $comment->comment }}</p>
@@ -121,9 +119,7 @@
 
                 <!-- Comment Input -->
                 <form wire:submit.prevent="commentPost({{ $post->id }})" class="relative flex items-center">
-                    <img src="@if (auth()->user()->dp) {{ asset('storage/images/dp/' . auth()->user()->dp) }}
-                            @else
-                                https://ui-avatars.com/api/?name={{ auth()->user()->first_name }}+{{ auth()->user()->last_name }}&background=6366f1&color=fff @endif"
+                    <img src="{{ auth()->user()->dp ?: 'https://ui-avatars.com/api/?name=' . auth()->user()->first_name . '+' . auth()->user()->last_name . '&background=6366f1&color=fff' }}"
                         alt="{{ auth()->user()->first_name }}"
                         class="w-8 h-8 rounded-full absolute left-3 border border-slate-100">
 
@@ -138,9 +134,9 @@
             </div>
 
         </div>
-    {{-- @endforeach --}}
-     @empty
-        <!-- 🚫 NO POST STATE -->
+        {{-- @endforeach --}}
+    @empty
+        <!-- NO POST STATE -->
         <div class="bg-white border border-dashed border-slate-300 rounded-2xl p-10 text-center">
             <div class="flex flex-col items-center gap-3">
                 <x-heroicon-o-document-text class="w-10 h-10 text-slate-400" />
@@ -151,7 +147,7 @@
                     This user hasn’t shared anything yet.
                 </p>
 
-                {{-- OPTIONAL: Only show button on own profile --}}
+                {{-- Only show button on own profile --}}
                 @if (auth()->id() === $selectedUser->id)
                     <button
                         class="mt-3 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-sm font-semibold transition">

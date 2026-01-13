@@ -7,8 +7,7 @@ use Livewire\Component;
 
 #[Layout("components.layouts.user")]
 
-class GroupView extends Component
-{
+class GroupView extends Component{
     public function render()
     {
         return view('livewire.user.group-view');

@@ -1,7 +1,7 @@
 <div class=" mx-auto px-4 lg:px-8 py-6">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
 
-        <!-- 2. MAIN PROFILE CONTENT -->
+        <!-- MAIN PROFILE CONTENT -->
         <div class="lg:col-span-10 ">
 
             <!-- PROFILE HEADER CARD -->
@@ -10,7 +10,7 @@
 
                 <!-- Cover Photo -->
                 <div class="h-48 md:h-64 w-full bg-slate-200 relative">
-                    <img src="@if ($selectedUser->cover) {{ asset('storage/images/cover/' . $selectedUser->cover) }} @else https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop @endif"
+                    <img src="{{ $selectedUser->cover ?: 'https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop' }}"
                         class="w-full h-full object-cover" alt="Cover Photo">
 
                     <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
@@ -38,12 +38,19 @@
                 <div class="px-6 pb-6 relative">
                     <div class="flex flex-col md:flex-row items-start md:items-end -mt-12 gap-4">
 
-                        <!-- Avatar -->
+                        <!-- Dp/Profile -->
                         <div class="relative group/avatar flex-shrink-0">
                             <div
                                 class="h-32 w-32 rounded-full border-4 border-white bg-white shadow-md overflow-hidden relative z-10">
-                                <img src="@if ($selectedUser->dp) {{ asset('storage/images/dp/' . $selectedUser->dp) }} @else https://ui-avatars.com/api/?name={{ $selectedUser->first_name }}+{{ $selectedUser->last_name }}&background=6366f1&color=fff @endif"
+                                <img src="{{ $selectedUser->dp
+                                    ? $selectedUser->dp
+                                    : 'https://ui-avatars.com/api/?name=' .
+                                        $selectedUser->first_name .
+                                        '+' .
+                                        $selectedUser->last_name .
+                                        '&background=6366f1&color=fff' }}"
                                     class="w-full h-full object-cover">
+
 
                                 @if ($selectedUser->id == auth()->user()->id)
                                     <form wire:submit.prevent="updateProfile" enctype="multipart/form-data">
@@ -170,7 +177,6 @@
                                 </a>
                             @endif
 
-
                         </div>
                     </div>
 
@@ -200,11 +206,11 @@
                             <div class="grid grid-cols-3 gap-2 rounded-xl">
 
                                 @foreach ($mediaPosts as $index => $post)
-                                    <a x-show="expanded || {{ $index }} < 3"
-                                        href="{{ asset('storage/' . $post->image) }}" target="_blank"
+                                    <a x-show="expanded || {{ $index }} < 3" href="{{ $post->image }}"
+                                        target="_blank"
                                         class="relative aspect-square bg-slate-100 overflow-hidden group" x-transition>
 
-                                        <img src="{{ asset('storage/' . $post->image) }}"
+                                        <img src="{{ $post->image }}"
                                             class="w-full h-full object-cover
                                 transition-transform duration-300
                                 group-hover:scale-105">

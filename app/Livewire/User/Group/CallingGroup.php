@@ -43,8 +43,7 @@ class CallingGroup extends Component
         );
     }
 
-    public function updatedSearch()
-    {
+    public function updatedSearch(){
         // When searching, reset filter to 'all'
         if ($this->search !== '') {
             $this->filter = 'all';

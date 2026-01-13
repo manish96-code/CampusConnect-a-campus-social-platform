@@ -8,8 +8,7 @@ use Livewire\Component;
 
 #[Layout("components.layouts.user")]
 
-class FindFriend extends Component
-{
+class FindFriend extends Component{
     public $users = [];
 
     public function mount(){
@@ -24,14 +23,12 @@ class FindFriend extends Component
                         ->orWhere('email', 'like', '%' . $query . '%');
                 })
                 ->get();
-        }
-        else {
+        } else {
             $this->users = User::where("id", "!=", auth()->user()->id)->get();
         }
     }
 
-    public function render()
-    {
+    public function render(){
         return view('livewire.user.find-friend', ['users' => $this->users]);
     }
 }
