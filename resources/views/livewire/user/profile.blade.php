@@ -174,20 +174,52 @@
                         </div>
                     </div>
 
-                    <!-- Photos -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+
+                    <!-- Photos / Media -->
+                    <div x-data="{ expanded: false }"
+                        class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 transition-all duration-300">
+
+                        <!-- Heading -->
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="font-bold text-slate-800 text-base">Photos</h3>
-                            <a href="#" class="text-indigo-600 text-xs font-medium hover:underline">See All</a>
+
+                            @if ($mediaPosts->count() > 3)
+                                <button @click="expanded = !expanded"
+                                    class="text-indigo-600 text-xs font-medium hover:underline focus:outline-none">
+
+                                    <span x-show="!expanded">See All</span>
+                                    <span x-show="expanded">Collapse</span>
+                                </button>
+                            @endif
                         </div>
-                        <div class="grid grid-cols-3 gap-2 rounded-xl overflow-hidden">
-                            @for ($i = 0; $i < 3; $i++)
-                                <div class="aspect-square bg-slate-100 flex items-center justify-center text-slate-300">
-                                    <x-heroicon-o-photo class="w-6 h-6" />
-                                </div>
-                            @endfor
+
+                        <!-- Media Grid Wrapper -->
+                        <div :class="expanded ? 'max-h-[440px] overflow-y-auto pr-1' : ''"
+                            class="transition-all duration-300">
+
+                            <div class="grid grid-cols-3 gap-2 rounded-xl">
+
+                                @foreach ($mediaPosts as $index => $post)
+                                    <a x-show="expanded || {{ $index }} < 3"
+                                        href="{{ asset('storage/' . $post->image) }}" target="_blank"
+                                        class="relative aspect-square bg-slate-100 overflow-hidden group" x-transition>
+
+                                        <img src="{{ asset('storage/' . $post->image) }}"
+                                            class="w-full h-full object-cover
+                                transition-transform duration-300
+                                group-hover:scale-105">
+
+                                        <div
+                                            class="absolute inset-0 bg-black/0
+                                group-hover:bg-black/20 transition">
+                                        </div>
+                                    </a>
+                                @endforeach
+
+                            </div>
                         </div>
                     </div>
+
                 </div>
 
                 <!-- RIGHT COLUMN -->

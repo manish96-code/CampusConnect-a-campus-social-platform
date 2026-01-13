@@ -25,33 +25,63 @@ class CallingPost extends Component
         $this->loadPosts();
     }
 
+    // protected function loadPosts()
+    // {
+    //     if ($this->selectedUser && $this->selectedUser->id !== auth()->id()) {
+    //         $this->posts = UserPost::where('user_id', $this->selectedUser->id)
+    //             ->latest()
+    //             ->get();
+    //         return;
+    //     }
+
+    //     $myFriendIds = Friend::where(function ($query) {
+    //             $query->where('sender_id', auth()->id())
+    //                   ->orWhere('receiver_id', auth()->id());
+    //         })
+    //         ->where('status', 'accepted')
+    //         ->get()
+    //         ->map(fn ($friend) =>
+    //             $friend->sender_id === auth()->id()
+    //                 ? $friend->receiver_id
+    //                 : $friend->sender_id
+    //         )
+    //         ->toArray();
+
+    //     $this->posts = UserPost::whereIn('user_id', $myFriendIds)
+    //         ->orWhere('user_id', auth()->id())
+    //         ->latest()
+    //         ->get();
+    // }
     protected function loadPosts()
-    {
-        if ($this->selectedUser && $this->selectedUser->id !== auth()->id()) {
-            $this->posts = UserPost::where('user_id', $this->selectedUser->id)
-                ->latest()
-                ->get();
-            return;
-        }
-
-        $myFriendIds = Friend::where(function ($query) {
-                $query->where('sender_id', auth()->id())
-                      ->orWhere('receiver_id', auth()->id());
-            })
-            ->where('status', 'accepted')
-            ->get()
-            ->map(fn ($friend) =>
-                $friend->sender_id === auth()->id()
-                    ? $friend->receiver_id
-                    : $friend->sender_id
-            )
-            ->toArray();
-
-        $this->posts = UserPost::whereIn('user_id', $myFriendIds)
-            ->orWhere('user_id', auth()->id())
+{
+    // PROFILE PAGE → show only opened user's posts
+    if ($this->selectedUser) {
+        $this->posts = UserPost::where('user_id', $this->selectedUser->id)
             ->latest()
             ->get();
+        return;
     }
+
+    // HOME FEED → friends + own posts
+    $myFriendIds = Friend::where(function ($query) {
+            $query->where('sender_id', auth()->id())
+                  ->orWhere('receiver_id', auth()->id());
+        })
+        ->where('status', 'accepted')
+        ->get()
+        ->map(fn ($friend) =>
+            $friend->sender_id === auth()->id()
+                ? $friend->receiver_id
+                : $friend->sender_id
+        )
+        ->toArray();
+
+    $this->posts = UserPost::whereIn('user_id', $myFriendIds)
+        ->orWhere('user_id', auth()->id())
+        ->latest()
+        ->get();
+}
+
 
     public function likePost($postId)
     {

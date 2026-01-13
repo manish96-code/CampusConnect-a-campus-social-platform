@@ -1,5 +1,6 @@
 <div class="space-y-6">
-    @foreach ($posts as $post)
+    {{-- @foreach ($posts as $post) --}}
+    @forelse ($posts as $post)
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden transition-shadow hover:shadow-md"
             x-data="{ open: false }">
 
@@ -137,5 +138,27 @@
             </div>
 
         </div>
-    @endforeach
+    {{-- @endforeach --}}
+     @empty
+        <!-- 🚫 NO POST STATE -->
+        <div class="bg-white border border-dashed border-slate-300 rounded-2xl p-10 text-center">
+            <div class="flex flex-col items-center gap-3">
+                <x-heroicon-o-document-text class="w-10 h-10 text-slate-400" />
+                <p class="text-slate-600 font-semibold text-base">
+                    No posts yet
+                </p>
+                <p class="text-sm text-slate-400">
+                    This user hasn’t shared anything yet.
+                </p>
+
+                {{-- OPTIONAL: Only show button on own profile --}}
+                @if (auth()->id() === $selectedUser->id)
+                    <button
+                        class="mt-3 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-sm font-semibold transition">
+                        Create your first post
+                    </button>
+                @endif
+            </div>
+        </div>
+    @endforelse
 </div>

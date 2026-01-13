@@ -3,6 +3,7 @@
 namespace App\Livewire\User;
 
 use App\Models\User;
+use App\Models\UserPost;
 use Livewire\Component;
 use Livewire\Attributes\Validate;
 use Livewire\Attributes\Layout;
@@ -14,6 +15,8 @@ use Livewire\WithFileUploads;
 class Profile extends Component
 {
     use WithFileUploads;
+
+    public $mediaPosts = [];
 
     #[Validate("image|max:1024|nullable|mimes:jpg,jpeg,png")]
     public $dp;
@@ -44,6 +47,8 @@ class Profile extends Component
         else{
             $this->selectedUser = auth()->user();
         }
+
+        $this->loadMediaPosts();
     }
 
     public function updateProfile(){
@@ -71,6 +76,15 @@ class Profile extends Component
 
         session()->flash('message', 'Profile updated successfully.');
     }
+
+    private function loadMediaPosts()
+{
+    $this->mediaPosts = UserPost::where('user_id', $this->selectedUser->id)
+        ->whereNotNull('image')
+        ->latest()
+        ->take(9)
+        ->get();
+}
 
     public function render()
     {
