@@ -7,8 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-class CallingGroupPost extends Component
-{
+class CallingGroupPost extends Component{
     public $group;
 
     #[On('postCreated')]
@@ -16,13 +15,11 @@ class CallingGroupPost extends Component
         
     }
 
-    public function mount($group)
-    {
+    public function mount($group){
         $this->group = $group;
     }
 
-    public function deletePost($postId)
-{
+    public function deletePost($postId){
     $post = GroupPost::findOrFail($postId);
 
     $isAdmin = $this->group->members()
@@ -33,11 +30,6 @@ class CallingGroupPost extends Component
     // Permission check
     if ($post->user_id !== auth()->id() && ! $isAdmin) {
         abort(403);
-    }
-
-    // Delete image if exists
-    if ($post->image && \Storage::disk('public')->exists($post->image)) {
-        \Storage::disk('public')->delete($post->image);
     }
 
     $post->delete();

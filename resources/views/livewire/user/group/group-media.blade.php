@@ -3,8 +3,8 @@
         <div class="grid grid-cols-3 gap-2">
             @foreach ($media as $index => $item)
                 @if (is_null($limit) || $index < $limit)
-                    <a href="{{ asset('storage/' . $item->image) }}" target="_blank">
-                        <img src="{{ asset('storage/' . $item->image) }}"
+                    <a href="{{ $item->image }}" target="_blank">
+                        <img src="{{ $item->image }}"
                             class="aspect-square w-full rounded-lg object-cover
                                hover:opacity-90 transition">
                     </a>

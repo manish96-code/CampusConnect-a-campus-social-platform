@@ -18,7 +18,7 @@
 
                 <!-- Avatar Container -->
                 <div class="relative flex-shrink-0">
-                    <img src="@if ($friend->dp) {{ asset('storage/images/dp/' . $friend->dp) }} @else https://ui-avatars.com/api/?name={{ $friend->first_name }}+{{ $friend->last_name }}&background=6366f1&color=fff @endif"
+                    <img src="{{ $friend->dp ?: 'https://ui-avatars.com/api/?name=' . urlencode($friend->first_name . '+' . $friend->last_name) . '&background=6366f1&color=fff' }}"
                         alt="{{ $friend->first_name }}"
                         class="w-10 h-10 rounded-full object-cover border-2 border-slate-50 group-hover:border-white shadow-sm transition-colors">
 

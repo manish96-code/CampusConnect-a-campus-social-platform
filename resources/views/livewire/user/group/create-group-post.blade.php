@@ -8,11 +8,8 @@
             <div class="flex items-end gap-3">
 
                 {{-- Avatar --}}
-                <img src="@if (auth()->user()->dp) {{ asset('storage/images/dp/' . auth()->user()->dp) }}
-                        @else
-                            https://ui-avatars.com/api/?name={{ auth()->user()->first_name }}+{{ auth()->user()->last_name }}&background=6366f1&color=fff @endif"
+                <img src="{{ auth()->user()->dp ?: 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->first_name . ' ' . auth()->user()->last_name) . '&background=6366f1&color=fff' }}"
                     alt="{{ auth()->user()->first_name }}" class="w-9 h-9 rounded-full border flex-shrink-0 object-cover">
-
 
                 <div class="flex-1">
                     <input type="text" wire:model.defer="caption" placeholder="Type a message…"

@@ -1,13 +1,17 @@
 <div class="max-w-7xl mx-auto px-4 lg:px-8 py-6 min-h-screen">
 
-    <!-- 1. GROUP HEADER -->
+    <!--  GROUP HEADER -->
     <div class="bg-white rounded-b-3xl rounded-t-2xl shadow-sm border border-slate-100 overflow-hidden mb-6 relative">
 
         <div class="relative h-52 bg-slate-200 group">
-
-            <img src="{{ $group->cover_pic
-                ? asset('storage/' . $group->cover_pic)
-                : 'https://images.unsplash.com/photo-1557683316-973673baf926' }}"
+            <div wire:loading wire:target="cover_pic"
+                class="absolute inset-0 z-20 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center">
+                <div class="flex flex-col items-center gap-2 mt-12">
+                    <x-heroicon-o-arrow-path class="w-8 h-8 text-white animate-spin" />
+                    <span class="text-white text-xs font-bold uppercase tracking-widest">Uploading Cover...</span>
+                </div>
+            </div>
+            <img src="{{ $group->cover_pic ? $group->cover_pic . '?tr=w-1200,h-400,fo-auto' : 'https://images.unsplash.com/photo-1557683316-973673baf926' }}"
                 class="w-full h-full object-cover">
 
             @if ($isAdmin)
@@ -27,19 +31,25 @@
 
                 <div class="relative -mt-2 ml-6 group">
 
-                    <img src="{{ $group->profile_pic
-                        ? asset('storage/' . $group->profile_pic)
-                        : 'https://ui-avatars.com/api/?name=' . urlencode($group->group_name) }}"
-                        class="w-28 h-28 rounded-full border-4 border-white object-cover">
+                    <div
+                        class="relative w-28 h-28 rounded-full border-4 border-white bg-white shadow-md overflow-hidden z-10 flex-shrink-0">
 
-                    @if ($this->isAdmin)
-                        <label
-                            class="absolute inset-0 bg-black/40 flex items-center justify-center rounded-full
-                            opacity-0 group-hover:opacity-100 cursor-pointer transition">
-                            <x-heroicon-o-camera class="w-6 h-6 text-white" />
-                            <input type="file" wire:model="profile_pic" class="hidden" accept="image/*">
-                        </label>
-                    @endif
+                        <div wire:loading wire:target="profile_pic"
+                            class="absolute inset-0 z-30 bg-indigo-600/60 backdrop-blur-sm flex items-center justify-center rounded-full leading-none text-[0]">
+                            <x-heroicon-o-arrow-path class="w-6 h-6 text-white animate-spin" />
+                        </div>
+
+                        <img src="{{ $group->profile_pic ?: 'https://ui-avatars.com/api/?name=' . urlencode($group->group_name) . '&background=6366f1&color=fff' }}"
+                            class="w-full h-full object-cover">
+
+                        @if ($isAdmin)
+                            <label
+                                class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition z-20">
+                                <x-heroicon-o-camera class="w-6 h-6 text-white" />
+                                <input type="file" wire:model="profile_pic" class="hidden" accept="image/*">
+                            </label>
+                        @endif
+                    </div>
                 </div>
 
 
@@ -89,7 +99,7 @@
         </div>
     </div>
 
-    <!-- 2. CONTENT GRID -->
+    <!-- CONTENT GRID -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         <!-- LEFT COLUMN -->
@@ -98,7 +108,7 @@
             @if ($activeTab === 'discussion')
                 <div class="relative h-[calc(100vh-160px)] bg-slate-50 rounded-2xl overflow-hidden">
 
-                    {{-- CHAT MESSAGES (scrollable) --}}
+                    {{-- CHAT MESSAGES --}}
                     <div class="absolute inset-0 bottom-20 overflow-y-auto space-y-4 mb-4" x-data="{ scroll() { this.$el.scrollTop = this.$el.scrollHeight } }"
                         x-init="scroll()" x-on:post-created.window="$nextTick(() => scroll())">
                         <livewire:user.group.calling-group-post :group="$group"
@@ -106,7 +116,7 @@
                     </div>
 
 
-                    {{-- FIXED INPUT AT BOTTOM --}}
+                    {{-- FIXED INPUT --}}
                     <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4">
                         <livewire:user.group.create-group-post :group="$group"
                             :wire:key="'group-chat-input-'.$group->id" />
@@ -316,8 +326,8 @@
                     <h3 class="font-bold text-slate-800 text-sm">Admins</h3>
                 </div>
                 <div class="flex items-center gap-3">
-                    <img src="https://ui-avatars.com/api/?name={{ $group->creator->first_name ?? 'Admin' }}&background=random"
-                        class="w-10 h-10 rounded-xl">
+                    <img src="{{ $group->creator->dp ?: 'https://ui-avatars.com/api/?name=' . urlencode($group->creator->first_name) . '&background=random' }}"
+                        class="w-10 h-10 rounded-full object-cover">
                     <div>
                         <a href="{{ route('profile', $group->creator->id) }}">
                             <p class="text-sm font-bold text-slate-700 capitalize">
@@ -337,14 +347,6 @@
                     {{-- HEADER --}}
                     <div class="flex items-center justify-between mb-3">
                         <h3 class="font-bold text-slate-800 text-sm">Recent Media</h3>
-                        {{-- 
-                        @if ($media->count() > 3)
-                            <button @click="showAll = !showAll"
-                                class="text-xs text-indigo-600 font-bold hover:underline">
-                                <span x-show="!showAll">See all</span>
-                                <span x-show="showAll">Show less</span>
-                            </button>
-                        @endif --}}
                     </div>
 
                     <livewire:user.group.group-media :media="$media" limit="3" />

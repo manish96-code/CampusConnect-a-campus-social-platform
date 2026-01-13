@@ -4,9 +4,7 @@
     <div class="sticky top-0 z-10 bg-white border-b border-slate-200 px-4 py-3 flex items-center gap-3">
 
         {{-- Group Avatar --}}
-        <img src="{{ $group->profile_pic
-            ? asset('storage/' . $group->profile_pic)
-            : 'https://ui-avatars.com/api/?name=' . urlencode($group->group_name) }}"
+        <img src="{{ $group->profile_pic ?: 'https://ui-avatars.com/api/?name=' . urlencode($group->group_name) . '&background=6366f1&color=fff' }}"
             class="w-10 h-10 rounded-full object-cover border">
 
         {{-- Group Info --}}
@@ -20,14 +18,14 @@
             </p>
         </div>
 
-        {{-- Optional status --}}
+        {{-- Status --}}
         <span class="ml-auto text-xs text-emerald-600 font-semibold flex items-center gap-1">
             <span class="bg-emerald-600 h-2.5 w-2.5 rounded-full"></span>
             <span>Active</span>
         </span>
     </div>
 
-    {{-- 🔹 CHAT MESSAGES --}}
+    {{-- CHAT MESSAGES --}}
     <div class="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-slate-50" x-data="{ scroll() { this.$el.scrollTop = this.$el.scrollHeight } }" x-init="scroll()"
         x-on:post-created.window="$nextTick(() => scroll())">
 
@@ -52,10 +50,10 @@
                     <div class="max-w-[75%] flex gap-2 {{ $isMe ? 'flex-row-reverse' : '' }}">
 
                         {{-- Avatar --}}
-                        <img src="{{ $post->user->dp
-                            ? asset('storage/images/dp/' . $post->user->dp)
-                            : 'https://ui-avatars.com/api/?name=' . $post->user->first_name }}"
-                            class="w-8 h-8 rounded-full object-cover border">
+                        <a href="{{ route('profile', $post->user->id) }}">
+                            <img src="{{ $post->user->dp ?: 'https://ui-avatars.com/api/?name=' . urlencode($post->user->first_name) . '&background=random' }}"
+                                class="w-8 h-8 rounded-full object-cover border">
+                        </a>
 
                         {{-- Message --}}
                         <div
@@ -63,9 +61,11 @@
                             {{ $isMe ? 'bg-indigo-600 text-white rounded-br-sm' : 'bg-white border text-slate-800 rounded-bl-sm' }}">
 
                             @unless ($isMe)
-                                <p class="text-xs font-bold text-indigo-600 mb-1 capitalize">
-                                    {{ $post->user->first_name }} {{ $post->user->last_name }}
-                                </p>
+                                <a href="{{ route('profile', $post->user->id) }}">
+                                    <p class="text-xs font-bold text-indigo-600 mb-1 capitalize">
+                                        {{ $post->user->first_name }} {{ $post->user->last_name }}
+                                    </p>
+                                </a>
                             @endunless
 
                             @if ($canDelete)
@@ -96,8 +96,10 @@
                             @endif
 
                             @if ($post->image)
-                                <img src="{{ asset('storage/' . $post->image) }}"
-                                    class="mt-2 rounded-xl max-h-64 object-cover border">
+                                <a href="{{ $post->image }}" target="_blank">
+                                    <img src="{{ $post->image }}"
+                                        class="mt-2 rounded-xl max-h-64 object-cover border hover:opacity-90 transition">
+                                </a>
                             @endif
 
                             <p class="text-[10px] mt-1 text-right opacity-70">

@@ -13,8 +13,7 @@ use Livewire\WithFileUploads;
 
 #[Layout("components.layouts.user")]
 
-class Profile extends Component
-{
+class Profile extends Component{
 
     use WithFileUploads;
 
@@ -34,8 +33,7 @@ class Profile extends Component
     #[Validate('nullable|image|max:4096')]
     public $cover_pic;
 
-    public function mount($id)
-    {
+    public function mount($id){
         $this->group = Group::with('members')->findOrFail($id);
 
         $this->isAdmin = $this->group->members()
@@ -44,7 +42,6 @@ class Profile extends Component
             ->wherePivot('status', 'approved')
             ->exists();
 
-        // 🔥 THIS WAS MISSING (MANDATORY)
         $this->group_name = $this->group->group_name;
         $this->description = $this->group->description;
         $this->group_type = $this->group->group_type;
@@ -61,45 +58,49 @@ class Profile extends Component
     }
 
 
-    public function updatedProfilePic()
-    {
+    public function updatedProfilePic(){
         $this->updateGroupImages();
     }
 
-    public function updatedCoverPic()
-    {
+    public function updatedCoverPic(){
         $this->updateGroupImages();
     }
 
-    public function updateGroupImages()
-    {
-        if (! $this->isAdmin) return;
+    public function updateGroupImages(){
+        if (!$this->isAdmin) return;
 
-        $this->validate();
+        $this->validate([
+            'profile_pic' => 'nullable|image|max:2048',
+            'cover_pic' => 'nullable|image|max:4096',
+        ]);
+
+        $imageKit = app(\App\Services\ImageKitService::class);
 
         if ($this->profile_pic) {
-            $path = $this->profile_pic->store('group/profile', 'public');
+            $path = $imageKit->upload($this->profile_pic, 'groups/profile');
             $this->group->profile_pic = $path;
+            $this->reset('profile_pic');
         }
 
         if ($this->cover_pic) {
-            $path = $this->cover_pic->store('group/cover', 'public');
+            $path = $imageKit->upload($this->cover_pic, 'groups/cover');
             $this->group->cover_pic = $path;
+            $this->reset('cover_pic');
         }
 
         $this->group->save();
-
+        
         $this->group->refresh();
+
+        session()->flash('message', 'Images updated successfully! 🖼️');
     }
 
-    public function setTab($tab)
-    {
+    public function setTab($tab){
         $this->activeTab = $tab;
     }
 
 
-    public function saveGroup()
-    {
+    public function saveGroup(){
         if (! $this->isAdmin) return;
 
         $this->validate([
@@ -125,8 +126,7 @@ class Profile extends Component
     }
 
 
-    public function render()
-    {
+    public function render(){
         return view('livewire.user.group.profile');
     }
 }

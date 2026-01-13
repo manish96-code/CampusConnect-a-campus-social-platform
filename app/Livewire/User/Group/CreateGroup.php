@@ -3,13 +3,13 @@
 namespace App\Livewire\User\Group;
 
 use App\Models\Group;
+use App\Services\ImageKitService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-class CreateGroup extends Component
-{
+class CreateGroup extends Component{
     use WithFileUploads;
 
     #[Validate('required|string|min:3|max:50|unique:groups,group_name')]
@@ -27,30 +27,29 @@ class CreateGroup extends Component
     #[Validate('nullable|image|max:5120')]
     public $cover_pic;
 
-    public function create_group()
-    {
-        // dd('create_group fired');
-        
+    public function create_group(){
         $this->validate();
 
+        $imageKit = app(ImageKitService::class);
+
         $profilePic = $this->profile_pic
-            ? $this->profile_pic->store('group/groupProfilePic', 'public')
+            ? $imageKit->upload($this->profile_pic, 'groups/profiles')
             : null;
 
         $coverPic = $this->cover_pic
-            ? $this->cover_pic->store('group/groupCoverPic', 'public')
+            ? $imageKit->upload($this->cover_pic, 'groups/covers')
             : null;
 
         $group = Group::create([
-            'created_by' => Auth::id(),
+            'created_by' => auth()->id(),
             'group_name' => $this->group_name,
             'description' => $this->description,
             'group_type' => $this->group_type,
             'profile_pic' => $profilePic,
-            'cover_pic' => $coverPic,
+            'cover_pic'  => $coverPic,
         ]);
 
-        $group->members()->attach(Auth::id(), [
+        $group->members()->attach(auth()->id(), [
             'role' => 'admin',
             'status' => 'approved',
         ]);
@@ -61,8 +60,7 @@ class CreateGroup extends Component
         $this->group_type = 'public';
     }
 
-    public function render()
-    {
+    public function render(){
         return view('livewire.user.group.create-group');
     }
 }

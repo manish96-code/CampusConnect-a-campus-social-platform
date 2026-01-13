@@ -131,7 +131,7 @@
 
                 <!-- Avatar -->
                 @if ($group->profile_pic)
-                    <img src="{{ asset('storage/' . $group->profile_pic) }}" class="w-6 h-6 rounded-full object-cover">
+                    <img src="{{ $group->profile_pic }}" class="w-6 h-6 rounded-full object-cover">
                 @else
                     <div
                         class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600

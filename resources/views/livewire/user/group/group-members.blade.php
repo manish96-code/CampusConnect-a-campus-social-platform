@@ -63,11 +63,11 @@
                 @endif
 
                 @foreach ([
-                    'approved' => 'Members',
-                    'admin' => 'Admins',
-                    'pending' => 'Pending',
-                    'all' => 'All',
-                ] as $key => $label)
+        'approved' => 'Members',
+        'admin' => 'Admins',
+        'pending' => 'Pending',
+        'all' => 'All',
+    ] as $key => $label)
                     <button wire:click="setFilter('{{ $key }}')"
                         class="px-3 py-1.5 text-xs font-bold rounded-lg transition
                 {{ $filter === $key ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
@@ -99,11 +99,7 @@
                                 class="flex items-center justify-between px-6 py-4">
 
                                 <div class="flex items-center gap-4">
-                                    {{-- <img src="https://ui-avatars.com/api/?name={{ $user->first_name }}+{{ $user->last_name }}&background=6366f1&color=fff"
-                                        class="w-11 h-11 rounded-xl"> --}}
-                                    <img src="@if ($user->dp) {{ asset('storage/images/dp/' . $user->dp) }}
-                                        @else
-                                            https://ui-avatars.com/api/?name={{ $user->first_name }}+{{ $user->last_name }}&background=6366f1&color=fff @endif"
+                                    <img src="{{ $member->dp ?: 'https://ui-avatars.com/api/?name=' . urlencode($member->first_name . ' ' . $member->last_name) . '&background=6366f1&color=fff' }}"
                                         alt="{{ $user->first_name }}"
                                         class="w-11 h-11 rounded-full object-cover border">
 
@@ -145,11 +141,7 @@
 
                         <!-- User Info -->
                         <div class="flex items-center gap-4">
-                            {{-- <img src="https://ui-avatars.com/api/?name={{ $member->first_name }}+{{ $member->last_name }}&background=6366f1&color=fff"
-                                class="w-11 h-11 rounded-xl"> --}}
-                            <img src="@if ($member->dp) {{ asset('storage/images/dp/' . $member->dp) }}
-                                @else
-                                    https://ui-avatars.com/api/?name={{ $member->first_name }}+{{ $member->last_name }}&background=6366f1&color=fff @endif"
+                            <img src="{{ $member->dp ?: 'https://ui-avatars.com/api/?name=' . urlencode($member->first_name . ' ' . $member->last_name) . '&background=6366f1&color=fff' }}"
                                 alt="{{ $member->first_name }}" class="w-11 h-11 rounded-full object-cover border">
 
 

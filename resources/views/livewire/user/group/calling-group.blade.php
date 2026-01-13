@@ -48,7 +48,7 @@
                     <!-- Cover Image Banner -->
                     <div class="h-28 w-full bg-slate-100 relative overflow-hidden">
                         @if ($group->cover_pic)
-                            <img src="{{ asset('storage/' . $group->cover_pic) }}"
+                            <img src="{{ $group->cover_pic }}"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         @else
                             <div class="w-full h-full bg-gradient-to-r from-indigo-400 to-purple-400"></div>
@@ -70,13 +70,12 @@
                         </div>
                     </div>
 
-                    <!-- Profile Icon (Overlapping) -->
+                    <!-- Profile Icon -->
                     <div class="px-5 relative">
                         <div
                             class="absolute -top-8 left-5 w-16 h-16 rounded-2xl border-4 border-white bg-white shadow-md overflow-hidden">
                             @if ($group->profile_pic)
-                                <img src="{{ asset('storage/' . $group->profile_pic) }}"
-                                    class="w-full h-full object-cover">
+                                <img src="{{ $group->profile_pic }}" class="w-full h-full object-cover">
                             @else
                                 <div
                                     class="w-full h-full bg-slate-50 flex items-center justify-center text-indigo-500 font-bold text-xl uppercase">
@@ -104,9 +103,7 @@
                                 {{-- SHOW UP TO 3 MEMBERS --}}
                                 @foreach ($group->members->take(3) as $member)
                                     <img class="w-6 h-6 rounded-full border-2 border-white object-cover"
-                                        src="{{ $member->dp
-                                            ? asset('storage/images/dp/' . $member->dp)
-                                            : 'https://ui-avatars.com/api/?name=' . urlencode($member->first_name) }}"
+                                        src="{{ $member->dp ?: 'https://ui-avatars.com/api/?name=' . urlencode($member->first_name) }}"
                                         alt="{{ $member->first_name }}">
                                 @endforeach
 

@@ -5,10 +5,10 @@ namespace App\Livewire\User\Group;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\GroupPost;
+use App\Services\ImageKitService;
 use Illuminate\Support\Facades\Auth;
 
-class CreateGroupPost extends Component
-{
+class CreateGroupPost extends Component{
     use WithFileUploads;
 
     public $group;
@@ -20,13 +20,11 @@ class CreateGroupPost extends Component
         'image'   => 'nullable|image|max:2048',
     ];
 
-    public function mount($group)
-    {
+    public function mount($group){
         $this->group = $group;
     }
 
-    public function createPost()
-    {
+    public function createPost(){
         $this->validate();
 
         if (!$this->caption && !$this->image) {
@@ -34,13 +32,23 @@ class CreateGroupPost extends Component
             return;
         }
 
+        $imageKit = app(ImageKitService::class);
+        $imageUrl = null;
+
+        if ($this->image) {
+            try {
+                $imageUrl = $imageKit->upload($this->image, 'group_chat_images');
+            } catch (\Exception $e) {
+                $this->addError('image', 'Upload failed: ' . $e->getMessage());
+                return;
+            }
+        }
+
         GroupPost::create([
             'group_id' => $this->group->id,
             'user_id'  => Auth::id(),
             'caption'  => ucfirst(trim($this->caption)),
-            'image'    => $this->image
-                ? $this->image->store('group_posts', 'public')
-                : null,
+            'image'    => $imageUrl,
         ]);
 
         $this->reset('caption', 'image');
@@ -48,8 +56,7 @@ class CreateGroupPost extends Component
         $this->dispatch('postCreated');
     }
 
-    public function render()
-    {
+    public function render(){
         return view('livewire.user.group.create-group-post');
     }
 }

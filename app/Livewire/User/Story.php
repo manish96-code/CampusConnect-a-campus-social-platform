@@ -3,47 +3,65 @@
 namespace App\Livewire\User;
 
 use Livewire\Component;
-use Livewire\WithFileUploads;   
+use Livewire\WithFileUploads;
 use Livewire\Attributes\Validate;
+use App\Models\Story as StoryModel;
+use App\Services\ImageKitService;
+use Illuminate\Support\Facades\Auth;
 
+class Story extends Component{
 
-class Story extends Component
-{
+    use WithFileUploads;
+
     public $stories;
 
     #[Validate("required|file|mimes:jpg,jpeg,png,mp4|max:10240")]
     public $media_path;
 
-    use withfileuploads;
-    
-
     public function mount(){
-        $this->stories = auth()->user()->stories()->where('expires_at', '>', now())->get();
-    }   
+        $this->loadStories();
+    }
+
+    public function loadStories(){
+        $friendIds = Auth::user()->friends()->pluck('friends.receiver_id')
+            ->merge(Auth::user()->friends()->pluck('friends.sender_id'))
+            ->unique();
+
+        $userIds = $friendIds->push(Auth::id());
+
+        $this->stories = StoryModel::with('user')
+            ->whereIn('user_id', $userIds)
+            ->where('expires_at', '>', now())
+            ->latest()
+            ->get();
+    }
 
     public function createStory(){
-        $data = $this->validate();
-        
-        $data['media_path'] = $this->media_path->store('stories','public');
-        $data['user_id'] = auth()->id();
-        $data['expires_at'] = now()->addHours(24);
+        $this->validate();
 
-        auth()->user()->stories()->create($data);
+        try {
+            $imageKit = app(ImageKitService::class);
+            $cloudPath = $imageKit->upload($this->media_path, 'stories');
 
-        $this->stories = auth()->user()->stories()->where('expires_at', '>', now())->get();
-        session()->flash('success', 'Story uploaded successfully.');
+            Auth::user()->stories()->create([
+                'media_path' => $cloudPath,
+                'expires_at' => now()->addHours(24),
+            ]);
 
-        $this->media_path = '';
-        
-        
+            $this->reset('media_path');
+            $this->loadStories();
+
+            session()->flash('success', 'Story uploaded successfully! ✨');
+        } catch (\Exception $e) {
+            $this->addError('media_path', 'Cloud upload failed: ' . $e->getMessage());
+        }
     }
 
-    public function updatedMediaPath()
-    {
+    public function updatedMediaPath(){
         $this->createStory();
     }
-    public function render()
-    {
+
+    public function render(){
         return view('livewire.user.story');
     }
 }

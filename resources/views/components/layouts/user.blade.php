@@ -4,6 +4,12 @@
 <head>
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <style>
+        .section-lock {
+            height: calc(100vh - 5rem);
+            overflow: hidden !important;
+        }
+    </style>
     @livewireStyles
 </head>
 
@@ -59,21 +65,50 @@
                     <span class="absolute top-2 right-2.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white"></span>
                 </button>
 
-                <!-- User -->
-                <div class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full">
-                    <img src="@if (auth()->user()->dp) {{ asset('storage/images/dp/' . auth()->user()->dp) }}
-                             @else
-                                https://ui-avatars.com/api/?name={{ auth()->user()->first_name }}+{{ auth()->user()->last_name }}&background=6366f1&color=fff @endif"
-                        class="w-8 h-8 rounded-full border-2 border-white shadow-sm">
+                <div class="relative" x-data="{ open: false }">
 
-                    <div class="hidden lg:block text-left">
-                        <p class="text-xs font-bold text-slate-700 capitalize">
-                            {{ auth()->user()->first_name }}
-                        </p>
-                        <p class="text-[10px] text-slate-400">Student</p>
+                    <button @click="open = !open" @click.away="open = false"
+                        class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full hover:bg-slate-50 transition-colors focus:outline-none">
+
+                        <img src="{{ auth()->user()->dp ?: 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->first_name . ' ' . auth()->user()->last_name) . '&background=6366f1&color=fff' }}"
+                            alt="{{ auth()->user()->first_name }}"
+                            class="w-8 h-8 rounded-full border-2 border-white shadow-sm object-cover">
+
+                        <div class="hidden lg:block text-left">
+                            <p class="text-xs font-bold text-slate-700 capitalize">
+                                {{ auth()->user()->first_name }}
+                            </p>
+                            <p class="text-[10px] text-slate-400">Student</p>
+                        </div>
+
+                        <x-heroicon-o-chevron-down
+                            class="w-3 h-3 text-slate-400 hidden lg:block transition-transform duration-200"
+                            ::class="open ? 'rotate-180' : ''" />
+                    </button>
+
+                    <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="transform opacity-0 scale-95"
+                        x-transition:enter-end="transform opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="transform opacity-100 scale-100"
+                        x-transition:leave-end="transform opacity-0 scale-95"
+                        class="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-[60]"
+                        x-cloak>
+
+                        <a href="{{ route('profile') }}"
+                            class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
+                            <x-heroicon-o-user class="w-4 h-4" />
+                            <span class="font-semibold">My Profile</span>
+                        </a>
+
+                        <div class="my-1 border-t border-slate-100"></div>
+
+                        <a wire:navigate href="{{ route('logout') }}"
+                            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition-all duration-200 group">
+                            <x-heroicon-o-arrow-right-on-rectangle class="w-4 h-4 group-hover:text-rose-600" />
+                            <span>Log Out</span>
+                        </a>
                     </div>
-
-                    <x-heroicon-o-chevron-down class="w-3 h-3 text-slate-400 hidden lg:block" />
                 </div>
 
             </div>
@@ -91,43 +126,25 @@
                     </div>
                 </aside>
 
-                {{-- <section class="col-span-1 lg:col-span-12 lg:ml-72">
-                    {{ $slot }}
-                </section> --}}
+                <section id="main-content-section"
+                    class="col-span-1 lg:col-span-12 lg:ml-72 relative transition-all duration-300">
 
-                <section class="col-span-1 lg:col-span-12 lg:ml-72 relative">
-
-                    <!-- Loader -->
-                    {{-- <div id="page-loader"
-                        class="absolute inset-0 z-50 hidden flex items-center justify-center bg-white/70 backdrop-blur-sm">
-                        <div class="flex flex-col items-center gap-4">
-                            <div
-                                class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin">
-                            </div>
-                            <p class="text-sm font-semibold text-indigo-600">Loading...</p>
-                        </div>
-                    </div> --}}
-
-                    <!-- Loader -->
                     <div id="page-loader"
-                        class="absolute inset-0 z-50 hidden flex items-center justify-center bg-white/70 backdrop-blur-md">
-
+                        class="absolute inset-0 z-40 hidden flex flex-col items-center justify-center bg-white/70 backdrop-blur-md rounded-2xl">
                         <div class="flex flex-col items-center gap-4">
                             <div class="flex gap-2">
                                 <span
-                                    class="w-2.5 h-2.5 bg-indigo-600 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                                    class="w-3 h-3 bg-indigo-600 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
                                 <span
-                                    class="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                                <span class="w-2.5 h-2.5 bg-indigo-400 rounded-full animate-bounce"></span>
+                                    class="w-3 h-3 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                                <span class="w-3 h-3 bg-indigo-400 rounded-full animate-bounce"></span>
                             </div>
-
-                            <p class="text-sm font-semibold text-slate-600">
-                                Loading content…
-                            </p>
+                            <p class="font-semibold text-slate-600">Loading content…</p>
                         </div>
                     </div>
 
                     {{ $slot }}
+
                 </section>
 
             </div>
@@ -165,44 +182,48 @@
 
     <script>
         (function() {
+            const loader = document.getElementById('page-loader');
+            const section = document.getElementById('main-content-section');
+
             const showLoader = () => {
-                const loader = document.getElementById('page-loader');
                 if (!loader) return;
                 loader.classList.remove('hidden');
                 loader.classList.add('flex');
+
+                if (section) {
+                    section.classList.add('section-lock');
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
             };
 
             const hideLoader = () => {
-                const loader = document.getElementById('page-loader');
                 if (!loader) return;
                 loader.classList.add('hidden');
                 loader.classList.remove('flex');
+
+                if (section) {
+                    section.classList.remove('section-lock');
+                }
             };
 
-            // 1️⃣ Show loader on ANY internal link click
             document.addEventListener('click', function(e) {
                 const link = e.target.closest('a[href]');
                 if (!link) return;
-
-                // Ignore cases
-                if (
-                    link.target === '_blank' ||
-                    link.hasAttribute('download') ||
-                    link.href.includes('#') ||
-                    (link.href.startsWith('http') && !link.href.startsWith(location.origin))
+                if (link.target === '_blank' || link.hasAttribute('download') || link.href.includes('#') ||
+                    (link.href.startsWith('http') && !link.href.startsWith(location.origin)) || e.metaKey || e
+                    .ctrlKey
                 ) return;
 
                 showLoader();
             }, true);
 
-            // 2️⃣ Show loader when browser is leaving page
             window.addEventListener('beforeunload', showLoader);
-
-            // 3️⃣ Hide loader when page is ready (initial + back/forward)
             window.addEventListener('pageshow', hideLoader);
         })();
     </script>
-
 
 </body>
 
