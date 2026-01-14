@@ -75,7 +75,18 @@
                     </button>
 
                     <!-- Share Button -->
-                    <button class="group flex items-center gap-2 text-slate-500 hover:text-green-600 transition-colors">
+                    <button
+                        @click="if (navigator.share) {
+                            navigator.share({
+                                title: 'Campus Connect',
+                                text: 'Check this out!',
+                                url: window.location.href
+                            })
+                        } else {
+                            alert('Sharing not supported on this browser. Link copied!')
+                            navigator.clipboard.writeText(window.location.href)
+                        }"
+                        class="group flex items-center gap-2 text-slate-500 hover:text-green-600 transition-colors">
                         <div class="p-2 rounded-full group-hover:bg-green-50 transition">
                             <x-heroicon-o-share class="w-5 h-5" />
                         </div>

@@ -32,82 +32,102 @@
         @if (auth()->check() &&
                 $group->members()->where('users.id', auth()->id())->wherePivot('status', 'approved')->exists())
 
-            @forelse ($posts as $post)
-                @php
-                    $isMe = $post->user_id === auth()->id();
+            @forelse ($groupedPosts as $date => $posts)
+                {{-- DATE SEPARATOR --}}
+                <div class="flex justify-center my-4">
+                    <span
+                        class="bg-indigo-50 text-indigo-600 text-[10px] font-bold px-3 py-1 rounded-full shadow-sm border border-indigo-100 uppercase tracking-wider">
+                        @php
+                            $dateObj = \Carbon\Carbon::parse($date);
+                            if ($dateObj->isToday()) {
+                                echo 'Today';
+                            } elseif ($dateObj->isYesterday()) {
+                                echo 'Yesterday';
+                            } else {
+                                echo $dateObj->format('M d, Y');
+                            }
+                        @endphp
+                    </span>
+                </div>
 
-                    $isAdmin =
-                        $group
-                            ->members()
-                            ->where('users.id', auth()->id())
-                            ->wherePivot('status', 'approved')
-                            ->first()?->pivot->role === 'admin';
+                @foreach ($posts as $post)
+                    @php
+                        $isMe = $post->user_id === auth()->id();
 
-                    $canDelete = $isMe || $isAdmin;
-                @endphp
+                        $isAdmin =
+                            $group
+                                ->members()
+                                ->where('users.id', auth()->id())
+                                ->wherePivot('status', 'approved')
+                                ->first()?->pivot->role === 'admin';
 
-                <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }}">
-                    <div class="max-w-[75%] flex gap-2 {{ $isMe ? 'flex-row-reverse' : '' }}">
+                        $canDelete = $isMe || $isAdmin;
+                    @endphp
 
-                        {{-- Avatar --}}
-                        <a href="{{ route('profile', $post->user->id) }}">
-                            <img src="{{ $post->user->dp ?: 'https://ui-avatars.com/api/?name=' . urlencode($post->user->first_name) . '&background=random' }}"
-                                class="w-8 h-8 rounded-full object-cover border">
-                        </a>
+                    <div class="flex {{ $isMe ? 'justify-end' : 'justify-start' }}">
+                        <div class="max-w-[75%] flex gap-2 {{ $isMe ? 'flex-row-reverse' : '' }}">
 
-                        {{-- Message --}}
-                        <div
-                            class="rounded-2xl px-4 py-2 shadow-sm
+                            {{-- Avatar --}}
+                            <a href="{{ route('profile', $post->user->id) }}">
+                                <img src="{{ $post->user->dp ?: 'https://ui-avatars.com/api/?name=' . urlencode($post->user->first_name) . '&background=random' }}"
+                                    class="w-8 h-8 rounded-full object-cover border">
+                            </a>
+
+                            {{-- Message --}}
+                            <div
+                                class="rounded-2xl px-4 py-2 shadow-sm
                             {{ $isMe ? 'bg-indigo-600 text-white rounded-br-sm' : 'bg-white border text-slate-800 rounded-bl-sm' }}">
 
-                            @unless ($isMe)
-                                <a href="{{ route('profile', $post->user->id) }}">
-                                    <p class="text-xs font-bold text-indigo-600 mb-1 capitalize">
-                                        {{ $post->user->first_name }} {{ $post->user->last_name }}
-                                    </p>
-                                </a>
-                            @endunless
+                                @unless ($isMe)
+                                    <a href="{{ route('profile', $post->user->id) }}">
+                                        <p class="text-xs font-bold text-indigo-600 mb-1 capitalize">
+                                            {{ $post->user->first_name }} {{ $post->user->last_name }}
+                                        </p>
+                                    </a>
+                                @endunless
 
-                            @if ($canDelete)
-                                <div class="relative ml-2 mb-6" x-data="{ open: false }">
+                                @if ($canDelete)
+                                    <div class="relative ml-2 mb-6" x-data="{ open: false }">
 
-                                    {{-- 3 DOT BUTTON --}}
-                                    <button @click="open = !open" class="opacity-80 hover:opacity-100 absolute right-2">
-                                        <x-heroicon-o-ellipsis-vertical class="w-4 h-4" />
-                                    </button>
-
-                                    {{-- DROPDOWN --}}
-                                    <div x-show="open" @click.outside="open = false" x-cloak
-                                        class="absolute right-0 mt-1 w-28 bg-white border rounded-xl shadow-lg z-20">
-
-                                        <button wire:click="deletePost({{ $post->id }})" @click="open = false"
-                                            class="w-full text-left px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 rounded-xl flex items-center gap-2">
-                                            <x-heroicon-o-trash class="w-4 h-4" />
-                                            Delete
+                                        {{-- 3 DOT BUTTON --}}
+                                        <button @click="open = !open"
+                                            class="opacity-80 hover:opacity-100 absolute right-2">
+                                            <x-heroicon-o-ellipsis-vertical class="w-4 h-4" />
                                         </button>
+
+                                        {{-- DROPDOWN --}}
+                                        <div x-show="open" @click.outside="open = false" x-cloak
+                                            class="absolute right-0 mt-1 w-28 bg-white border rounded-xl shadow-lg z-20">
+
+                                            <button wire:click="deletePost({{ $post->id }})" @click="open = false"
+                                                class="w-full text-left px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 rounded-xl flex items-center gap-2">
+                                                <x-heroicon-o-trash class="w-4 h-4" />
+                                                Delete
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            @endif
+                                @endif
 
-                            @if ($post->caption)
-                                <p class="text-sm leading-relaxed">
-                                    {{ $post->caption }}
+                                @if ($post->caption)
+                                    <p class="text-sm leading-relaxed">
+                                        {{ $post->caption }}
+                                    </p>
+                                @endif
+
+                                @if ($post->image)
+                                    <a href="{{ $post->image }}" target="_blank">
+                                        <img src="{{ $post->image }}"
+                                            class="mt-2 rounded-xl max-h-64 object-cover border hover:opacity-90 transition">
+                                    </a>
+                                @endif
+
+                                <p class="text-[10px] mt-1 text-right opacity-70">
+                                    {{ $post->created_at->format('h:i A') }}
                                 </p>
-                            @endif
-
-                            @if ($post->image)
-                                <a href="{{ $post->image }}" target="_blank">
-                                    <img src="{{ $post->image }}"
-                                        class="mt-2 rounded-xl max-h-64 object-cover border hover:opacity-90 transition">
-                                </a>
-                            @endif
-
-                            <p class="text-[10px] mt-1 text-right opacity-70">
-                                {{ $post->created_at->format('h:i A') }}
-                            </p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endforeach
 
             @empty
                 <div class="text-center text-sm text-slate-500 py-10">

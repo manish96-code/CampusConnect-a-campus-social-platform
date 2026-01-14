@@ -3,6 +3,7 @@
 namespace App\Livewire\User;
 
 use App\Models\Library as LibraryModel;
+use App\Services\ImageKitService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
@@ -18,7 +19,7 @@ class Library extends Component
     #[Validate('required|string|max:255')]
     public $title;
 
-    #[Validate('required|file|max:10240')]
+    #[Validate('required|file|max:5120')]
     public $file;
 
     public $isCreating = false;
@@ -29,79 +30,73 @@ class Library extends Component
     public $viewerTitle;
     public $viewerExt;
 
-    public function toggleCreate()
-    {
+    public $search = "";
+    public $filter = 'all';
+
+    public function toggleCreate(){
         $this->isCreating = ! $this->isCreating;
         $this->resetValidation();
         $this->reset(['title', 'file']);
     }
 
-    public function create()
-    {
+    public function create(){
         $this->validate();
 
-        $path = $this->file->store('library_docs', 'public');
+        $imageKit = app(ImageKitService::class);
 
-        LibraryModel::create([
-            'user_id' => Auth::id(),
-            'title'   => $this->title,
-            'file'    => $path,
-        ]);
+        try {
+            $cloudPath = $imageKit->upload($this->file, 'library_docs');
 
-        $this->reset(['title', 'file']);
-        $this->isCreating = false;
+            LibraryModel::create([
+                'user_id' => Auth::id(),
+                'title'   => $this->title,
+                'file'    => $cloudPath,
+            ]);
 
-        session()->flash('message', 'Document uploaded successfully!');
-    }
-
-    public function delete($id)
-    {
-        $doc = LibraryModel::find($id);
-
-        if ($doc && $doc->user_id === Auth::id()) {
-            if ($doc->file) {
-                Storage::disk('public')->delete($doc->file);
-            }
-            $doc->delete();
-            session()->flash('message', 'Document deleted.');
+            $this->reset(['title', 'file']);
+            $this->isCreating = false;
+            session()->flash('message', 'Document uploaded to cloud successfully! ☁️');
+        } catch (\Exception $e) {
+            $this->addError('file', 'Upload failed: ' . $e->getMessage());
         }
     }
 
-    //  Open viewer
-    public function view($id)
-    {
-        $doc = LibraryModel::with('user')->findOrFail($id);
+    // View document
+    public function view($id){
+        $doc = LibraryModel::findOrFail($id);
 
-        $this->viewerUrl   = Storage::url($doc->file);
+        $this->viewerUrl   = $doc->file;
         $this->viewerTitle = $doc->title;
         $this->viewerExt   = strtolower(pathinfo($doc->file, PATHINFO_EXTENSION));
 
         $this->showViewer = true;
     }
 
+    public function delete($id){
+        $doc = LibraryModel::find($id);
+
+        if ($doc && $doc->user_id === Auth::id()) {
+            $doc->delete();
+            session()->flash('message', 'Document removed.');
+        }
+    }
+
     //  Close viewer
-    public function closeViewer()
-    {
+    public function closeViewer(){
         $this->reset(['showViewer', 'viewerUrl', 'viewerTitle', 'viewerExt']);
     }
 
-    public $search = "";
-    // filter
-    public $filter = 'all';
-    public function setFilter($filter)
-    {
+    public function setFilter($filter){
         $allowed = ['all', 'mine'];
         if (! in_array($filter, $allowed)) {
             $filter = 'all';
         }
         $this->filter = $filter;
-        // $this->search = '';
         $this->reset('search');
     }
 
 
-    public function render()
-    {
+    public function render(){
         $query = LibraryModel::with('user')->latest();
 
         if ($this->filter === 'mine') {

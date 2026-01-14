@@ -20,20 +20,20 @@ class CallingGroupPost extends Component{
     }
 
     public function deletePost($postId){
-    $post = GroupPost::findOrFail($postId);
+        $post = GroupPost::findOrFail($postId);
 
-    $isAdmin = $this->group->members()
-        ->where('users.id', auth()->id())
-        ->wherePivot('role', 'admin')
-        ->exists();
+        $isAdmin = $this->group->members()
+            ->where('users.id', auth()->id())
+            ->wherePivot('role', 'admin')
+            ->exists();
 
-    // Permission check
-    if ($post->user_id !== auth()->id() && ! $isAdmin) {
-        abort(403);
+        // Permission check
+        if ($post->user_id !== auth()->id() && ! $isAdmin) {
+            abort(403);
+        }
+
+        $post->delete();
     }
-
-    $post->delete();
-}
 
     public function render()
     {
@@ -50,11 +50,24 @@ class CallingGroupPost extends Component{
             ]);
         }
 
-        return view('livewire.user.group.calling-group-post', [
-            'posts' => GroupPost::with('user')
-                ->where('group_id', $this->group->id)
-                ->orderBy('created_at', 'asc')
-                ->get(),
-        ]);
+        // return view('livewire.user.group.calling-group-post', [
+        //     'posts' => GroupPost::with('user')
+        //         ->where('group_id', $this->group->id)
+        //         ->orderBy('created_at', 'asc')
+        //         ->get(),
+        // ]);
+        $allPosts = GroupPost::with('user')
+        ->where('group_id', $this->group->id)
+        ->orderBy('created_at', 'asc')
+        ->get();
+
+    // Group the posts by date
+    $groupedPosts = $allPosts->groupBy(function ($post) {
+        return $post->created_at->format('Y-m-d');
+    });
+
+    return view('livewire.user.group.calling-group-post', [
+        'groupedPosts' => $groupedPosts,
+    ]);
     }
 }

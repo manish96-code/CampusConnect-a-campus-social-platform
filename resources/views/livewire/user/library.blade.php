@@ -152,7 +152,7 @@
                                     <x-heroicon-o-eye class="w-4 h-4" />
                                 </button>
 
-                                <a href="{{ asset('storage/' . $doc->file) }}" download
+                                <a href="{{ $doc->file }}" download="{{ $doc->title }}" target="_blank"
                                     class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition">
                                     <x-heroicon-o-arrow-down-tray class="w-4 h-4" />
                                 </a>
