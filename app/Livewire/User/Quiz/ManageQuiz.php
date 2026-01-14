@@ -9,22 +9,23 @@ use Livewire\Component;
 
 #[Layout("components.layouts.user")]
 
-
-class ManageQuiz extends Component
-{
+class ManageQuiz extends Component{
 
     public $quizId;
     public Quiz $quiz;
-
     public $questions = [];
 
-    public function mount($quizId)
-    {
+    public function mount($quizId){
         $this->quizId = $quizId;
+        $this->loadQuizData();
+    }
 
+    // Load/refresh quiz data
+    public function loadQuizData(){
         $this->quiz = Quiz::with(['course', 'attempts.user', 'questions'])
-            ->findOrFail($quizId);
+            ->findOrFail($this->quizId);
 
+        $this->questions = [];
         foreach ($this->quiz->questions as $q) {
             $this->questions[] = [
                 'id'       => $q->id,
@@ -40,8 +41,50 @@ class ManageQuiz extends Component
         }
     }
 
-    public function saveQuestions()
-    {
+    public function syncTotalMarks(){
+        $count = QuizQuestion::where('quiz_id', $this->quiz->id)->count();
+        $shouldBePublished = $count > 0;
+
+        $this->quiz->update([
+            'total_marks' => $count,
+            'is_published' => $shouldBePublished
+        ]);
+        $this->quiz->refresh();
+    }
+
+    public function addNewQuestion(){
+        QuizQuestion::create([
+            'quiz_id'        => $this->quiz->id,
+            'question'       => $this->newQuestion['question'],
+            'option_a'       => $this->newQuestion['options'][0],
+            'option_b'       => $this->newQuestion['options'][1],
+            'option_c'       => $this->newQuestion['options'][2],
+            'option_d'       => $this->newQuestion['options'][3],
+            'correct_option' => ['A', 'B', 'C', 'D'][$this->newQuestion['correct']],
+        ]);
+
+        $this->syncTotalMarks();
+        $this->loadQuizData();
+
+        $this->newQuestion = [
+            'question' => '',
+            'options' => ['', '', '', ''],
+            'correct' => 0,
+        ];
+
+        session()->flash('message', 'Question added successfully ✅');
+    }
+
+    public function deleteQuestion($questionId){
+        QuizQuestion::where('id', $questionId)->delete();
+
+        $this->syncTotalMarks();
+        $this->loadQuizData();
+
+        session()->flash('message', 'Question deleted successfully ❌');
+    }
+
+    public function updateQuiz(){
         foreach ($this->questions as $q) {
             QuizQuestion::where('id', $q['id'])->update([
                 'question'       => $q['question'],
@@ -53,15 +96,15 @@ class ManageQuiz extends Component
             ]);
         }
 
+        $this->syncTotalMarks();
         session()->flash('message', 'Questions updated successfully ✅');
     }
 
-    public function deleteQuiz()
-    {
+    public function deleteQuiz(){
         $this->quiz->delete();
-        $this->dispatch('quizDeleted');
+        session()->flash('message', 'Quiz deleted successfully 🗑️');
+        return redirect()->route('quiz');
     }
-
 
     public $newQuestion = [
         'question' => '',
@@ -69,37 +112,8 @@ class ManageQuiz extends Component
         'correct' => 0,
     ];
 
-    public function addQuestion()
-    {
-        QuizQuestion::create([
-            'quiz_id'        => $this->quiz->id,
-            'question'       => $this->newQuestion['question'],
-            'option_a'       => $this->newQuestion['options'][0],
-            'option_b'       => $this->newQuestion['options'][1],
-            'option_c'       => $this->newQuestion['options'][2],
-            'option_d'       => $this->newQuestion['options'][3],
-            'correct_option' => ['A', 'B', 'C', 'D'][$this->newQuestion['correct']],
-        ]);
-
-        $this->newQuestion = [
-            'question' => '',
-            'options' => ['', '', '', ''],
-            'correct' => 0,
-        ];
-
-        session()->flash('message', 'Question added successfully ✅');
-    }
-
-    public function deleteQuestion($questionId)
-    {
-        QuizQuestion::where('id', $questionId)->delete();
-
-        session()->flash('message', 'Question deleted successfully ❌');
-    }
-
-
     public function render()
-    {
+{
         return view('livewire.user.quiz.manage-quiz');
     }
 }

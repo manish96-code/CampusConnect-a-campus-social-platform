@@ -17,11 +17,10 @@ class AttemptQuiz extends Component
 {
     public $quizId;
     public Quiz $quiz;
-
     public $answers = [];
-
     public bool $submitted = false;
     public ?QuizAttempt $attempt = null;
+    public $currentQuestionIndex = 0;
 
     public function mount($quizId)
     {
@@ -38,10 +37,30 @@ class AttemptQuiz extends Component
 
         if ($this->attempt) {
             $this->submitted = true;
-
             foreach ($this->attempt->answers as $ans) {
                 $this->answers[$ans->quiz_question_id] = $ans->selected_option;
             }
+        }
+    }
+
+    public function goToQuestion($index)
+    {
+        if ($index >= 0 && $index < $this->quiz->questions->count()) {
+            $this->currentQuestionIndex = $index;
+        }
+    }
+
+    public function nextQuestion()
+    {
+        if ($this->currentQuestionIndex < $this->quiz->questions->count() - 1) {
+            $this->currentQuestionIndex++;
+        }
+    }
+
+    public function previousQuestion()
+    {
+        if ($this->currentQuestionIndex > 0) {
+            $this->currentQuestionIndex--;
         }
     }
 

@@ -35,7 +35,8 @@
 
 
             <!-- COURSE FILTER -->
-            <select wire:model.live="courseFilter" class="rounded-xl border border-slate-200 px-4 py-2 text-sm capitalize">
+            <select wire:model.live="courseFilter"
+                class="rounded-xl border border-slate-200 px-4 py-2 text-sm capitalize">
                 <option value="all">All Courses</option>
                 @foreach ($courses as $course)
                     <option value="{{ $course->id }}">{{ $course->course_name }}</option>
@@ -59,7 +60,24 @@
     <!-- QUIZ GRID -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         @forelse($quizzes as $quiz)
-            <div class="bg-white border border-slate-100 rounded-2xl shadow-sm p-6 flex flex-col">
+            <div
+                class="bg-white border border-slate-100 rounded-2xl shadow-sm p-6 flex flex-col relative overflow-hidden group">
+
+                @if ($quiz->user_id === auth()->id())
+                    <div class="absolute top-0 right-0">
+                        @if ($quiz->is_published)
+                            <span
+                                class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+                                Published
+                            </span>
+                        @else
+                            <span
+                                class="bg-amber-100 text-amber-700 text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+                                Draft
+                            </span>
+                        @endif
+                    </div>
+                @endif
 
                 <!-- TITLE -->
                 <h3 class="text-lg font-bold text-slate-800 mb-1">
@@ -118,9 +136,16 @@
             </div>
 
         @empty
-            <div class="col-span-full text-center py-12 bg-white rounded-2xl border border-dashed">
-                <h3 class="text-lg font-bold text-slate-700">No quizzes found</h3>
-                <p class="text-sm text-slate-500">Try searching something else</p>
+            <div class="col-span-full text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
+                <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <x-heroicon-o-academic-cap class="w-8 h-8 text-slate-300" />
+                </div>
+                <h3 class="text-lg font-bold text-slate-700">
+                    {{ $myQuiz ? "You haven't created any quizzes yet" : 'No public quizzes available' }}
+                </h3>
+                <p class="text-sm text-slate-500 max-w-xs mx-auto mt-1">
+                    {{ $myQuiz ? 'Share your knowledge with other students by creating your first quiz!' : "Try adjusting your search or filters to find what you're looking for." }}
+                </p>
             </div>
         @endforelse
     </div>

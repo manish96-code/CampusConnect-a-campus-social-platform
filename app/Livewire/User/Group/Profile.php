@@ -4,6 +4,7 @@ namespace App\Livewire\User\Group;
 
 use App\Models\Group;
 use App\Models\GroupPost;
+use App\Services\ImageKitService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
@@ -21,6 +22,7 @@ class Profile extends Component{
     public $activeTab = 'discussion';
     public $isAdmin = false;
     public $media = [];
+    public $allAdmins;
 
     public string $group_name = '';
     public ?string $description = null;
@@ -34,7 +36,7 @@ class Profile extends Component{
     public $cover_pic;
 
     public function mount($id){
-        $this->group = Group::with('members')->findOrFail($id);
+        $this->group = Group::with(['members', 'creator'])->findOrFail($id);
 
         $this->isAdmin = $this->group->members()
             ->where('users.id', auth()->id())
@@ -51,10 +53,13 @@ class Profile extends Component{
             ->latest()
             ->get();
 
-        $this->media = GroupPost::where('group_id', $this->group->id)
-            ->whereNotNull('image')
-            ->latest()
-            ->get();
+            $owner = $this->group->creator;
+            $otherAdmins = $this->group->members()
+                ->wherePivot('role', 'admin')
+                ->wherePivot('status', 'approved')
+                ->get();
+
+        $this->allAdmins = collect([$owner])->merge($otherAdmins)->unique('id');
     }
 
 
@@ -74,7 +79,7 @@ class Profile extends Component{
             'cover_pic' => 'nullable|image|max:4096',
         ]);
 
-        $imageKit = app(\App\Services\ImageKitService::class);
+        $imageKit = app(ImageKitService::class);
 
         if ($this->profile_pic) {
             $path = $imageKit->upload($this->profile_pic, 'groups/profile');

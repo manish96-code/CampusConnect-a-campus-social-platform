@@ -66,7 +66,6 @@ class AddQuestions extends Component
                 ]);
             }
 
-            // changes made to the quiz table
             $this->quiz->update([
                 'total_marks' => count($this->questions),
                 'is_published' => true

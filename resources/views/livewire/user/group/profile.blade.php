@@ -325,20 +325,36 @@
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold text-slate-800 text-sm">Admins</h3>
                 </div>
-                <div class="flex items-center gap-3">
-                    <img src="{{ $group->creator->dp ?: 'https://ui-avatars.com/api/?name=' . urlencode($group->creator->first_name) . '&background=random' }}"
-                        class="w-10 h-10 rounded-full object-cover">
-                    <div>
-                        <a href="{{ route('profile', $group->creator->id) }}">
-                            <p class="text-sm font-bold text-slate-700 capitalize">
-                                {{ $group->creator->first_name ?? 'Unknown' }} {{ $group->creator->last_name ?? '' }}
-                            </p>
-                            <p class="text-[10px] text-indigo-600 font-bold uppercase tracking-wider">Owner</p>
-                        </a>
-                    </div>
+
+                <div class="space-y-4">
+                    @foreach ($allAdmins as $admin)
+                        <div class="flex items-center gap-3">
+                            <img src="{{ $admin->dp ?: 'https://ui-avatars.com/api/?name=' . urlencode($admin->first_name) . '&background=random' }}"
+                                class="w-10 h-10 rounded-full object-cover border border-slate-50 shadow-sm">
+
+                            <div class="flex-1 min-w-0">
+                                <a href="{{ route('profile', $admin->id) }}" class="group">
+                                    <p
+                                        class="text-sm font-bold text-slate-700 capitalize truncate group-hover:text-indigo-600 transition">
+                                        {{ $admin->first_name }} {{ $admin->last_name }}
+                                    </p>
+
+                                    <p class="text-[10px] font-bold uppercase tracking-wider">
+                                        @if ($admin->id === $group->created_by)
+                                            <span class="text-indigo-600 flex items-center gap-1">
+                                                <x-heroicon-s-shield-check class="w-3 h-3" /> Owner
+                                            </span>
+                                        @else
+                                            <span class="text-slate-400">Admin</span>
+                                        @endif
+                                    </p>
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
-
+            
             @if (auth()->check() &&
                     $group->members()->where('users.id', auth()->id())->wherePivot('status', 'approved')->exists())
 

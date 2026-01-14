@@ -32,7 +32,7 @@
         </div>
     </div>
 
-    
+
     <!-- ================= QUIZ DETAILS ================= -->
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
@@ -84,8 +84,7 @@
                     + Add Question
                 </button>
 
-                <button wire:click="saveQuestions"
-                    class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-bold">
+                <button wire:click="updateQuiz" class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-bold">
                     Save Changes
                 </button>
 
@@ -165,9 +164,9 @@
         </div>
 
         <div class="flex gap-3">
-            <button wire:click="addQuestion" @click="adding = false"
+            <button wire:click="addNewQuestion" @click="adding = false"
                 class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-bold">
-                Save Question
+                Save
             </button>
 
             <button @click="adding = false" class="px-4 py-2 rounded-xl bg-slate-200 text-sm font-bold">
