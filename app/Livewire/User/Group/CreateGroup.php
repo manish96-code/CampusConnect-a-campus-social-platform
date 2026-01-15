@@ -54,7 +54,7 @@ class CreateGroup extends Component{
             'status' => 'approved',
         ]);
 
-        session()->flash('message', 'Group created successfully!');
+        $this->dispatch('toast', message: 'Group created successfully! 🎊', type: 'success');
 
         $this->reset(['group_name', 'description', 'profile_pic', 'cover_pic']);
         $this->group_type = 'public';

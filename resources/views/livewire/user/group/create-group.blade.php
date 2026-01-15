@@ -217,12 +217,6 @@
                     </form>
                 </div>
 
-                @if (session()->has('message'))
-                    <div
-                        class="mt-3 px-4 py-3 bg-emerald-100 text-emerald-700 rounded-xl flex items-center gap-2 text-sm font-bold">
-                        <x-heroicon-o-check-circle class="w-4 h-4" /> {{ session('message') }}
-                    </div>
-                @endif
             </div>
 
         </div>

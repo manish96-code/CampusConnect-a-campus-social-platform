@@ -1,6 +1,5 @@
 <div class="flex flex-col h-full bg-white rounded-2xl border border-slate-200 overflow-hidden">
 
-    {{-- 🔹 CHAT HEADER --}}
     <div class="sticky top-0 z-10 bg-white border-b border-slate-200 px-4 py-3 flex items-center gap-3">
 
         {{-- Group Avatar --}}
@@ -89,7 +88,7 @@
                                 @if ($canDelete)
                                     <div class="relative ml-2 mb-6" x-data="{ open: false }">
 
-                                        {{-- 3 DOT BUTTON --}}
+                                        {{-- DOT BUTTON --}}
                                         <button @click="open = !open"
                                             class="opacity-80 hover:opacity-100 absolute right-2">
                                             <x-heroicon-o-ellipsis-vertical class="w-4 h-4" />

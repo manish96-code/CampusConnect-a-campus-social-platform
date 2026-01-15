@@ -16,9 +16,6 @@
                     class="w-full bg-transparent border-none focus:ring-0 text-slate-700 text-base placeholder-slate-400 resize-none p-0 focus:outline-none"
                     placeholder="What's happening on campus, {{ auth()->user()->first_name }}?"></textarea>
 
-                @error('caption')
-                    <span class="text-rose-500 text-xs mt-1 block font-medium">{{ $message }}</span>
-                @enderror
             </div>
         </div>
 
@@ -43,10 +40,6 @@
                 </button>
             </div>
         @endif
-
-        @error('image')
-            <span class="text-rose-500 text-xs mt-2 ml-14 block font-medium">{{ $message }}</span>
-        @enderror
 
         <!-- Divider -->
         <div class="h-px bg-slate-50 mt-4 mb-3 ml-14"></div>
@@ -74,7 +67,7 @@
                 <!-- Loading State -->
                 <span wire:loading wire:target="createPost" class="flex items-center gap-2">
                     <x-heroicon-o-arrow-path class="w-4 h-4 animate-spin text-white" />
-                    Posting...
+                    Sending...
                 </span>
 
                 <x-heroicon-o-paper-airplane wire:loading.remove wire:target="createPost" class="w-4 h-4" />

@@ -22,7 +22,7 @@ class CallingGroup extends Component
             ->exists();
 
         if ($exists) {
-            session()->flash('message', 'You are already a member or request is pending.');
+            $this->dispatch('toast', message: 'You are already a member or request is pending.', type: 'warning');
             return;
         }
 
@@ -35,16 +35,11 @@ class CallingGroup extends Component
             'status'   => $status,
         ]);
 
-        session()->flash(
-            'message',
-            $status === 'approved'
-                ? 'You joined the group.'
-                : 'Join request sent — waiting for approval.'
-        );
+        $this->dispatch('toast', message: $status === 'approved' ? 'You joined the group.' : 'Join request sent — waiting for approval.', type: 'success');
     }
 
-    public function updatedSearch(){
-        // When searching, reset filter to 'all'
+    public function updatedSearch()
+    {
         if ($this->search !== '') {
             $this->filter = 'all';
         }

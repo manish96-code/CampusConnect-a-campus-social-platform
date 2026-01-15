@@ -178,7 +178,122 @@
         </div>
     </nav>
 
+
+
+
+    <div id="alpine-root">
+        <style>
+            @keyframes shrink-progress {
+                from {
+                    width: 100%;
+                }
+
+                to {
+                    width: 0%;
+                }
+            }
+
+            .animate-progress {
+                animation: shrink-progress 3s linear forwards;
+            }
+        </style>
+
+        <div x-data="{ show: false, message: '', type: 'success' }" x-init="window.addEventListener('toast', e => {
+            message = e.detail.message;
+            type = e.detail.type ?? 'success';
+            show = false;
+            setTimeout(() => show = true, 50);
+            setTimeout(() => show = false, 3000);
+        })" {{-- Positioned at top-20 to sit below the 16-unit header --}}
+            class="fixed top-20 right-6 z-[100] flex flex-col gap-2 w-full max-w-sm" style="display: none;"
+            x-show="show">
+
+            <div x-show="show" x-transition:enter="transform ease-out duration-300 transition"
+                x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
+                x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
+                x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                class="relative overflow-hidden flex items-start w-full p-4 bg-white rounded-xl shadow-2xl border border-slate-100 ring-1 ring-black/5"
+                role="alert">
+
+                <div class="flex-shrink-0">
+                    <template x-if="type === 'success'">
+                        <div
+                            class="inline-flex items-center justify-center w-8 h-8 text-emerald-500 bg-emerald-100 rounded-lg">
+                            <x-heroicon-s-check-circle class="w-5 h-5" />
+                        </div>
+                    </template>
+
+                    <template x-if="type === 'delete'">
+                        <div
+                            class="inline-flex items-center justify-center w-8 h-8 text-rose-500 bg-rose-100 rounded-lg">
+                            <x-heroicon-s-x-circle class="w-5 h-5" />
+                        </div>
+                    </template>
+
+                    <template x-if="type === 'error'">
+                        <div
+                            class="inline-flex items-center justify-center w-8 h-8 text-rose-500 bg-rose-100 rounded-lg">
+                            <x-heroicon-s-x-circle class="w-5 h-5" />
+                        </div>
+                    </template>
+
+                    <template x-if="type === 'warning'">
+                        <div
+                            class="inline-flex items-center justify-center w-8 h-8 text-amber-500 bg-amber-100 rounded-lg">
+                            <x-heroicon-s-exclamation-triangle class="w-5 h-5" />
+                        </div>
+                    </template>
+                </div>
+
+                <div class="ml-3 text-sm font-bold text-slate-700 pt-1 flex-1">
+                    <span x-text="message"></span>
+                </div>
+
+                <button type="button" @click="show = false"
+                    class="ml-auto -mx-1.5 -my-1.5 bg-transparent text-slate-400 hover:text-slate-900 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8 transition">
+                    <x-heroicon-s-x-mark class="w-4 h-4" />
+                </button>
+
+                {{-- Progress Bar --}}
+                <div x-show="show" class="absolute bottom-0 left-0 h-1 animate-progress"
+                    :class="{
+                        'bg-emerald-500': type === 'success',
+                        'bg-rose-500': type === 'delete',
+                        'bg-rose-600': type === 'error',
+                        'bg-amber-500': type === 'warning'
+                    }">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- @livewireScripts --}}
+    {{-- </body> --}}
+
     @livewireScripts
+
+    <script>
+        document.addEventListener('livewire:navigated', () => {
+            @if (session()->has('message'))
+                window.dispatchEvent(new CustomEvent('toast', {
+                    detail: {
+                        message: "{{ session('message') }}",
+                        type: 'success'
+                    }
+                }));
+            @endif
+
+            @if (session()->has('delete'))
+                window.dispatchEvent(new CustomEvent('toast', {
+                    detail: {
+                        message: "{{ session('delete') }}",
+                        type: 'delete'
+                    }
+                }));
+            @endif
+        });
+    </script>
 
     <script>
         (function() {

@@ -26,8 +26,6 @@ class GroupMembers extends Component{
             ->exists();
     }
 
-
-
     public function setFilter($filter){
         $this->filter = $filter;
         $this->search = '';
@@ -49,32 +47,9 @@ class GroupMembers extends Component{
             'status'   => 'approved',
         ]);
 
-        // $this->filter = 'approved';
+        $this->dispatch('toast', message: 'Member added successfully', type: 'success');
         $this->dispatch('group-updated');
     }
-
-
-
-    //     public function render()
-    // {
-    //     $membersQuery = $this->group->members()
-    //         ->where(function ($q) {
-    //             $q->where('first_name', 'like', '%' . $this->search . '%')
-    //               ->orWhere('last_name', 'like', '%' . $this->search . '%');
-    //         });
-
-    //     if ($this->filter === 'admin') {
-    //         $membersQuery
-    //             ->wherePivot('role', 'admin')
-    //             ->wherePivot('status', 'approved');
-    //     } elseif ($this->filter !== 'all') {
-    //         $membersQuery->wherePivot('status', $this->filter);
-    //     }
-
-    //     return view('livewire.user.group.group-members', [
-    //         'members' => $membersQuery->get(),
-    //     ]);
-    // }
 
     public function render(){
         if ($this->filter === 'add') {

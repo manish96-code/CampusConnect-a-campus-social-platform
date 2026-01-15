@@ -37,26 +37,20 @@
             </div>
 
             {{-- IMAGE PREVIEW --}}
-            @if ($image)
-                <div class="relative mt-2 max-w-xs">
-                    <img src="{{ $image->temporaryUrl() }}" class="rounded-xl border border-slate-200 shadow-sm">
+           @if ($image)
+                <div class="relative mt-2 max-w-xs group" wire:loading.remove wire:target="image">
+                    <img src="{{ $image->temporaryUrl() }}" class="rounded-xl border border-slate-200 shadow-sm brightness-90">
 
                     <button type="button" wire:click="$set('image', null)"
-                        class="absolute top-2 right-2 bg-black/60 text-white text-xs
-                                   px-2 py-1 rounded-full hover:bg-black">
+                        class="absolute top-2 right-2 bg-black/60 text-white text-[10px] font-bold
+                                   px-2 py-1 rounded-full hover:bg-rose-600 transition-colors">
                         ✕
                     </button>
+                    <div class="absolute bottom-2 left-2 bg-black/40 text-[9px] text-white px-2 py-0.5 rounded-md backdrop-blur-sm">
+                        Ready to send
+                    </div>
                 </div>
             @endif
-
-            {{-- ERRORS --}}
-            @error('caption')
-                <p class="text-xs text-rose-500">{{ $message }}</p>
-            @enderror
-
-            @error('image')
-                <p class="text-xs text-rose-500">{{ $message }}</p>
-            @enderror
 
         </form>
 

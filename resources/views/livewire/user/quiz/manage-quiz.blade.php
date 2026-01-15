@@ -84,8 +84,10 @@
                     + Add Question
                 </button>
 
-                <button wire:click="updateQuiz" class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-bold">
-                    Save Changes
+                <button wire:click="updateQuiz" wire:loading.attr="disabled"
+                    class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-bold flex items-center gap-2">
+                    <span wire:loading.remove wire:target="updateQuiz">Save Changes</span>
+                    <span wire:loading wire:target="updateQuiz">Saving...</span>
                 </button>
 
                 <button @click="editingQuiz = false; adding = false"
@@ -175,14 +177,6 @@
         </div>
 
     </div>
-
-
-    @if (session()->has('message'))
-        <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl p-4 mt-4">
-            {{ session('message') }}
-        </div>
-    @endif
-
 
 
     <!-- ================= USER ATTEMPTS ================= -->

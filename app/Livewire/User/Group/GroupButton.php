@@ -49,43 +49,38 @@ class GroupButton extends Component
         }
     }
 
-
     // USER ACTIONS
-
     public function join()
     {
         if ($this->group->group_type === 'public') {
             // Join immediately
             $this->group->members()->attach(Auth::id(), ['role' => 'member', 'status' => 'approved']);
+            $this->dispatch('toast', message: "Welcome to {$this->group->group_name}! 🎉", type: 'success');
         } else {
             // Request to join
             $this->group->members()->attach(Auth::id(), ['role' => 'member', 'status' => 'pending']);
+            $this->dispatch('toast', message: 'Join request sent! Waiting for approval. ⏳', type: 'warning');
         }
         $this->checkStatus();
     }
-
-    // public function cancelRequest()
-    // {
-    //     $this->group->members()->detach(Auth::id());
-    //     $this->checkStatus();
-    //     // 
-    // }
 
     public function cancelRequest()
     {
         $this->group->members()->detach(Auth::id());
         $this->checkStatus();
+        $this->dispatch('toast', message: 'Join request cancelled.', type: 'delete');
     }
 
     public function leave_group()
     {
         if ($this->status === 'admin' && $this->group->members()->wherePivot('role', 'admin')->count() === 1) {
-            session()->flash('error', 'You are the only admin. Delete the group instead.');
+            $this->dispatch('toast', message: 'You are the only admin. Delete the group instead.', type: 'error');
             return;
         }
 
         $this->group->members()->detach(Auth::id());
         $this->checkStatus();
+        $this->dispatch('toast', message: 'You left the group.', type: 'delete');
     }
 
     // ADMIN ACTIONS
@@ -95,6 +90,7 @@ class GroupButton extends Component
 
         $this->group->members()->updateExistingPivot($this->targetUserId, ['status' => 'approved']);
         $this->checkStatus();
+        $this->dispatch('toast', message: 'Member approved! ✅', type: 'success');
     }
 
     public function reject()
@@ -103,6 +99,7 @@ class GroupButton extends Component
 
         $this->group->members()->detach($this->targetUserId);
         $this->checkStatus();
+        $this->dispatch('toast', message: 'Request rejected.', type: 'delete');
     }
 
     public function removeUser()
@@ -111,7 +108,7 @@ class GroupButton extends Component
 
         $this->group->members()->detach($this->targetUserId);
         $this->dispatch('group-updated');
-        // $this->checkStatus();
+        $this->dispatch('toast', message: 'User removed from group.', type: 'delete');
     }
 
     public function deleteGroup()
@@ -120,9 +117,9 @@ class GroupButton extends Component
 
         $this->group->delete();
 
-        return redirect()
-            ->route('group')
-            ->with('message', 'Group deleted successfully.');
+        $this->dispatch('toast', message: 'Group deleted successfully.', type: 'delete');
+
+        return redirect()->route('group');
     }
 
     public function makeAdmin()
@@ -135,13 +132,14 @@ class GroupButton extends Component
 
         $this->dispatch('group-updated');
         $this->checkStatus();
+        $this->dispatch('toast', message: 'Role updated to Admin. 🛡️', type: 'success');
     }
 
     public function removeAdmin()
     {
         if (! $this->isGroupAdmin) return;
 
-        // Safety: prevent self-demotion
+        // prevent self delete
         if ($this->targetUserId === auth()->id()) return;
 
         GroupMember::where('group_id', $this->group->id)
@@ -149,6 +147,8 @@ class GroupButton extends Component
             ->update(['role' => 'member']);
 
         $this->dispatch('group-updated');
+        $this->checkStatus();
+        $this->dispatch('toast', message: 'Admin role removed.', type: 'warning');
     }
 
 

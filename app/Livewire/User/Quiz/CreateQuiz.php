@@ -44,6 +44,7 @@ class CreateQuiz extends Component
             // is_published = false (default)
         ]);
 
+        $this->dispatch('toast', message: 'Quiz created successfully! Now add some questions. 📝', type: 'success');
         return redirect()->route('quiz.questions', $quiz->id);
     }
 

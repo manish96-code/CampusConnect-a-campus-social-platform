@@ -97,7 +97,7 @@ class Profile extends Component{
         
         $this->group->refresh();
 
-        session()->flash('message', 'Images updated successfully! 🖼️');
+        $this->dispatch('toast', message: 'Images updated successfully! 🖼️', type: 'success');
     }
 
     public function setTab($tab){
@@ -126,8 +126,9 @@ class Profile extends Component{
             'group_type' => $this->group_type,
         ]);
 
-        session()->flash('message', 'Group updated successfully ✅');
         $this->activeTab = 'discussion';
+        $this->dispatch('toast', message: 'Group updated successfully ✅', type: 'success');
+
     }
 
 

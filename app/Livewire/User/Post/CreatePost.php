@@ -20,25 +20,45 @@ class CreatePost extends Component{
 
     public function createPost(){
         if (!$this->caption && !$this->image) {
-            $this->addError('caption', 'Caption or image is required.');
-            $this->addError('image', 'Caption or image is required.');
+            $this->dispatch('toast', 
+                message: 'Write something or add an image to post! ✍️', 
+                type: 'warning'
+            );
             return;
         }
 
         $data = $this->validate();
-        $data['user_id'] = Auth::id();
 
-        if ($this->image) {
-            // Use ImageKit 
-            $imageKit = app(ImageKitService::class);
-            $data['image'] = $imageKit->upload($this->image, 'posts');
+        try {
+            $imageUrl = null;
+
+            if ($this->image) {
+                $imageKit = app(ImageKitService::class);
+                $imageUrl = $imageKit->upload($this->image, 'posts');
+            }
+
+            UserPost::create([
+                'user_id' => Auth::id(),
+                'caption' => $this->caption,
+                'image'   => $imageUrl,
+            ]);
+
+            $this->reset('caption', 'image');
+            
+            $this->dispatch('toast', 
+                message: 'Post shared successfully! 🚀', 
+                type: 'success'
+            );
+            
+            $this->dispatch("postCreated");
+
+        } catch (\Exception $e) {
+            $this->dispatch('toast', 
+                message: 'Something went wrong. Please try again.', 
+                type: 'error'
+            );
         }
 
-        UserPost::create($data);
-
-        $this->reset('caption', 'image');
-        $this->dispatch("postCreated");
-        session()->flash('message', 'Post created successfully!');
     }
 
     public function render(){

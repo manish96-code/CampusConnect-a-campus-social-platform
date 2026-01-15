@@ -7,19 +7,20 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-class CallingGroupPost extends Component{
+class CallingGroupPost extends Component
+{
     public $group;
 
     #[On('postCreated')]
-    public function refreshPosts(){
-        
-    }
+    public function refreshPosts() {}
 
-    public function mount($group){
+    public function mount($group)
+    {
         $this->group = $group;
     }
 
-    public function deletePost($postId){
+    public function deletePost($postId)
+    {
         $post = GroupPost::findOrFail($postId);
 
         $isAdmin = $this->group->members()
@@ -29,10 +30,13 @@ class CallingGroupPost extends Component{
 
         // Permission check
         if ($post->user_id !== auth()->id() && ! $isAdmin) {
-            abort(403);
+            $this->dispatch('toast', message: 'You do not have permission to delete this post.', type: 'error');
+            return;
         }
 
         $post->delete();
+
+        $this->dispatch('toast', message: 'Post deleted successfully.', type: 'delete');
     }
 
     public function render()
@@ -50,24 +54,19 @@ class CallingGroupPost extends Component{
             ]);
         }
 
-        // return view('livewire.user.group.calling-group-post', [
-        //     'posts' => GroupPost::with('user')
-        //         ->where('group_id', $this->group->id)
-        //         ->orderBy('created_at', 'asc')
-        //         ->get(),
-        // ]);
+
         $allPosts = GroupPost::with('user')
-        ->where('group_id', $this->group->id)
-        ->orderBy('created_at', 'asc')
-        ->get();
+            ->where('group_id', $this->group->id)
+            ->orderBy('created_at', 'asc')
+            ->get();
 
-    // Group the posts by date
-    $groupedPosts = $allPosts->groupBy(function ($post) {
-        return $post->created_at->format('Y-m-d');
-    });
+        // Group the posts by date
+        $groupedPosts = $allPosts->groupBy(function ($post) {
+            return $post->created_at->format('Y-m-d');
+        });
 
-    return view('livewire.user.group.calling-group-post', [
-        'groupedPosts' => $groupedPosts,
-    ]);
+        return view('livewire.user.group.calling-group-post', [
+            'groupedPosts' => $groupedPosts,
+        ]);
     }
 }

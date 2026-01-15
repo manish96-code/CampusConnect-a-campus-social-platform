@@ -51,7 +51,7 @@ class Story extends Component{
             $this->reset('media_path');
             $this->loadStories();
 
-            session()->flash('success', 'Story uploaded successfully! ✨');
+            $this->dispatch('toast', message: 'Story uploaded successfully! ✨', type: 'success');
         } catch (\Exception $e) {
             $this->addError('media_path', 'Cloud upload failed: ' . $e->getMessage());
         }

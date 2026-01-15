@@ -72,7 +72,7 @@ class ManageQuiz extends Component{
             'correct' => 0,
         ];
 
-        session()->flash('message', 'Question added successfully ✅');
+        $this->dispatch('toast', message: 'New question added successfully! ✅', type: 'success');
     }
 
     public function deleteQuestion($questionId){
@@ -81,7 +81,7 @@ class ManageQuiz extends Component{
         $this->syncTotalMarks();
         $this->loadQuizData();
 
-        session()->flash('message', 'Question deleted successfully ❌');
+        $this->dispatch('toast', message: 'Question removed from the quiz.', type: 'delete');
     }
 
     public function updateQuiz(){
@@ -97,12 +97,12 @@ class ManageQuiz extends Component{
         }
 
         $this->syncTotalMarks();
-        session()->flash('message', 'Questions updated successfully ✅');
+        $this->dispatch('toast', message: 'All changes saved successfully! 💾', type: 'success');
     }
 
     public function deleteQuiz(){
         $this->quiz->delete();
-        session()->flash('message', 'Quiz deleted successfully 🗑️');
+        $this->dispatch('toast', message: 'The quiz has been deleted.', type: 'delete');
         return redirect()->route('quiz');
     }
 

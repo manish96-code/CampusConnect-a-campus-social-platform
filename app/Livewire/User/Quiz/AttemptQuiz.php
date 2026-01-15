@@ -79,7 +79,6 @@ class AttemptQuiz extends Component
             ]);
 
             $score = 0;
-
             foreach ($this->quiz->questions as $question) {
                 $selected = $this->answers[$question->id] ?? null;
 
@@ -104,7 +103,8 @@ class AttemptQuiz extends Component
 
         $this->submitted = true;
 
-        $this->dispatch('openResultQuiz', $this->quizId);
+        $this->dispatch('toast', message: 'Quiz submitted successfully! Your score: ' . $this->attempt->score, type: 'success');
+        return $this->redirectRoute('quiz', navigate: true);
     }
 
     public function render()

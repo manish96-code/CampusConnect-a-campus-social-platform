@@ -52,22 +52,29 @@ class CallingPost extends Component{
     }
 
 
-    public function likePost($postId){
+    public function likePost($postId)
+    {
         $post = UserPost::findOrFail($postId);
+        $isLiking = !$post->likes()->where('user_id', auth()->id())->exists();
 
-        if ($post->likes()->where('user_id', auth()->id())->exists()) {
-            $post->likes()->where('user_id', auth()->id())->delete();
-        } else {
+        if ($isLiking) {
             $post->likes()->create(['user_id' => auth()->id()]);
+            $this->dispatch('toast', message: 'Post liked! ❤️', type: 'success');
+        } else {
+            $post->likes()->where('user_id', auth()->id())->delete();
+            $this->dispatch('toast', message: 'Like removed.', type: 'delete');
         }
 
-        $this->dispatch('postCreated');
+        $this->loadPosts();
     }
 
     public function commentPost($postId){
         $commentText = $this->comments[$postId] ?? '';
 
-        if (!trim($commentText)) return;
+        if (!trim($commentText)) {
+            $this->dispatch('toast', message: 'Comment cannot be empty! ✍️', type: 'warning');
+            return;
+        }
 
         $post = UserPost::findOrFail($postId);
 
@@ -77,7 +84,8 @@ class CallingPost extends Component{
         ]);
 
         $this->comments[$postId] = '';
-        $this->dispatch('postCreated');
+        $this->dispatch('toast', message: 'Comment posted! 💬', type: 'success');
+        $this->loadPosts();
     }
 
     public function render(){

@@ -46,6 +46,7 @@ class AddQuestions extends Component
     {
         unset($this->questions[$index]);
         $this->questions = array_values($this->questions);
+        $this->dispatch('toast', message: 'Question removed from list.', type: 'warning');
     }
 
     public function save()
@@ -72,7 +73,7 @@ class AddQuestions extends Component
             ]);
         });
 
-        session()->flash('message', 'Quiz published successfully ✅');
+        $this->dispatch('toast', message: 'Quiz published successfully! 🚀', type: 'success');
 
         return redirect()->route('quiz');
     }

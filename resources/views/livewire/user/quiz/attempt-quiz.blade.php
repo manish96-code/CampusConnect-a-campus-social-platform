@@ -32,6 +32,13 @@
         <div class="lg:col-span-3 order-1 lg:order-2">
             <div class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
 
+                {{-- PROGRESS BAR --}}
+                <div class="w-full h-1.5 bg-slate-100">
+                    <div class="h-full bg-indigo-600 transition-all duration-500"
+                        style="width: {{ (($currentQuestionIndex + 1) / $quiz->questions->count()) * 100 }}%">
+                    </div>
+                </div>
+
                 {{-- QUIZ INFO --}}
                 <div class="px-8 py-6 border-b bg-slate-50/50 flex justify-between items-center">
                     <div>
