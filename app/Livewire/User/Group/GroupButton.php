@@ -113,7 +113,8 @@ class GroupButton extends Component
 
     public function deleteGroup()
     {
-        if (!$this->isGroupAdmin) return;
+        // if (!$this->isGroupAdmin) return;
+        $this->authorize('delete', $this->group);
 
         $this->group->delete();
 
@@ -137,10 +138,11 @@ class GroupButton extends Component
 
     public function removeAdmin()
     {
-        if (! $this->isGroupAdmin) return;
+        // if (! $this->isGroupAdmin) return;
+        $this->authorize('manageMembers', [$this->group, $this->targetUserId]);
 
         // prevent self delete
-        if ($this->targetUserId === auth()->id()) return;
+        // if ($this->targetUserId === auth()->id()) return;
 
         GroupMember::where('group_id', $this->group->id)
             ->where('user_id', $this->targetUserId)

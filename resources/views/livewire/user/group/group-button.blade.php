@@ -56,11 +56,13 @@
 
                 <div x-show="open" x-cloak
                     class="absolute right-0 mt-2 w-full bg-white rounded-xl shadow-xl border z-50">
-                    <button wire:click="deleteGroup" wire:confirm="⚠️ This will permanently delete the group. Continue?"
-                        class="w-full px-4 py-3 text-sm text-rose-600 hover:bg-rose-50 flex gap-2">
-                        <x-heroicon-o-trash class="w-4 h-4" />
-                        Delete Group
-                    </button>
+                    @can('delete', $group)
+                        <button wire:click="deleteGroup" wire:confirm="⚠️ This will permanently delete the group. Continue?"
+                            class="w-full px-4 py-3 text-sm text-rose-600 hover:bg-rose-50 flex gap-2">
+                            <x-heroicon-o-trash class="w-4 h-4" />
+                            Delete Group
+                        </button>
+                    @endcan
                 </div>
             </div>
         @endif
@@ -119,11 +121,13 @@
 
                     <div x-show="open" x-cloak
                         class="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-xl border z-50">
-                        <button wire:click="removeAdmin" wire:confirm="Remove admin role from this user?"
-                            class="w-full px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex gap-2">
-                            <x-heroicon-o-shield-exclamation class="w-4 h-4" />
-                            Remove Admin
-                        </button>
+                        @can('manageMembers', [$group, $targetUserId])
+                            <button wire:click="removeAdmin" wire:confirm="Remove admin role from this user?"
+                                class="w-full px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex gap-2">
+                                <x-heroicon-o-shield-exclamation class="w-4 h-4" />
+                                Remove Admin
+                            </button>
+                        @endcan
                     </div>
                 </div>
             @endif
