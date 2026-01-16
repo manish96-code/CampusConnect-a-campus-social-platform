@@ -7,12 +7,14 @@ use App\Models\GroupMember;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
-
 class GroupButton extends Component
 {
     public Group $group;
+
     public $targetUserId;
+
     public $status;
+
     public $isGroupAdmin = false;
 
     public function mount(Group $group, $candidateId = null)
@@ -35,7 +37,7 @@ class GroupButton extends Component
         if ($member) {
             $pivot = $member->pivot;
             $pivotStatus = $pivot->status ?? null;
-            $pivotRole   = $pivot->role ?? null;
+            $pivotRole = $pivot->role ?? null;
 
             if ($pivotStatus === 'pending') {
                 $this->status = 'pending';
@@ -75,6 +77,7 @@ class GroupButton extends Component
     {
         if ($this->status === 'admin' && $this->group->members()->wherePivot('role', 'admin')->count() === 1) {
             $this->dispatch('toast', message: 'You are the only admin. Delete the group instead.', type: 'error');
+
             return;
         }
 
@@ -86,7 +89,9 @@ class GroupButton extends Component
     // ADMIN ACTIONS
     public function approve()
     {
-        if (!$this->isGroupAdmin) return;
+        if (! $this->isGroupAdmin) {
+            return;
+        }
 
         $this->group->members()->updateExistingPivot($this->targetUserId, ['status' => 'approved']);
         $this->checkStatus();
@@ -95,7 +100,9 @@ class GroupButton extends Component
 
     public function reject()
     {
-        if (!$this->isGroupAdmin) return;
+        if (! $this->isGroupAdmin) {
+            return;
+        }
 
         $this->group->members()->detach($this->targetUserId);
         $this->checkStatus();
@@ -104,7 +111,8 @@ class GroupButton extends Component
 
     public function removeUser()
     {
-        if (!$this->isGroupAdmin) return;
+        // if (!$this->isGroupAdmin) return;
+        $this->authorize('manage-group-members', [$this->group, $this->targetUserId]);
 
         $this->group->members()->detach($this->targetUserId);
         $this->dispatch('group-updated');
@@ -114,7 +122,7 @@ class GroupButton extends Component
     public function deleteGroup()
     {
         // if (!$this->isGroupAdmin) return;
-        $this->authorize('delete', $this->group);
+        $this->authorize('delete-group', $this->group);
 
         $this->group->delete();
 
@@ -125,7 +133,9 @@ class GroupButton extends Component
 
     public function makeAdmin()
     {
-        if (! $this->isGroupAdmin) return;
+        if (! $this->isGroupAdmin) {
+            return;
+        }
 
         GroupMember::where('group_id', $this->group->id)
             ->where('user_id', $this->targetUserId)
@@ -139,10 +149,7 @@ class GroupButton extends Component
     public function removeAdmin()
     {
         // if (! $this->isGroupAdmin) return;
-        $this->authorize('manageMembers', [$this->group, $this->targetUserId]);
-
-        // prevent self delete
-        // if ($this->targetUserId === auth()->id()) return;
+        $this->authorize('manage-group-members', [$this->group, $this->targetUserId]);
 
         GroupMember::where('group_id', $this->group->id)
             ->where('user_id', $this->targetUserId)
@@ -152,7 +159,6 @@ class GroupButton extends Component
         $this->checkStatus();
         $this->dispatch('toast', message: 'Admin role removed.', type: 'warning');
     }
-
 
     public function render()
     {
