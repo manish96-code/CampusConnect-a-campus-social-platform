@@ -22,20 +22,32 @@ class Story extends Component{
         $this->loadStories();
     }
 
-    public function loadStories(){
-        $friendIds = Auth::user()->friends()->pluck('friends.receiver_id')
-            ->merge(Auth::user()->friends()->pluck('friends.sender_id'))
-            ->unique();
+    // public function loadStories(){
+    //     $friendIds = Auth::user()->friends()->pluck('friends.receiver_id')
+    //         ->merge(Auth::user()->friends()->pluck('friends.sender_id'))
+    //         ->unique();
 
-        $userIds = $friendIds->push(Auth::id());
+    //     $userIds = $friendIds->push(Auth::id());
 
-        $this->stories = StoryModel::with('user')
-            ->whereIn('user_id', $userIds)
+    //     $this->stories = StoryModel::with('user')
+    //         ->whereIn('user_id', $userIds)
+    //         ->where('expires_at', '>', now())
+    //         ->latest()
+    //         ->get();
+    // }
+    public function loadStories() {
+        $myFriendIds = Auth::user()->friends()
+            ->get()
+            ->map(fn($f) => $f->sender_id === auth()->id() ? $f->receiver_id : $f->sender_id)
+            ->push(auth()->id());
+
+        $this->stories = StoryModel::with('user:id,first_name,last_name,dp')
+            ->whereIn('user_id', $myFriendIds)
             ->where('expires_at', '>', now())
             ->latest()
             ->get();
     }
-
+    
     public function createStory(){
         $this->validate();
 

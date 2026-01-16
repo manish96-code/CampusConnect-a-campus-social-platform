@@ -31,19 +31,20 @@
 
     {{-- calling stories --}}
     @foreach ($stories as $story)
-        <div class="min-w-[112px] max-w-32 h-full bg-gray-200 rounded-xl overflow-hidden relative cursor-pointer">
-            <img src="{{ $story->media_path }}"
+        <div wire:key="story-{{ $story->id }}" class="min-w-[112px] max-w-32 h-full bg-gray-200 rounded-xl overflow-hidden relative cursor-pointer">
+            <img src="{{ $story->media_path }}?tr=w-200,cm-pad_resize,f-auto" 
+             loading="lazy"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
 
             <div
                 class="absolute top-2 left-2 w-9 h-9 rounded-full border-2 border-indigo-500 overflow-hidden shadow-md">
-                <img src="{{ $story->user->dp ?: 'https://ui-avatars.com/api/?name=' . urlencode($story->user->first_name) . '&background=random' }}"
+                <img src="{{ $story->user->dp ?: 'https://ui-avatars.com/api/?name=' . urlencode($story->user->first_name) . '&background=random' }}?tr=w-50,h-50"
                     class="w-full h-full object-cover">
             </div>
 
             <div
                 class="absolute bottom-2 left-2 text-white font-semibold text-xs shadow-black drop-shadow-md capitalize">
-                {{ $story->user->first_name }} {{ $story->user->last_name }}
+                {{ $story->user->first_name }}
             </div>
         </div>
     @endforeach

@@ -1,6 +1,6 @@
 <div class="space-y-6">
     @forelse ($posts as $post)
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden transition-shadow hover:shadow-md"
+        <div wire:key="post-{{ $post->id }}-{{ $post->likes_count }}" class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden transition-shadow hover:shadow-md"
             x-data="{ open: false }">
 
             <!-- POST HEADER -->
@@ -39,7 +39,7 @@
 
             @if ($post->image)
                 <div class="w-full bg-slate-50 border-y border-slate-100">
-                    <img src="{{ $post->image }}" alt="Post content" class="w-full max-h-[500px] object-cover"
+                    <img src="{{ $post->image }}?tr=w-600,f-auto,q-80" alt="Post content" class="w-full max-h-[500px] object-cover"
                         loading="lazy">
                 </div>
             @endif
@@ -50,16 +50,16 @@
 
                     <!-- Like Button -->
                     <button wire:click="likePost({{ $post->id }})"
-                        class="group flex items-center gap-2 transition-colors {{ $post->likes()->where('user_id', auth()->id())->exists()? 'text-rose-500': 'text-slate-500 hover:text-rose-500' }}">
+                        class="group flex items-center gap-2 transition-colors {{ $post->is_liked ?'text-rose-500': 'text-slate-500 hover:text-rose-500' }}">
                         <div class="p-2 rounded-full group-hover:bg-rose-50 transition">
-                            @if ($post->likes()->where('user_id', auth()->id())->exists())
+                            @if($post->is_liked)
                                 <x-heroicon-s-heart class="w-5 h-5" />
                             @else
                                 <x-heroicon-o-heart class="w-5 h-5" />
                             @endif
                         </div>
                         <span class="text-sm font-semibold">
-                            {{ $post->likes()->count() > 0 ? $post->likes()->count() : 'Like' }}
+                            {{ $post->likes_count > 0 ? $post->likes_count : 'Like' }}
                         </span>
                     </button>
 
@@ -70,7 +70,7 @@
                             <x-heroicon-o-chat-bubble-left-right class="w-5 h-5" />
                         </div>
                         <span class="text-sm font-semibold">
-                            {{ $post->comments()->count() > 0 ? $post->comments()->count() : 'Comment' }}
+                            {{ $post->comments_count > 0 ? $post->comments_count : 'Comment' }}
                         </span>
                     </button>
 

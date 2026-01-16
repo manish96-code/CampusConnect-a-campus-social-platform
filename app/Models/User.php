@@ -25,10 +25,6 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /* =====================
-       RELATIONSHIPS
-    ====================== */
-
     public function stories()
     {
         return $this->hasMany(Story::class);
