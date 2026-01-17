@@ -9,7 +9,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
-#[Layout("components.layouts.user")]
+#[Layout('components.layouts.user')]
 class EventLive extends Component
 {
     #[Validate('required|string|max:200')]
@@ -28,14 +28,20 @@ class EventLive extends Component
 
     // VIEW MODAL
     public $showViewModal = false;
+
     public $viewTitle;
+
     public $viewDescription;
+
     public $viewEventDate;
+
     public $viewLocation;
+
     public $viewOrganizer;
 
     // for edit
     public $showEditModal = false;
+
     public $eventId;
     // public $viewEventId;
 
@@ -52,11 +58,11 @@ class EventLive extends Component
         $this->eventId = $event->id;
 
         // pre-fill form fields
-        $this->title       = $event->title;
+        $this->title = $event->title;
         $this->description = $event->description;
         // format for datetime-local input
-        $this->event_date  = $event->event_date?->format('Y-m-d\TH:i');
-        $this->location    = $event->location;
+        $this->event_date = $event->event_date?->format('Y-m-d\TH:i');
+        $this->location = $event->location;
 
         $this->showEditModal = true;
     }
@@ -65,25 +71,26 @@ class EventLive extends Component
     public function updateEvent()
     {
         $this->validate();
-
         $event = Event::findOrFail($this->eventId);
 
         if ($event->user_id !== Auth::id()) {
+            $this->dispatch('toast', message: 'Unauthorized action!', type: 'error');
+
             return;
         }
 
         $event->update([
-            'title'       => $this->title,
+            'title' => $this->title,
             'description' => $this->description,
-            'event_date'  => $this->event_date,
-            'location'    => $this->location,
+            'event_date' => $this->event_date,
+            'location' => $this->location,
         ]);
 
         $this->showEditModal = false;
 
         $this->reset(['eventId', 'title', 'description', 'event_date', 'location']);
 
-        session()->flash('message', 'Event updated successfully!');
+        $this->dispatch('toast', message: 'Event details updated.', type: 'success');
     }
 
     public function closeEditModal()
@@ -96,7 +103,7 @@ class EventLive extends Component
     {
         $this->isCreating = ! $this->isCreating;
         $this->resetValidation();
-        if (!$this->isCreating) {
+        if (! $this->isCreating) {
             $this->reset(['title', 'description', 'event_date', 'location']);
         }
     }
@@ -107,17 +114,20 @@ class EventLive extends Component
         $this->validate();
 
         Event::create([
-            'title'       => $this->title,
+            'title' => $this->title,
             'description' => $this->description,
-            'event_date'  => $this->event_date,
-            'location'    => $this->location,
-            'user_id'     => Auth::id(),
+            'event_date' => $this->event_date,
+            'location' => $this->location,
+            'user_id' => Auth::id(),
         ]);
 
         $this->reset(['title', 'description', 'event_date', 'location']);
         $this->isCreating = false;
 
-        session()->flash('message', 'Event created successfully!');
+        $this->dispatch('toast',
+            message: 'Campus Event created successfully! 🗓️',
+            type: 'success'
+        );
     }
 
     public function delete($id)
@@ -125,12 +135,17 @@ class EventLive extends Component
         $event = Event::find($id);
         if ($event && $event->user_id == Auth::id()) {
             $event->delete();
+            $this->dispatch('toast', message: 'Event has been cancelled.', type: 'delete');
+        } else {
+            $this->dispatch('toast', message: 'You cannot delete this event.', type: 'error');
         }
     }
 
     // VIEW MODAL
     public $viewEventId;
+
     public $viewOwnerId;
+
     public function view($id)
     {
         $event = Event::with('user')->findOrFail($id);
@@ -138,13 +153,13 @@ class EventLive extends Component
         $this->viewEventId = $event->id;
         $this->viewOwnerId = $event->user_id;
 
-        $this->viewTitle       = $event->title;
+        $this->viewTitle = $event->title;
         $this->viewDescription = $event->description;
-        $this->viewEventDate   = $event->event_date;
-        $this->viewLocation    = $event->location;
-        $this->viewOrganizer   = $event->user->first_name . ' ' . $event->user->last_name ?? 'Unknown';
+        $this->viewEventDate = $event->event_date;
+        $this->viewLocation = $event->location;
+        $this->viewOrganizer = $event->user->first_name.' '.$event->user->last_name ?? 'Unknown';
 
-        $this->showViewModal   = true;
+        $this->showViewModal = true;
     }
 
     public function closeViewModal()
@@ -159,41 +174,25 @@ class EventLive extends Component
         ]);
     }
 
-    // request to join event
-    // public function joinEvent($id){
-    //     if (Event::find($id)->participants()->where('user_id', Auth::id())->exists()) {
-    //         return;
-    //     }
-    //     $event = Event::findOrFail($id);
-    //     $event->participants()->create([
-    //         'user_id' => Auth::id(),
-    //         'status'  => 'pending',
-    //     ]);
-    // }
-
-    // event participate button component will handle join/cancel logic
-    // public function mount($event = null){
-    //     // no specific mount logic for now
-
-    //     if ($event) {
-    //         // for possible future use
-
-    //     }
-
-    // }
-
     // organizer: accept participation request
     public function acceptParticipationRequest($participantId)
     {
         $participant = EventParticipant::with('event')->findOrFail($participantId);
 
         if ($participant->event->user_id !== Auth::id()) {
+            $this->dispatch('toast', message: 'Permission denied.', type: 'error');
+
             return;
         }
 
         $participant->update([
             'status' => 'approved',
         ]);
+
+        $this->dispatch('toast',
+            message: "Student approved for {$participant->event->title} ✅",
+            type: 'success'
+        );
     }
 
     // organizer: reject participation request
@@ -208,11 +207,15 @@ class EventLive extends Component
         $participant->update([
             'status' => 'rejected',
         ]);
+
+        $this->dispatch('toast', message: 'Participation request rejected.', type: 'delete');
     }
 
     // participants list for organizer view modal
     public $participantListModal = false;
+
     public $participantEventId;
+
     public function participantsList($id)
     {
         $event = Event::with('participants.user')->findOrFail($id);
@@ -223,18 +226,9 @@ class EventLive extends Component
         $this->participantListModal = true;
     }
 
-
-    // public function render(){
-    //     return view('livewire.user.event-live', [
-    //         'events' => Event::with('user')->orderBy('event_date', 'asc')->get(),
-    //         'participants' => EventParticipant::with('user')->get(),
-    //     ]);
-    // }
-
-    
     public $filter = 'upcoming';
 
-     public function setFilter($filter)
+    public function setFilter($filter)
     {
         $allowed = ['all', 'upcoming', 'past', 'mine'];
         if (! in_array($filter, $allowed)) {
@@ -248,7 +242,7 @@ class EventLive extends Component
 
         $query = Event::with('user')->orderBy('event_date', 'asc');
         $now = now();
-        
+
         if ($this->filter === 'upcoming') {
             $query->where('event_date', '>=', $now);
         } elseif ($this->filter === 'past') {
@@ -262,9 +256,8 @@ class EventLive extends Component
         }
         $events = $query->get();
 
-
         $participants = collect();
-        
+
         if ($this->participantEventId) {
             $participants = EventParticipant::with('user')
                 ->where('event_id', $this->participantEventId)
@@ -273,7 +266,7 @@ class EventLive extends Component
         }
 
         return view('livewire.user.event-live', [
-            'events'       => $events,
+            'events' => $events,
             'participants' => $participants,
         ]);
     }

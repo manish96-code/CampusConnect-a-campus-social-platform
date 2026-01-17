@@ -159,12 +159,12 @@
                 </p>
 
                 {{-- Only show button on own profile --}}
-                @if (auth()->id() === $selectedUser->id)
+                {{-- @if (auth()->id() === $selectedUser->id)
                     <button
                         class="mt-3 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-sm font-semibold transition">
                         Create your first post
                     </button>
-                @endif
+                @endif --}}
             </div>
         </div>
     @endforelse

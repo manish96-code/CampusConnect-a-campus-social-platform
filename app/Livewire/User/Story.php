@@ -37,9 +37,10 @@ class Story extends Component{
     // }
     public function loadStories() {
         $myFriendIds = Auth::user()->friends()
-            ->get()
-            ->map(fn($f) => $f->sender_id === auth()->id() ? $f->receiver_id : $f->sender_id)
-            ->push(auth()->id());
+            ->pluck('sender_id', 'receiver_id')
+            ->flatMap(fn($val, $key) => [$val, $key])
+            ->push(auth()->id())
+            ->unique();
 
         $this->stories = StoryModel::with('user:id,first_name,last_name,dp')
             ->whereIn('user_id', $myFriendIds)

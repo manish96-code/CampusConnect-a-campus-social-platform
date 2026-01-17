@@ -57,6 +57,7 @@ class FriendshipButton extends Component{
             'status' => 'pending'
         ]);
         $this->deterMineFriendshipStatus();
+        $this->dispatch('toast', message: 'Friend request sent! 📩', type: 'success');
     }
     
     // cancel friend request
@@ -66,6 +67,7 @@ class FriendshipButton extends Component{
         ->where('receiver_id', $this->selectedUser->id)
         ->delete();
         $this->deterMineFriendshipStatus();
+        $this->dispatch('toast', message: 'Request cancelled.', type: 'delete');
     }
 
     // accept friend request
@@ -79,6 +81,7 @@ class FriendshipButton extends Component{
         if($friendRequest){
             $friendRequest->status = 'accepted';
             $friendRequest->save();
+            $this->dispatch('toast', message: 'You are now friends! 🎉', type: 'success');
         }
         $this->deterMineFriendshipStatus();
     }
@@ -91,6 +94,7 @@ class FriendshipButton extends Component{
         ->where('receiver_id', $user->id)
         ->delete();
         $this->deterMineFriendshipStatus();
+        $this->dispatch('toast', message: 'Request declined.', type: 'warning');
     }
 
     // unfriend
@@ -106,6 +110,7 @@ class FriendshipButton extends Component{
         })->delete();
 
         $this->deterMineFriendshipStatus();
+        $this->dispatch('toast', message: 'Classmate removed.', type: 'delete');
     }
 
         

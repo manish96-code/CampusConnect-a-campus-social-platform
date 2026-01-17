@@ -28,7 +28,7 @@ class CreateGroupPost extends Component{
         $this->validate();
 
         if (!$this->caption && !$this->image) {
-            $this->dispatch('toast', message: 'Please provide either a caption or an image.', type: 'warning');
+            $this->dispatch('toast', message: 'Write something or choose an image.', type: 'warning');
             return;
         }
 
@@ -39,7 +39,7 @@ class CreateGroupPost extends Component{
             try {
                 $imageUrl = $imageKit->upload($this->image, 'group_chat_images');
             } catch (\Exception $e) {
-                $this->dispatch('toast', message: 'Image upload failed. Please try again.', type: 'error');
+                $this->dispatch('toast', message: 'Image sending failed. Please try again.', type: 'error');
                 return;
             }
         }
@@ -52,8 +52,6 @@ class CreateGroupPost extends Component{
         ]);
 
         $this->reset('caption', 'image');
-
-        $this->dispatch('toast', message: 'Post shared successfully! 🚀', type: 'success');
 
         $this->dispatch('postCreated');
     }

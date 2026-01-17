@@ -47,6 +47,26 @@ class User extends Authenticatable
         return $this->hasMany(Friend::class, 'receiver_id');
     }
 
+    public function posts()
+    {
+        return $this->hasMany(UserPost::class);
+    }
+
+    public function postLikes()
+    {
+        return $this->hasMany(LikePost::class);
+    }
+
+    public function postComments()
+    {
+        return $this->hasMany(PostComment::class);
+    }
+
+    public function groupPosts()
+    {
+        return $this->hasMany(GroupPost::class);
+    }
+
     public function groupPostLikes()
     {
         return $this->hasMany(GroupPostLike::class);
@@ -75,8 +95,7 @@ class User extends Authenticatable
     }
 
     public function courses()
-{
-    return $this->belongsToMany(Course::class, 'course_users')->withTimestamps();
-}
-
+    {
+        return $this->belongsToMany(Course::class, 'course_users')->withTimestamps();
+    }
 }

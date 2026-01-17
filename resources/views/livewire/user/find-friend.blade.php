@@ -29,7 +29,7 @@
                         <a href="{{ route('profile', ['id' => $user->id]) }}"
                             class="relative block group-hover:scale-105 transition-transform duration-300">
                             <img src="{{ $user->dp ?: 'https://ui-avatars.com/api/?name=' . urlencode($user->first_name . ' ' . $user->last_name) . '&background=6366f1&color=fff' }}"
-                                alt="{{ $user->first_name }}"
+                                alt="{{ $user->first_name }}?tr=w-100,h-100,fo-auto,q-80"
                                 class="w-24 h-24 rounded-full object-cover border-[4px] border-white shadow-md bg-white">
                         </a>
 

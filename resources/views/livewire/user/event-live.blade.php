@@ -22,14 +22,6 @@
                     </button>
                 </div>
 
-                @if (session()->has('message'))
-                    <div
-                        class="px-4 py-3 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-xl flex items-center gap-2 text-sm font-bold animate-fade-in-down">
-                        <x-heroicon-o-check-circle class="w-4 h-4" />
-                        {{ session('message') }}
-                    </div>
-                @endif
-
                 @if ($isCreating)
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in-down">
 
@@ -180,7 +172,7 @@
                             class="group bg-white rounded-3xl p-5 border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
 
                             <div class="flex items-start gap-4">
-                                <div {{-- if event past change background color --}}
+                                <div
                                     class="flex-shrink-0 w-16 h-16 {{ $date->isPast() ? 'bg-red-200 border-red-300' : 'bg-indigo-50 border-indigo-100' }} rounded-2xl flex flex-col items-center justify-center border transition-colors">
                                     <span
                                         class="text-xs font-bold {{ $date->isPast() ? 'text-red-700' : 'text-indigo-500' }} uppercase">{{ $date->format('M') }}</span>
@@ -230,13 +222,16 @@
                             </div>
 
                             <div class="flex items-center justify-between pt-4 border-t border-slate-50">
-                                <div class="flex items-center gap-2">
-                                    <img src="{{ $event->user->dp ? asset('storage/images/dp/' . $event->user->dp) : asset('storage/images/dp.png') }}"
-                                        class="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm"
-                                        alt="Avatar">
-                                    <p class="text-xs font-medium text-slate-500 capitalize">Organized By <span
-                                            class="font-bold text-slate-700">{{ $event->user->first_name }}</span></p>
-                                </div>
+                                <a href="{{ route('profile', $event->user->id) }}" class="ml-2">
+                                    <div class="flex items-center gap-2">
+                                        <img src="{{ $event->user->dp ?: 'https://ui-avatars.com/api/?name=' . $event->user->first_name . '+' . $event->user->last_name . '&background=6366f1&color=fff' }}?tr=w-80,h-80,crop-circle"
+                                            class="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm"
+                                            alt="Avatar">
+                                        <p class="text-xs font-medium text-slate-500 capitalize">Organized By <span
+                                                class="font-bold text-slate-700">{{ $event->user->first_name }}</span>
+                                        </p>
+                                    </div>
+                                </a>
                                 <button wire:click="view({{ $event->id }})"
                                     class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 hover:text-indigo-700 flex items-center gap-1 transition">
                                     <x-heroicon-o-eye class="w-3 h-3" />

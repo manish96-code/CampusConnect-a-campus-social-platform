@@ -30,13 +30,13 @@ class CallingGroupPost extends Component
 
         // Permission check
         if ($post->user_id !== auth()->id() && ! $isAdmin) {
-            $this->dispatch('toast', message: 'You do not have permission to delete this post.', type: 'error');
+            $this->dispatch('toast', message: 'You do not have permission to delete this chat.', type: 'error');
             return;
         }
 
         $post->delete();
 
-        $this->dispatch('toast', message: 'Post deleted successfully.', type: 'delete');
+        $this->dispatch('toast', message: 'Chat deleted successfully.', type: 'delete');
     }
 
     public function render()
