@@ -63,9 +63,11 @@ class CallingPost extends Component
             'comments.user:id,first_name,last_name,dp',
         ])
             ->withCount(['likes', 'comments'])
-            ->withExists(['likes as is_liked' => function ($q) {
-                $q->where('user_id', auth()->id());
-            }])
+            ->withExists([
+                'likes as is_liked' => function ($q) {
+                    $q->where('user_id', auth()->id());
+                }
+            ])
             ->latest();
 
         if ($this->selectedUser) {
@@ -78,7 +80,7 @@ class CallingPost extends Component
                         ->orWhere('receiver_id', auth()->id());
                 })
                 ->get()
-                ->map(fn ($f) => $f->sender_id === auth()->id() ? $f->receiver_id : $f->sender_id)
+                ->map(fn($f) => $f->sender_id === auth()->id() ? $f->receiver_id : $f->sender_id)
                 ->push(auth()->id())
                 ->toArray();
 
@@ -89,10 +91,20 @@ class CallingPost extends Component
     public function likePost($postId)
     {
         $post = UserPost::findOrFail($postId);
-        $isLiking = ! $post->likes()->where('user_id', auth()->id())->exists();
+        $isLiking = !$post->likes()->where('user_id', auth()->id())->exists();
 
         if ($isLiking) {
             $post->likes()->create(['user_id' => auth()->id()]);
+
+            // Notify post owner
+            if ($post->user_id !== auth()->id()) {
+                $post->user->notify(new \App\Notifications\SystemNotification(
+                    'New Like',
+                    auth()->user()->first_name . ' liked your post.',
+                    'heroicon-o-heart'
+                ));
+            }
+
             $this->dispatch('toast', message: 'Post liked! ❤️', type: 'success');
         } else {
             $post->likes()->where('user_id', auth()->id())->delete();
@@ -106,7 +118,7 @@ class CallingPost extends Component
     {
         $commentText = $this->comments[$postId] ?? '';
 
-        if (! trim($commentText)) {
+        if (!trim($commentText)) {
             $this->dispatch('toast', message: 'Comment cannot be empty! ✍️', type: 'warning');
 
             return;
@@ -118,6 +130,15 @@ class CallingPost extends Component
             'user_id' => auth()->id(),
             'comment' => $commentText,
         ]);
+
+        // Notify post owner
+        if ($post->user_id !== auth()->id()) {
+            $post->user->notify(new \App\Notifications\SystemNotification(
+                'New Comment',
+                auth()->user()->first_name . ' commented on your post.',
+                'heroicon-o-chat-bubble-bottom-center-text'
+            ));
+        }
 
         $this->comments[$postId] = '';
         $this->dispatch('toast', message: 'Comment posted! 💬', type: 'success');

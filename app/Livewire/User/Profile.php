@@ -26,10 +26,12 @@ class Profile extends Component{
 
     public function updatedCover(){
         $this->updateProfile();
+        $this->dispatch('toast', message: 'Cover photo updated successfully!', type: 'success');
     }
 
     public function updatedDp(){
         $this->updateProfile();
+        $this->dispatch('toast', message: 'Profile picture updated successfully!', type: 'success');
     }
 
     public function mount($id = null){
@@ -73,7 +75,6 @@ class Profile extends Component{
 
         $this->loadMediaPosts();
 
-        session()->flash('message', 'Profile updated successfully.');
     }
 
     private function loadMediaPosts(){

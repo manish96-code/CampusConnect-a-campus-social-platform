@@ -6,114 +6,133 @@ use App\Models\Friend;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
-class FriendshipButton extends Component{
+class FriendshipButton extends Component
+{
 
     public $selectedUser;
     public $friendshipStatus;
 
-    public function mount($selectedUser){
+    public function mount($selectedUser)
+    {
         $this->selectedUser = $selectedUser;
         $this->deterMineFriendshipStatus();
     }
 
-    public function deterMineFriendshipStatus(){
+    public function deterMineFriendshipStatus()
+    {
         // $user = auth()->user();
         $user = Auth::user();
 
-        $friendRequest = Friend::where(function($query) use ($user){
+        $friendRequest = Friend::where(function ($query) use ($user) {
             $query->where('sender_id', $user->id)
-                  ->where('receiver_id', $this->selectedUser->id);
-        })->orWhere(function($query) use ($user){
+                ->where('receiver_id', $this->selectedUser->id);
+        })->orWhere(function ($query) use ($user) {
             $query->where('sender_id', $this->selectedUser->id)
-                  ->where('receiver_id', $user->id);
+                ->where('receiver_id', $user->id);
         })->first();
-        
 
-        if(!$friendRequest){
+
+        if (!$friendRequest) {
             $this->friendshipStatus = 'not_friends';
-        }
-        elseif($friendRequest->status == 'pending'){
-            if($friendRequest->sender_id == $user->id){
+        } elseif ($friendRequest->status == 'pending') {
+            if ($friendRequest->sender_id == $user->id) {
                 $this->friendshipStatus = 'request_sent';
             } else {
                 $this->friendshipStatus = 'request_received';
             }
-        }
-        elseif($friendRequest->status == 'accepted'){
+        } elseif ($friendRequest->status == 'accepted') {
             $this->friendshipStatus = 'friends';
-        }
-        else{
+        } else {
             $this->friendshipStatus = 'not_friends';
         }
 
     }
 
     // send friend request
-    public function sendFriendRequest(){
+    public function sendFriendRequest()
+    {
         $user = auth()->user();
         Friend::create([
             'sender_id' => $user->id,
             'receiver_id' => $this->selectedUser->id,
             'status' => 'pending'
         ]);
+
+        $this->selectedUser->notify(new \App\Notifications\SystemNotification(
+            'New Friend Request',
+            $user->first_name . ' ' . $user->last_name . ' sent you a friend request.',
+            'heroicon-o-user-plus'
+        ));
+
         $this->deterMineFriendshipStatus();
         $this->dispatch('toast', message: 'Friend request sent! 📩', type: 'success');
     }
-    
+
     // cancel friend request
-    public function cancelFriendRequest(){
+    public function cancelFriendRequest()
+    {
         $user = auth()->user();
         Friend::where('sender_id', $user->id)
-        ->where('receiver_id', $this->selectedUser->id)
-        ->delete();
+            ->where('receiver_id', $this->selectedUser->id)
+            ->delete();
         $this->deterMineFriendshipStatus();
         $this->dispatch('toast', message: 'Request cancelled.', type: 'delete');
     }
 
     // accept friend request
-    public function acceptFriendRequest(){
+    public function acceptFriendRequest()
+    {
         $user = auth()->user();
 
         $friendRequest = Friend::where('sender_id', $this->selectedUser->id)
-        ->where('receiver_id', $user->id)
-        ->first();
-        
-        if($friendRequest){
+            ->where('receiver_id', $user->id)
+            ->first();
+
+        if ($friendRequest) {
             $friendRequest->status = 'accepted';
             $friendRequest->save();
+
+            $this->selectedUser->notify(new \App\Notifications\SystemNotification(
+                'Request Accepted',
+                $user->first_name . ' ' . $user->last_name . ' accepted your friend request.',
+                'heroicon-o-hand-thumb-up'
+            ));
+
             $this->dispatch('toast', message: 'You are now friends! 🎉', type: 'success');
         }
         $this->deterMineFriendshipStatus();
     }
-    
+
     // reject friend request
-    public function rejectFriendRequest(){
+    public function rejectFriendRequest()
+    {
         $user = auth()->user();
-        
+
         $friendRequest = Friend::where('sender_id', $this->selectedUser->id)
-        ->where('receiver_id', $user->id)
-        ->delete();
+            ->where('receiver_id', $user->id)
+            ->delete();
         $this->deterMineFriendshipStatus();
         $this->dispatch('toast', message: 'Request declined.', type: 'warning');
     }
 
     // unfriend
-    public function unfriend(){
+    public function unfriend()
+    {
         $user = auth()->user();
 
-        Friend::where(function($query) use ($user){
+        Friend::where(function ($query) use ($user) {
             $query->where('sender_id', $user->id)
-                  ->where('receiver_id', $this->selectedUser->id);
-        })->orWhere(function($query) use ($user){
+                ->where('receiver_id', $this->selectedUser->id);
+        })->orWhere(function ($query) use ($user) {
             $query->where('sender_id', $this->selectedUser->id)
-                  ->where('receiver_id', $user->id);
+                ->where('receiver_id', $user->id);
         })->delete();
 
         $this->deterMineFriendshipStatus();
         $this->dispatch('toast', message: 'Classmate removed.', type: 'delete');
     }
 
-        
+
     public function render()
     {
         return view('livewire.user.friendship-button');

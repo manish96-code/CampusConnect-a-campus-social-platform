@@ -2,7 +2,9 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 
 <head>
-    <script src="https://cdn.tailwindcss.com"></script>
+    {{--
+    <script src="https://cdn.tailwindcss.com"></script> --}}
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
     <style>
         .section-lock {
@@ -60,10 +62,7 @@
                 </button>
 
                 <!-- Notifications -->
-                <button class="relative p-2 text-slate-500 rounded-full">
-                    <x-heroicon-o-bell class="w-5 h-5" />
-                    <span class="absolute top-2 right-2.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white"></span>
-                </button>
+                <livewire:user.notification-dropdown />
 
                 <div class="relative" x-data="{ open: false }">
 
@@ -204,8 +203,7 @@
             show = false;
             setTimeout(() => show = true, 50);
             setTimeout(() => show = false, 3000);
-        })" {{-- Positioned at top-20 to sit below the 16-unit header --}}
-            class="fixed top-20 right-6 z-[100] flex flex-col gap-2 w-full max-w-sm" style="display: none;"
+        })" class="fixed top-20 right-6 z-[100] flex flex-col gap-2 w-full max-w-sm" style="display: none;"
             x-show="show">
 
             <div x-show="show" x-transition:enter="transform ease-out duration-300 transition"
@@ -256,8 +254,7 @@
                 </button>
 
                 {{-- Progress Bar --}}
-                <div x-show="show" class="absolute bottom-0 left-0 h-1 animate-progress"
-                    :class="{
+                <div x-show="show" class="absolute bottom-0 left-0 h-1 animate-progress" :class="{
                         'bg-emerald-500': type === 'success',
                         'bg-rose-500': type === 'delete',
                         'bg-rose-600': type === 'error',
@@ -267,9 +264,6 @@
             </div>
         </div>
     </div>
-
-    {{-- @livewireScripts --}}
-    {{-- </body> --}}
 
     @livewireScripts
 
@@ -292,11 +286,20 @@
                     }
                 }));
             @endif
+
+            @if (session()->has('error'))
+                window.dispatchEvent(new CustomEvent('toast', {
+                    detail: {
+                        message: "{{ session('error') }}",
+                        type: 'error'
+                    }
+                }));
+            @endif
         });
     </script>
 
     <script>
-        (function() {
+        (function () {
             const loader = document.getElementById('page-loader');
             const section = document.getElementById('main-content-section');
 
@@ -324,12 +327,12 @@
                 }
             };
 
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 const link = e.target.closest('a[href]');
                 if (!link) return;
                 if (link.target === '_blank' || link.hasAttribute('download') || link.href.includes('#') ||
                     (link.href.startsWith('http') && !link.href.startsWith(location.origin)) || e.metaKey || e
-                    .ctrlKey
+                        .ctrlKey
                 ) return;
 
                 showLoader();

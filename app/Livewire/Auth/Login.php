@@ -2,17 +2,17 @@
 
 namespace App\Livewire\Auth;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 class Login extends Component
 {
-
-    #[Validate("required|email|max:50")]
+    #[Validate('required|email|max:50')]
     public $email;
 
-    #[Validate("required|string|min:8|max:16")]
+    #[Validate('required|string|min:8|max:16')]
     public $password;
 
     public function login()
@@ -20,12 +20,26 @@ class Login extends Component
         $data = $this->validate();
 
         if (Auth::attempt($data)) {
+            $this->dispatch('toast', message: 'Welcome back! 👋', type: 'success');
+
+            if (auth()->user()->is_admin) {
+                return redirect()->route('admin.dashboard');
+            }
+
             return redirect()->route('home');
         }
 
-        $this->addError('email', 'Invalid email or password.');
-        // $this->addError('email', 'Invalid email.');
-        // $this->addError('password', 'wrong password.');
+        $userExists = User::where('email', $this->email)->exists();
+
+        if (!$userExists) {
+            // unregistered email
+            $this->addError('email', 'This email is not registered.');
+            $this->dispatch('toast', message: 'Account not found.', type: 'error');
+        } else {
+            // wrong password
+            $this->addError('password', 'The password you entered is incorrect.');
+            $this->dispatch('toast', message: 'Incorrect password.', type: 'error');
+        }
     }
 
     public function render()

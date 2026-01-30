@@ -1,5 +1,8 @@
 <?php
 
+use App\Livewire\Admin\CourseManagement;
+use App\Livewire\Admin\Dashboard;
+use App\Livewire\Admin\UserManagement;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\User\Assignment;
@@ -51,6 +54,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/course', CourseView::class)->name('courses');
 
     Route::get('/settings', Settings::class)->name('settings');
+    Route::get('/profile-edit', \App\Livewire\User\EditProfile::class)->name('profile.edit');
 
     Route::get('/logout', function () {
         Auth::logout();
@@ -58,7 +62,19 @@ Route::middleware('auth')->group(function () {
     })->name('logout');
 });
 
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/dashboard', Dashboard::class)->name('admin.dashboard');
+    Route::get('/admin/users',UserManagement::class)->name('admin.users');
+    Route::get('/admin/courses', CourseManagement::class)->name('admin.courses');
+});
+
+Route::get('/admin', function () {
+    return redirect()->route('admin.dashboard');
+});
+
 Route::middleware('guest')->group(function () {
     Route::get('/register', Register::class)->name('register');
     Route::get('/login', Login::class)->name('login');
 });
+
+Route::get('/admin/login', Login::class)->name('admin.login');

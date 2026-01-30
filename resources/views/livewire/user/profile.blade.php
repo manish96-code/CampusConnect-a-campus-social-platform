@@ -84,10 +84,10 @@
                         <!-- Action Buttons -->
                         <div class="flex items-center gap-2 mb-1">
                             @if ($selectedUser->id == auth()->user()->id)
-                                <button
+                                <a wire:navigate href="{{ route('profile.edit') }}"
                                     class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border border-indigo-200 font-semibold px-4 py-2 rounded-xl transition text-sm flex items-center gap-2">
                                     <x-heroicon-o-pencil-square class="w-4 h-4" /> Edit
-                                </button>
+                                </a>
                             @else
                                 <div class="w-40">
                                     <livewire:user.friendship-button :selectedUser="$selectedUser" :key="$selectedUser->id" />
